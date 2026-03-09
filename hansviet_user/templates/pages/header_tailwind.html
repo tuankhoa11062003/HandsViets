@@ -19,6 +19,13 @@
             <span class="text-xl font-extrabold bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent drop-shadow-lg hover:drop-shadow-2xl transition-all duration-300 hover:scale-105">HandsViet</span>
         </a>
 
+        <!-- Mobile toggle -->
+        <button class="lg:hidden p-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100" id="mobileMenuBtn" aria-label="Mở menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+
         <!-- Desktop Navigation -->
         <nav class="hidden lg:flex items-center gap-4 xl:gap-8 justify-center">
             <a href="/" class="{% if request.resolver_match.url_name == 'home' %}text-blue-600 border-b-2 border-[#14B8A6]{% else %}text-gray-700 hover:text-blue-600{% endif %} transition font-medium whitespace-nowrap">Trang chủ</a>
@@ -94,9 +101,9 @@
     </div>
 </header>
 
-<!-- Mobile navigation -->
-<div class="lg:hidden bg-white border-t border-slate-200 px-4 py-3 space-y-2 shadow">
-    <div class="flex flex-wrap gap-3">
+<!-- Mobile navigation (toggle) -->
+<div class="lg:hidden hidden bg-white border-t border-slate-200 px-4 py-3 space-y-2 shadow" id="mobileMenu">
+    <div class="flex flex-col gap-2">
         <a href="/" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Trang chủ</a>
         <a href="{% url 'pages:services' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Dịch vụ</a>
         <a href="{% url 'pages:exercise_library' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Video tập</a>
@@ -105,12 +112,27 @@
         <a href="{% url 'pages:booking' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Đặt lịch</a>
         <a href="{% url 'pages:contact' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Liên hệ</a>
     </div>
-    <div class="pt-2 border-t border-slate-100 flex gap-3">
+    <div class="pt-2 border-t border-slate-100 flex flex-col gap-2">
         {% if request.user.is_authenticated %}
         <a href="{% url 'auth:logout' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Đăng xuất</a>
         {% else %}
         <a href="{% url 'auth:login' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Đăng nhập</a>
-        <a href="{% url 'auth:register' %}" class="text-sm font-semibold text-white bg-blue-600 px-3 py-2 rounded-lg shadow">Đăng ký</a>
+        <a href="{% url 'auth:register' %}" class="text-sm font-semibold text-white bg-blue-600 px-3 py-2 rounded-lg shadow text-center">Đăng ký</a>
         {% endif %}
     </div>
 </div>
+<script>
+  (function() {
+    const btn = document.getElementById('mobileMenuBtn');
+    const menu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('mobileMenuOverlay');
+    const toggle = () => {
+      menu.classList.toggle('hidden');
+      overlay.classList.toggle('active');
+    };
+    if (btn && menu && overlay) {
+      btn.addEventListener('click', toggle);
+      overlay.addEventListener('click', toggle);
+    }
+  })();
+</script>
