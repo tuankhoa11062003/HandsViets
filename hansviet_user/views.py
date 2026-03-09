@@ -474,7 +474,10 @@ def visit_guide(request):
 
 
 def buy_package(request, slug):
-    package = get_object_or_404(Package, slug=slug, is_active=True)
+    package = Package.objects.filter(slug=slug, is_active=True).first()
+    if not package:
+        messages.error(request, "Gói tập chưa sẵn sàng, vui lòng chọn dịch vụ khác.")
+        return redirect('/services/')
     if not request.user.is_authenticated:
         messages.error(request, "Vui lòng đăng nhập để mua gói.")
         return redirect(f"{settings.LOGIN_URL}?next={request.path}")

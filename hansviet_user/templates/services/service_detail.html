@@ -145,6 +145,13 @@
                             <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent">
                             </div>
                         </div>
+                        {% else %}
+                        <div class="relative group">
+                            <img src="{% static 'images/assets/clinic-desk.jpg' %}" alt="{{ service.title }}"
+                                class="w-full aspect-[21/9] object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent">
+                            </div>
+                        </div>
                         {% endif %}
 
                         <div class="p-8 md:p-16 -mt-10 relative bg-white rounded-t-[3rem]">
