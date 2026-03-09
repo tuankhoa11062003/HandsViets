@@ -93,3 +93,24 @@
         </div>
     </div>
 </header>
+
+<!-- Mobile navigation -->
+<div class="lg:hidden bg-white border-t border-slate-200 px-4 py-3 space-y-2 shadow">
+    <div class="flex flex-wrap gap-3">
+        <a href="/" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Trang chủ</a>
+        <a href="{% url 'pages:services' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Dịch vụ</a>
+        <a href="{% url 'pages:exercise_library' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Video tập</a>
+        <a href="{% url 'pages:package_buy' slug='goi-1-thang' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Gói tập</a>
+        <a href="{% url 'news:news_list' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Tin tức</a>
+        <a href="{% url 'pages:booking' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Đặt lịch</a>
+        <a href="{% url 'pages:contact' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Liên hệ</a>
+    </div>
+    <div class="pt-2 border-t border-slate-100 flex gap-3">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'auth:logout' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Đăng xuất</a>
+        {% else %}
+        <a href="{% url 'auth:login' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Đăng nhập</a>
+        <a href="{% url 'auth:register' %}" class="text-sm font-semibold text-white bg-blue-600 px-3 py-2 rounded-lg shadow">Đăng ký</a>
+        {% endif %}
+    </div>
+</div>
