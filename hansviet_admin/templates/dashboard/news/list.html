@@ -1,0 +1,83 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Tin tức - HandsViet Dashboard{% endblock %}
+{% block breadcrumbs %}
+<span class="text-slate-900 font-extrabold">Tin tức y tế</span>
+{% endblock %}
+{% block content %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Quản lý Tin tức</h1>
+        <p class="text-gray-500 mt-1">Quản lý các bài viết kiến thức và cập nhật y khoa.</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="{% url 'dashboard:news_category_list' %}"
+            class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-6 py-3 rounded-2xl font-bold transition-all flex items-center gap-2">📁
+            Chuyên mục</a>
+        <a href="{% url 'dashboard:news_create' %}"
+            class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-teal-500/20 transition-all flex items-center gap-2"><span>+</span>
+            Đăng bài viết</a>
+    </div>
+</div>
+<div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+    <div class="overflow-x-auto text-sm">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-gray-50/50">
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px]">Bài viết</th>
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px]">Chuyên mục</th>
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px]">Ngày đăng</th>
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px]">Trạng thái</th>
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px] text-right">Hành động</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for article in articles %}
+                <tr class="hover:bg-gray-50/40 transition-colors group">
+                    <td class="px-8 py-5">
+                        <div class="flex items-center gap-4">
+                            {% if article.thumbnail %}<img src="{{ article.thumbnail.url }}"
+                                class="w-12 h-12 rounded-xl object-cover border border-gray-100">{% else %}<div
+                                class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-gray-300">
+                                🖼️</div>{% endif %}
+                            <div>
+                                <div class="font-bold text-gray-900 group-hover:text-teal-600 transition-colors line-clamp-1">
+                                    {{ article.title }}</div>
+                                <div class="text-[11px] text-gray-400 mt-1 font-semibold">
+                                    Lượt xem: {{ article.view_count }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-5">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-600 border border-amber-100 uppercase tracking-wider">
+                            {{ article.category.name|default:"Chung" }}
+                        </span>
+                    </td>
+                    <td class="px-8 py-5">
+                        <div class="text-gray-800 font-bold text-xs uppercase tracking-tight">{{ article.created_at|date:"d/m/Y" }}</div>
+                    </td>
+                    <td class="px-8 py-5 text-center">
+                        {% if article.is_featured %}
+                        <div class="w-8 h-8 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto" title="Bài viết nổi bật">⭐</div>
+                        {% else %}<span class="text-gray-200">○</span>{% endif %}
+                    </td>
+                    <td class="px-8 py-5 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <a href="{% url 'dashboard:news_edit' article.pk %}"
+                                class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-blue-600 rounded-xl transition-all">✏️</a>
+                            <a href="{% url 'dashboard:news_delete' article.pk %}"
+                                class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-xl transition-all">🗑️</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-8 py-20 text-center">
+                        <p class="text-gray-400 font-medium">Chưa có bài viết nào.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,226 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Tổng quan - HandsViet Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-card {
+        animation: fadeInUp 0.5s ease-out forwards;
+        opacity: 0;
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<span class="text-slate-900 font-extrabold">Tổng quan hệ thống</span>
+{% endblock %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="relative overflow-hidden bg-white p-10 rounded-[2.5rem] border border-slate-200 mb-10 group shadow-sm">
+    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-2">
+            <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                Chào buổi sáng, <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-500">{{ request.user.username }}</span>! 👋
+            </h2>
+            <p class="text-slate-400 font-medium max-w-xl text-lg">
+                Hệ thống HandsViet đã sẵn sàng. Bạn có <span class="text-teal-600 font-bold underline decoration-teal-200">2 bản tin mới</span> và <span class="text-blue-600 font-bold underline decoration-blue-200">5 yêu cầu hỗ trợ</span> cần xử lý.
+            </p>
+        </div>
+        <div class="hidden lg:flex items-center gap-4 bg-slate-50 p-2 rounded-[2rem] border border-slate-100">
+            <div class="flex -space-x-3">
+                <div class="w-12 h-12 rounded-full border-4 border-white bg-slate-200 flex items-center justify-center font-bold text-slate-500 text-xs">A1</div>
+                <div class="w-12 h-12 rounded-full border-4 border-white bg-teal-500/20 flex items-center justify-center font-bold text-teal-600 text-xs">A2</div>
+                <div class="w-12 h-12 rounded-full border-4 border-white bg-emerald-500/20 flex items-center justify-center font-bold text-emerald-600 text-xs text-xl">+</div>
+            </div>
+            <div class="pr-4">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đội ngũ trực</p>
+                <p class="text-xs font-bold text-slate-700">3 Thành viên</p>
+            </div>
+        </div>
+    </div>
+    <!-- Decorative elements -->
+    <div class="absolute -right-20 -top-20 w-80 h-80 bg-teal-50/50 rounded-full blur-3xl group-hover:bg-teal-100/50 transition-all duration-1000"></div>
+    <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-blue-50/30 rounded-full blur-2xl group-hover:bg-blue-100/30 transition-all duration-1000"></div>
+</div>
+
+<!-- Stats Dashboard -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+    <!-- People Stat -->
+    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 group relative overflow-hidden">
+        <div class="relative z-10">
+            <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-sm border border-indigo-100">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-width="2.5"></path></svg>
+            </div>
+            <div class="text-5xl font-black text-slate-900 tracking-tighter mb-1">{{ total_users|default:0 }}</div>
+            <div class="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">Người dùng</div>
+            <div class="mt-4 flex items-center gap-1.5 text-emerald-500 font-bold text-[10px] uppercase">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4l-8 8h16z"></path></svg>
+                +12% <span class="text-slate-300 font-medium lowercase italic">tháng này</span>
+            </div>
+        </div>
+        <div class="absolute -right-5 -bottom-5 w-24 h-24 bg-slate-50 rounded-full opacity-50 group-hover:scale-150 transition-all duration-700"></div>
+    </div>
+
+    <!-- Video Stat -->
+    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 group relative overflow-hidden">
+        <div class="relative z-10">
+            <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500 shadow-sm border border-emerald-100">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-width="2.5"></path></svg>
+            </div>
+            <div class="text-5xl font-black text-slate-900 tracking-tighter mb-1">{{ total_videos|default:0 }}</div>
+            <div class="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">Video bài tập</div>
+            <div class="mt-4 flex items-center gap-1.5 text-slate-400 font-bold text-[10px] uppercase">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path d="M5 12h14"></path></svg>
+                Mới <span class="text-slate-300 font-medium lowercase italic">tuần này</span>
+            </div>
+        </div>
+        <div class="absolute -right-5 -bottom-5 w-24 h-24 bg-slate-50 rounded-full opacity-50 group-hover:scale-150 transition-all duration-700"></div>
+    </div>
+
+    <!-- News Stat -->
+    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 group relative overflow-hidden">
+        <div class="relative z-10">
+            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-amber-600 group-hover:text-white transition-all duration-500 shadow-sm border border-amber-100">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" stroke-width="2.5"></path></svg>
+            </div>
+            <div class="text-5xl font-black text-slate-900 tracking-tighter mb-1">{{ total_news|default:0 }}</div>
+            <div class="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">Tin tức y tế</div>
+            <div class="mt-4 flex items-center gap-1.5 text-blue-500 font-bold text-[10px] uppercase">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4l-8 8h16z"></path></svg>
+                +3 <span class="text-slate-300 font-medium lowercase italic">hôm nay</span>
+            </div>
+        </div>
+        <div class="absolute -right-5 -bottom-5 w-24 h-24 bg-slate-50 rounded-full opacity-50 group-hover:scale-150 transition-all duration-700"></div>
+    </div>
+
+    <!-- Therapy Stat -->
+    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 group relative overflow-hidden">
+        <div class="relative z-10">
+            <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-rose-600 group-hover:text-white transition-all duration-500 shadow-sm border border-rose-100">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-width="2.5"></path></svg>
+            </div>
+            <div class="text-5xl font-black text-slate-900 tracking-tighter mb-1">{{ total_therapies|default:0 }}</div>
+            <div class="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">Liệu pháp</div>
+            <div class="mt-4 flex items-center gap-1.5 text-slate-400 font-bold text-[10px] uppercase">
+                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                Active
+            </div>
+        </div>
+        <div class="absolute -right-5 -bottom-5 w-24 h-24 bg-slate-50 rounded-full opacity-50 group-hover:scale-150 transition-all duration-700"></div>
+    </div>
+
+    <!-- Service Stat -->
+    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 group relative overflow-hidden">
+        <div class="relative z-10">
+            <div class="w-14 h-14 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-teal-600 group-hover:text-white transition-all duration-500 shadow-sm border border-teal-100">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-width="2.5"></path></svg>
+            </div>
+            <div class="text-5xl font-black text-slate-900 tracking-tighter mb-1">{{ total_services|default:0 }}</div>
+            <div class="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">Dịch vụ GP</div>
+            <div class="mt-4 flex items-center gap-1.5 text-teal-500 font-bold text-[10px] uppercase">
+                <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+                Sẵn sàng
+            </div>
+        </div>
+        <div class="absolute -right-5 -bottom-5 w-24 h-24 bg-slate-50 rounded-full opacity-50 group-hover:scale-150 transition-all duration-700"></div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Quick Actions Column -->
+    <div class="lg:col-span-2 bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-10">
+            <h3 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                <span class="w-2.5 h-8 bg-teal-600 rounded-full"></span>
+                Thao tác quản trị
+            </h3>
+            <a href="/admin/" class="text-[10px] font-black uppercase text-slate-400 hover:text-teal-600 tracking-widest transition-colors">Vào Django Admin &rarr;</a>
+        </div>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <a href="{% url 'dashboard:user_list' %}" class="group/btn bg-slate-50 hover:bg-teal-600 p-6 rounded-[2rem] text-center transition-all duration-500">
+                <div class="text-3xl mb-3 group-hover/btn:scale-125 transition-transform duration-500">👥</div>
+                <div class="text-[10px] font-black text-slate-900 uppercase tracking-widest group-hover/btn:text-white">Người dùng</div>
+            </a>
+            <a href="{% url 'dashboard:service_list' %}" class="group/btn bg-slate-50 hover:bg-blue-600 p-6 rounded-[2rem] text-center transition-all duration-500">
+                <div class="text-3xl mb-3 group-hover/btn:scale-125 transition-transform duration-500">🛠️</div>
+                <div class="text-[10px] font-black text-slate-900 uppercase tracking-widest group-hover/btn:text-white">Dịch vụ</div>
+            </a>
+            <a href="/admin/" class="group/btn bg-slate-50 hover:bg-emerald-600 p-6 rounded-[2rem] text-center transition-all duration-500">
+                <div class="text-3xl mb-3 group-hover/btn:scale-125 transition-transform duration-500">🎥</div>
+                <div class="text-[10px] font-black text-slate-900 uppercase tracking-widest group-hover/btn:text-white">Video</div>
+            </a>
+            <a href="{% url 'dashboard:news_list' %}" class="group/btn bg-slate-50 hover:bg-amber-600 p-6 rounded-[2rem] text-center transition-all duration-500">
+                <div class="text-3xl mb-3 group-hover/btn:scale-125 transition-transform duration-500">📰</div>
+                <div class="text-[10px] font-black text-slate-900 uppercase tracking-widest group-hover/btn:text-white">Tin tức</div>
+            </a>
+        </div>
+        
+        <div class="mt-10 p-8 bg-teal-900 rounded-[2.5rem] text-white relative overflow-hidden group">
+            <div class="relative z-10">
+                <h4 class="text-sm font-black uppercase tracking-[0.2em] opacity-60 mb-2">Tình trạng hệ thống</h4>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]"></div>
+                    <span class="text-xl font-extrabold tracking-tight">Vận hành tối ưu</span>
+                </div>
+                <p class="text-xs text-teal-100/70 font-medium leading-relaxed max-w-sm">Tất cả các dịch vụ đang chạy ổn định. Không có báo cáo lỗi nghiêm trọng trong 24 giờ qua.</p>
+            </div>
+            <div class="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-teal-800 to-transparent"></div>
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 border-[20px] border-teal-800 rounded-full opacity-30"></div>
+        </div>
+    </div>
+
+    <!-- Side Activities Column -->
+    <div class="space-y-6">
+        <div class="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-sm h-full">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-lg font-black text-slate-900 tracking-tight">Hoạt động mới</h3>
+                <span class="w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
+            </div>
+            
+            <div class="space-y-8">
+                <!-- Activity Item -->
+                <div class="flex gap-4 relative">
+                    <div class="absolute left-[11px] top-8 bottom-[-20px] w-0.5 bg-slate-100"></div>
+                    <div class="w-6 h-6 rounded-full bg-teal-100 border-4 border-white shadow-sm flex-shrink-0 z-10"></div>
+                    <div>
+                        <p class="text-[11px] font-black text-slate-900 uppercase tracking-wide">Cập nhật dịch vụ</p>
+                        <p class="text-xs text-slate-400 font-medium mt-1">Admin vừa chỉnh sửa "Phục hồi chức năng vai".</p>
+                        <p class="text-[9px] font-bold text-slate-300 mt-2 uppercase">10 phút trước</p>
+                    </div>
+                </div>
+                <!-- Activity Item -->
+                <div class="flex gap-4 relative">
+                    <div class="absolute left-[11px] top-8 bottom-[-20px] w-0.5 bg-slate-100"></div>
+                    <div class="w-6 h-6 rounded-full bg-blue-100 border-4 border-white shadow-sm flex-shrink-0 z-10"></div>
+                    <div>
+                        <p class="text-[11px] font-black text-slate-900 uppercase tracking-wide">Người dùng mới</p>
+                        <p class="text-xs text-slate-400 font-medium mt-1">Khách hàng <span class="text-blue-600 underline">nguyenvana@gmail.com</span> vừa đăng ký.</p>
+                        <p class="text-[9px] font-bold text-slate-300 mt-2 uppercase">1 giờ trước</p>
+                    </div>
+                </div>
+                <!-- Activity Item -->
+                <div class="flex gap-4 relative">
+                    <div class="w-6 h-6 rounded-full bg-amber-100 border-4 border-white shadow-sm flex-shrink-0 z-10"></div>
+                    <div>
+                        <p class="text-[11px] font-black text-slate-900 uppercase tracking-wide">Bản tin định kỳ</p>
+                        <p class="text-xs text-slate-400 font-medium mt-1">Hệ thống đã tự động gửi báo cáo tuần cho quản trị viên.</p>
+                        <p class="text-[9px] font-bold text-slate-300 mt-2 uppercase">3 giờ trước</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

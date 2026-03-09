@@ -1,0 +1,29 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Xác nhận xóa - HandsViet Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto py-20 text-center">
+    <div class="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center text-4xl mx-auto mb-8 animate-bounce">
+        ⚠️
+    </div>
+    
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-4 tracking-tighter">Xác nhận xóa tài khoản?</h1>
+    <p class="text-gray-500 mb-12 text-lg">
+        Bạn đang chuẩn bị xóa tài khoản của <span class="text-red-600 font-black">"{{ target_user.username }}"</span>. 
+        Hành động này <span class="underline decoration-red-200">không thể khôi phục</span>. 
+        Mọi dữ liệu liên quan đến người dùng này sẽ bị mất vĩnh viễn.
+    </p>
+
+    <form method="POST" class="flex items-center justify-center gap-6">
+        {% csrf_token %}
+        <button type="submit" 
+                class="bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-red-500/20 transition-all">
+            Xóa vĩnh viễn
+        </button>
+        <a href="{% url 'dashboard:user_list' %}" 
+           class="px-10 py-4 rounded-2xl text-[11px] font-black text-slate-400 hover:text-slate-900 border border-slate-200 hover:bg-white transition-all uppercase tracking-widest">
+            Quay lại bàng
+        </a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Quản lý Chuyên mục - HandsViet Dashboard{% endblock %}
+{% block breadcrumbs %}
+<a href="{% url 'dashboard:service_list' %}" class="hover:text-teal-600">Dịch vụ</a>
+<span class="text-gray-300">/</span>
+<span class="text-gray-900 font-medium">Chuyên mục</span>
+{% endblock %}
+{% block content %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">📁 Chuyên mục Dịch vụ</h1>
+        <p class="text-gray-500 mt-1">Phân loại các dịch vụ và giải pháp của bạn.</p>
+    </div>
+    <a href="{% url 'dashboard:category_create' %}"
+        class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-2xl font-bold transition-all flex items-center gap-2"><span>+</span>
+        Thêm chuyên mục</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for category in categories %}
+    <div
+        class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl transition-all group flex flex-col justify-between">
+        <div>
+            <div class="flex items-center justify-between mb-6">
+                <div
+                    class="w-16 h-16 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center text-3xl transition-transform group-hover:scale-110">
+                    {% if category.icon_svg %}{{ category.icon_svg|safe }}{% else %}📁{% endif %}</div>
+                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <a href="{% url 'dashboard:category_edit' category.pk %}"
+                        class="w-10 h-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center">✏️</a>
+                    <a href="{% url 'dashboard:category_delete' category.pk %}"
+                        class="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center">🗑️</a>
+                </div>
+            </div>
+            <h3 class="text-xl font-extrabold text-gray-900 mb-2 truncate">{{ category.name }}</h3>
+            <!-- prettier-ignore -->
+            <p class="text-sm text-gray-400 line-clamp-2 leading-relaxed">
+                {{ category.description|default:"Chưa có mô tả." }}
+            </p>
+        </div>
+        <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
+            <div class="text-[11px] font-bold text-gray-300 uppercase tracking-widest">
+                <!-- prettier-ignore -->
+                Bài viết: {{ category.services.count }}
+            </div>
+            <a href="{% url 'dashboard:service_list' %}?category={{ category.id }}"
+                class="text-xs font-bold text-teal-600 hover:underline">Xem tất cả &rarr;</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

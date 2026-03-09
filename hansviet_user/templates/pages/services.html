@@ -1,0 +1,349 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dịch vụ PHCN - HandsViet</title>
+    <meta name="description" content="Các gói phục hồi chức năng, vật lý trị liệu, trị liệu thần kinh và sau phẫu thuật tại HandsViet.">
+    <meta property="og:title" content="Dịch vụ PHCN - HandsViet">
+    <meta property="og:description" content="Chọn gói dịch vụ phù hợp: cơ xương khớp, thần kinh, sau tai biến, trị liệu 1:1.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://127.0.0.1:8000/services/">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style>
+        .contact-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.6s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    {% include 'includes/loader.html' %}
+
+    <!-- Header Component -->
+    {% include 'pages/header_tailwind.html' %}
+
+
+    <main>
+        <!-- Services Page Hero Section -->
+        <section class="contact-hero text-white py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center fade-in-up">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Dịch vụ Phục hồi Chức năng</h1>
+                    <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+                        Chúng tôi cung cấp đa dạng các dịch vụ phục hồi chức năng chuyên nghiệp, giúp bạn phục hồi sức
+                        khỏe và cải thiện chất lượng cuộc sống.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Packages Section -->
+        <section class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Dịch vụ</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Chọn gói dịch vụ phù hợp với nhu cầu của bạn
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {% for service in services %}
+                    <div
+                        class="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border {% if service.is_featured %}border-2 border-teal-500{% else %}border-gray-100{% endif %}">
+                        <div class="flex justify-center mb-4">
+                            <div class="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center">
+                                {% if service.category.icon_svg %}
+                                {{ service.category.icon_svg|safe }}
+                                {% else %}
+                                <svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-center text-gray-800 mb-2">{{ service.title }}</h3>
+                        {% if service.featured_tag %}
+                        <div
+                            class="bg-teal-100 text-teal-600 text-xs font-semibold px-3 py-1 rounded-full inline-block mb-4">
+                            {{ service.featured_tag }}
+                        </div>
+                        {% endif %}
+                        <p class="text-gray-600 text-sm mb-6 text-center">
+                            {{ service.summary }}
+                        </p>
+                        <div class="text-center mb-4">
+                            <div class="text-teal-600 text-sm font-semibold mb-1">THỜI GIAN / GIÁ</div>
+                            <div class="text-2xl font-bold text-gray-800">
+                                {{ service.duration|default:service.price_text}}</div>
+                        </div>
+                        <a href="{{ service.get_absolute_url }}"
+                            class="w-full flex items-center justify-center {% if service.is_featured %}bg-teal-500 text-white hover:bg-teal-600{% else %}border-2 border-teal-500 text-teal-600 hover:bg-teal-50{% endif %} py-3 rounded-xl font-semibold transition-all duration-300">
+                            {% if service.is_featured %}Đặt ngay ✓{% else %}Xem chi tiết →{% endif %}
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-500">Chưa có dịch vụ nào được đăng.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Work Process Section -->
+        <section class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-teal-600 font-bold text-sm uppercase tracking-wider">Quy trình chuyên
+                        nghiệp</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-2">Quy trình điều trị chuẩn
+                    </h2>
+                    <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Chúng tôi áp dụng quy trình điều trị khoa học, cá
+                        nhân hóa cho từng bệnh nhân để đạt hiệu quả tối ưu.</p>
+                </div>
+
+                <div class="relative">
+                    <!-- Connecting Line -->
+                    <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gray-100 -translate-y-1/2 z-0">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+                        <!-- Step 1 -->
+                        <div
+                            class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm text-center relative group hover:-translate-y-2 transition-transform duration-300">
+                            <div
+                                class="w-16 h-16 mx-auto bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                                1</div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Thăm khám & Tư vấn</h3>
+                            <p class="text-sm text-gray-600">Bác sĩ chuyên khoa thăm khám trực tiếp, đánh giá tình trạng
+                                và tư vấn phác đồ phù hợp.</p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div
+                            class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm text-center relative group hover:-translate-y-2 transition-transform duration-300">
+                            <div
+                                class="w-16 h-16 mx-auto bg-teal-100 text-teal-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                                2</div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Lên phác đồ điều trị</h3>
+                            <p class="text-sm text-gray-600">Xây dựng lộ trình trị liệu chi tiết, kết hợp các phương
+                                pháp vật lý trị liệu và vận động.</p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div
+                            class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm text-center relative group hover:-translate-y-2 transition-transform duration-300">
+                            <div
+                                class="w-16 h-16 mx-auto bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                                3</div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Thực hiện trị liệu</h3>
+                            <p class="text-sm text-gray-600">Kỹ thuật viên 1:1 hướng dẫn, theo sát quá trình tập luyện
+                                và điều trị bằng máy móc hiện đại.</p>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div
+                            class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm text-center relative group hover:-translate-y-2 transition-transform duration-300">
+                            <div
+                                class="w-16 h-16 mx-auto bg-green-100 text-green-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 group-hover:scale-110 transition-transform">
+                                4</div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Đánh giá & Duy trì</h3>
+                            <p class="text-sm text-gray-600">Đánh giá lại kết quả sau mỗi mốc thời gian, điều chỉnh phác
+                                đồ và hướng dẫn bài tập tại nhà.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us Section -->
+        <section class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="lg:w-1/2">
+                        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                            alt="Why Choose HandsViet" class="rounded-3xl shadow-2xl">
+                    </div>
+                    <div class="lg:w-1/2">
+                        <span class="text-teal-600 font-bold text-sm uppercase tracking-wider">Tại sao chọn
+                            HandsViet</span>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-6">Đặc quyền khi sử dụng dịch vụ
+                        </h2>
+
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <div
+                                    class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-teal-500 flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-gray-800">Cam kết hiệu quả</h3>
+                                    <p class="text-gray-600 text-sm">Hoàn tiền hoặc điều trị miễn phí nếu không đạt kết
+                                        quả như cam kết trong phác đồ.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div
+                                    class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-teal-500 flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-gray-800">Đặt lịch linh hoạt</h3>
+                                    <p class="text-gray-600 text-sm">Chủ động chọn bác sĩ và thời gian khám qua ứng
+                                        dụng. Không chờ đợi.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div
+                                    class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-teal-500 flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-gray-800">Chăm sóc trọn đời</h3>
+                                    <p class="text-gray-600 text-sm">Hồ sơ sức khỏe điện tử lưu trữ trọn đời. Theo dõi
+                                        và tư vấn sức khỏe định kỳ.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="py-16 bg-white">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900">Câu hỏi thường gặp</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- FAQ 1 -->
+                    <div class="border border-gray-200 rounded-xl overflow-hidden">
+                        <button
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left font-semibold text-gray-800"
+                            onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180');">
+                            <span>Tôi cần chuẩn bị gì trước khi đến khám?</span>
+                            <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="p-4 bg-white text-gray-600 hidden">
+                            Bạn nên mang theo các kết quả chụp chiếu (X-quang, MRI) cũ nếu có. Mặc trang phục thoải mái
+                            để thuận tiện cho việc thăm khám vận động.
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="border border-gray-200 rounded-xl overflow-hidden">
+                        <button
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left font-semibold text-gray-800"
+                            onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180');">
+                            <span>Bảo hiểm y tế có chi trả không?</span>
+                            <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="p-4 bg-white text-gray-600 hidden">
+                            Hiện tại HandsViet có liên kết bảo lãnh viện phí với một số đơn vị bảo hiểm tư nhân. Vui
+                            lòng liên hệ hotline để được kiểm tra chi tiết.
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="border border-gray-200 rounded-xl overflow-hidden">
+                        <button
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left font-semibold text-gray-800"
+                            onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180');">
+                            <span>Thời gian một buổi trị liệu kéo dài bao lâu?</span>
+                            <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="p-4 bg-white text-gray-600 hidden">
+                            Trung bình một buổi trị liệu kéo dài từ 45 - 60 phút, bao gồm cả thời gian chạy máy và tập
+                            vận động với kỹ thuật viên.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-16 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+            <div class="w-full px-6 md:px-12 text-center">
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Cần tư vấn thêm về gói dịch vụ?</h2>
+                    <p class="text-xl mb-8 text-blue-100">
+                        Đội ngũ chuyên gia của chúng tôi sẵn sàng tư vấn và hỗ trợ bạn chọn gói dịch vụ phù hợp nhất.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{% url 'pages:booking' %}"
+                            class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            Đặt lịch tư vấn
+                        </a>
+                        <a href="{% url 'pages:contact' %}"
+                            class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105">
+                            Liên hệ ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    {% include 'pages/footer.html' %}
+
+
+    <!-- Managed loading script is now inside includes/loader.html -->
+</body>
+
+</html>

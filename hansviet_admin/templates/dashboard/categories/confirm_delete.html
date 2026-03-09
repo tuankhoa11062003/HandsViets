@@ -1,0 +1,34 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Xác nhận xóa chuyên mục - HandsViet Dashboard{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center py-20">
+    <div
+        class="max-w-md w-full bg-white rounded-[3rem] shadow-2xl border border-gray-100 p-12 text-center animate-in zoom-in duration-300">
+        <div
+            class="w-24 h-24 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl">
+            ⚠️
+        </div>
+
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-4">Xóa chuyên mục?</h1>
+        <p class="text-gray-500 mb-10 leading-relaxed font-medium">
+            Bạn có chắc chắn muốn xóa chuyên mục <span class="font-bold text-red-600">"{{ category.name }}"</span>?<br>
+            <span class="text-xs text-orange-500 mt-2 block italic">Lưu ý: Các bài viết thuộc chuyên mục này sẽ bị mồ
+                côi hoặc lỗi hiển thị.</span>
+        </p>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <button type="submit"
+                class="w-full bg-red-600 hover:bg-red-700 text-white py-5 rounded-2xl font-bold shadow-xl shadow-red-500/20 transition-all active:scale-95">
+                Xác nhận xóa vĩnh viễn
+            </button>
+            <a href="{% url 'dashboard:category_list' %}"
+                class="block w-full text-gray-400 font-bold py-2 hover:text-gray-600 transition-colors">
+                Hủy và quay lại
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

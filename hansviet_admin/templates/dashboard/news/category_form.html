@@ -1,0 +1,52 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{{ title }} - HandsViet Dashboard{% endblock %}
+{% block breadcrumbs %}
+<a href="{% url 'dashboard:news_list' %}" class="hover:text-teal-600">Tin tức</a>
+<span class="text-gray-300">/</span>
+<a href="{% url 'dashboard:news_category_list' %}" class="hover:text-teal-600">Chuyên mục</a>
+<span class="text-gray-300">/</span>
+<span class="text-gray-900 font-medium text-xs uppercase tracking-widest">{{ title }}</span>
+{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto py-12">
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{% url 'dashboard:news_category_list' %}"
+            class="w-12 h-12 bg-white border border-gray-100 text-gray-400 hover:text-teal-600 rounded-2xl flex items-center justify-center transition-all">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+        </a>
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">{{ title }}</h1>
+    </div>
+    <form method="post" class="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 p-10 md:p-14 space-y-8">
+        {% csrf_token %}
+        {% if form.errors %}
+        <div class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-3xl text-sm">
+            <ul class="list-disc list-inside">
+                {% for field, errors in form.errors.items %}
+                <li><strong>{{ field.label }}:</strong> {{ errors|striptags }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="space-y-4">
+            <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tên chuyên mục <span class="text-red-500">*</span></label>
+            {{ form.name }}
+            <p class="text-[10px] text-slate-400 font-medium ml-1">Slug sẽ được tự động tạo dựa trên tên chuyên mục.</p>
+        </div>
+        <div class="space-y-4">
+            <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Slug (URL)</label>
+            {{ form.slug }}
+            <p class="text-[10px] text-slate-400 font-medium ml-1">Có thể nhập thủ công, hoặc để trống để tự sinh.</p>
+        </div>
+
+        <div class="pt-10 border-t border-gray-100 flex items-center justify-between">
+            <a href="{% url 'dashboard:news_category_list' %}" class="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">Hủy</a>
+            <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white px-10 py-5 rounded-[1.5rem] font-bold shadow-xl shadow-teal-500/20 transition-all hover:-translate-y-1 active:scale-95">
+                {{ button_text|default:"Lưu" }}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

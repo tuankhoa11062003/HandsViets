@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ service.title }} - HandsViet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+</head>
+<body class="bg-slate-50 text-slate-800">
+    {% include 'includes/loader.html' %}
+    {% include 'pages/header_tailwind.html' %}
+
+    <main class="w-full px-4 md:px-8 py-12 space-y-12">
+        <div class="max-w-6xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600 text-2xl">🩺</div>
+                <div>
+                    <p class="text-xs uppercase font-black text-slate-400 tracking-[0.2em]">Dịch vụ</p>
+                    <h1 class="text-3xl font-black text-slate-900">{{ service.title }}</h1>
+                    {% if service.category %}
+                    <p class="text-sm text-teal-600 font-semibold">{{ service.category.name }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if service.summary %}
+            <p class="text-lg text-slate-600 leading-relaxed mb-6">{{ service.summary }}</p>
+            {% endif %}
+
+            <div class="grid sm:grid-cols-2 gap-4 mb-6">
+                {% if service.duration or service.price_text %}
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Thời gian / Giá</p>
+                    <p class="text-xl font-bold text-slate-900">{{ service.duration|default:service.price_text }}</p>
+                </div>
+                {% endif %}
+                {% if service.featured_tag %}
+                <div class="p-4 rounded-2xl bg-teal-50 border border-teal-100 text-teal-700 font-semibold">
+                    {{ service.featured_tag }}
+                </div>
+                {% endif %}
+            </div>
+
+            {% if service.category %}
+            <a href="{% url 'services:category_detail' slug=service.category.slug %}" class="inline-flex items-center gap-2 text-teal-600 font-semibold hover:text-teal-700">
+                ← Xem thêm trong chuyên mục {{ service.category.name }}
+            </a>
+            {% endif %}
+        </div>
+
+    </main>
+
+    {% include 'pages/footer.html' %}
+</body>
+</html>

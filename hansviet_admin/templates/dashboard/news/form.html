@@ -1,0 +1,88 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{{ title }} - HandsViet Dashboard{% endblock %}
+{% block breadcrumbs %}
+<a href="{% url 'dashboard:news_list' %}" class="hover:text-teal-600">Tin tức</a>
+<span class="text-gray-300">/</span>
+<span class="text-gray-900 font-medium">{{ title }}</span>
+{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{% url 'dashboard:news_list' %}"
+            class="w-12 h-12 bg-white border border-gray-100 text-gray-400 hover:text-teal-600 rounded-2xl flex items-center justify-center transition-all">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </a>
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">{{ title }}</h1>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 p-8 md:p-14 space-y-10">
+        {% csrf_token %}
+        {% if form.errors %}
+        <div class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-3xl text-sm">
+            <ul class="list-disc list-inside">
+                {% for field, errors in form.errors.items %}
+                <li><strong>{{ field.label }}:</strong> {{ errors|striptags }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="space-y-8">
+                <div class="space-y-3">
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tiêu đề bài viết <span class="text-red-500">*</span></label>
+                    {{ form.title }}
+                </div>
+                <div class="space-y-3">
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Slug (URL)</label>
+                    {{ form.slug }}
+                </div>
+                <div class="space-y-3">
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Chuyên mục <span class="text-red-500">*</span></label>
+                    <div class="relative">{{ form.category }}</div>
+                </div>
+                <div class="space-y-3">
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Ảnh bài viết</label>
+                    <div class="p-6 bg-gray-50 border-2 border-dashed border-gray-200 rounded-3xl relative overflow-hidden">
+                        {{ form.thumbnail }}
+                        <div class="text-center text-gray-400">
+                            <div class="text-2xl mb-1">🖼️</div>
+                            <div class="text-xs font-bold uppercase tracking-wider">Tải ảnh lên</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-8">
+                <div class="p-8 bg-amber-50 rounded-[2rem] border border-amber-100">
+                    <div class="flex items-center gap-4 mb-4">
+                        {{ form.is_published }}
+                        <label for="{{ form.is_published.id_for_label }}" class="font-black text-amber-900 uppercase tracking-widest text-[11px]">Đăng bài</label>
+                    </div>
+                    <p class="text-amber-700/70 text-xs leading-relaxed">Chỉ bài viết đã đăng mới hiển thị trên trang public.</p>
+                </div>
+                <div class="space-y-3">
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Mô tả tóm tắt <span class="text-red-500">*</span></label>
+                    {{ form.summary }}
+                </div>
+            </div>
+
+            <div class="col-span-1 md:col-span-2 space-y-3">
+                <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nội dung bài viết (HTML) <span class="text-red-500">*</span></label>
+                {{ form.content }}
+            </div>
+        </div>
+
+        <div class="pt-10 border-t border-gray-100 flex items-center justify-between">
+            <a href="{% url 'dashboard:news_list' %}" class="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">Quay lại</a>
+            <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white px-12 py-5 rounded-[1.5rem] font-bold shadow-xl shadow-teal-500/20 transition-all hover:-translate-y-1 active:scale-95">
+                {{ button_text|default:"Lưu" }}
+            </button>
+        </div>
+    </form>
+</div>
+<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+<script>
+    if (document.getElementById('id_content')) {
+        CKEDITOR.replace('id_content');
+    }
+</script>
+{% endblock %}
