@@ -4,15 +4,18 @@ from types import SimpleNamespace
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import (
     NewsArticleForm,
     NewsCategoryForm,
+    PackageForm,
     ServiceCategoryForm,
     ServiceForm,
+    VideoForm,
 )
-from .models import NewsArticle, NewsCategory, Service, ServiceCategory
+from .models import Lead, NewsArticle, NewsCategory, Package, Service, ServiceCategory, Video
 
 
 def staff_required(view_func):
@@ -23,11 +26,17 @@ def staff_required(view_func):
 
 @staff_required
 def dashboard_home(request):
+    User = get_user_model()
+    today = timezone.localdate()
+
     context = {
-        "total_users": 5,
-        "total_videos": 12,
-        "total_news": 3,
-        "total_therapies": 4,
+        "total_users": User.objects.count(),
+        "total_videos": Video.objects.count(),
+        "total_news": NewsArticle.objects.count(),
+        "total_therapies": Package.objects.filter(is_active=True).count(),
+        "total_services": Service.objects.count(),
+        "new_news_today": NewsArticle.objects.filter(published_at__date=today).count(),
+        "new_leads_today": Lead.objects.filter(created_at__date=today).count(),
     }
     return render(request, "dashboard/index.html", context)
 
@@ -160,6 +169,122 @@ def service_delete(request, pk):
         messages.success(request, "Đã xóa dịch vụ.")
         return redirect("dashboard:service_list")
     return render(request, "dashboard/services/confirm_delete.html", {"service": service})
+
+
+@staff_required
+def video_list(request):
+    access_filter = request.GET.get("access")
+    videos_qs = Video.objects.select_related("category").all()
+    if access_filter in {Video.ACCESS_FREE, Video.ACCESS_PAID}:
+        videos_qs = videos_qs.filter(access=access_filter)
+    videos = list(videos_qs.order_by("title"))
+    return render(
+        request,
+        "dashboard/videos/list.html",
+        {
+            "videos": videos,
+            "current_access": access_filter or "",
+            "total_videos": Video.objects.count(),
+            "total_free": Video.objects.filter(access=Video.ACCESS_FREE).count(),
+            "total_paid": Video.objects.filter(access=Video.ACCESS_PAID).count(),
+        },
+    )
+
+
+@staff_required
+def video_create(request):
+    form = VideoForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Đã tạo video bài tập.")
+        return redirect("dashboard:video_list")
+    return render(request, "dashboard/videos/form.html", {"form": form, "title": "Thêm video", "button_text": "Lưu"})
+
+
+@staff_required
+def video_edit(request, pk):
+    video = get_object_or_404(Video, pk=pk)
+    form = VideoForm(request.POST or None, instance=video)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Đã cập nhật video.")
+        return redirect("dashboard:video_list")
+    return render(
+        request,
+        "dashboard/videos/form.html",
+        {"form": form, "video": video, "title": "Chỉnh sửa video", "button_text": "Lưu"},
+    )
+
+
+@staff_required
+def video_delete(request, pk):
+    video = get_object_or_404(Video, pk=pk)
+    if request.method == "POST":
+        video.delete()
+        messages.success(request, "Đã xóa video.")
+        return redirect("dashboard:video_list")
+    return render(request, "dashboard/videos/confirm_delete.html", {"video": video})
+
+
+@staff_required
+def therapy_list(request):
+    status_filter = request.GET.get("status")
+    packages_qs = Package.objects.all()
+    if status_filter == "active":
+        packages_qs = packages_qs.filter(is_active=True)
+    elif status_filter == "inactive":
+        packages_qs = packages_qs.filter(is_active=False)
+    packages = list(packages_qs.order_by("name"))
+    return render(
+        request,
+        "dashboard/therapies/list.html",
+        {
+            "packages": packages,
+            "current_status": status_filter or "",
+            "total_packages": Package.objects.count(),
+            "total_active": Package.objects.filter(is_active=True).count(),
+            "total_inactive": Package.objects.filter(is_active=False).count(),
+        },
+    )
+
+
+@staff_required
+def therapy_create(request):
+    form = PackageForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Đã tạo gói liệu pháp.")
+        return redirect("dashboard:therapy_list")
+    return render(
+        request,
+        "dashboard/therapies/form.html",
+        {"form": form, "title": "Thêm liệu pháp", "button_text": "Lưu"},
+    )
+
+
+@staff_required
+def therapy_edit(request, pk):
+    package = get_object_or_404(Package, pk=pk)
+    form = PackageForm(request.POST or None, instance=package)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Đã cập nhật gói liệu pháp.")
+        return redirect("dashboard:therapy_list")
+    return render(
+        request,
+        "dashboard/therapies/form.html",
+        {"form": form, "package": package, "title": "Chỉnh sửa liệu pháp", "button_text": "Lưu"},
+    )
+
+
+@staff_required
+def therapy_delete(request, pk):
+    package = get_object_or_404(Package, pk=pk)
+    if request.method == "POST":
+        package.delete()
+        messages.success(request, "Đã xóa gói liệu pháp.")
+        return redirect("dashboard:therapy_list")
+    return render(request, "dashboard/therapies/confirm_delete.html", {"package": package})
 
 
 # News

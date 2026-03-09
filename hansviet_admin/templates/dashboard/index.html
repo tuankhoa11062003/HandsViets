@@ -145,7 +145,6 @@
                 <span class="w-2.5 h-8 bg-teal-600 rounded-full"></span>
                 Thao tác quản trị
             </h3>
-            <a href="/admin/" class="text-[10px] font-black uppercase text-slate-400 hover:text-teal-600 tracking-widest transition-colors">Vào Django Admin &rarr;</a>
         </div>
         
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -157,7 +156,7 @@
                 <div class="text-3xl mb-3 group-hover/btn:scale-125 transition-transform duration-500">🛠️</div>
                 <div class="text-[10px] font-black text-slate-900 uppercase tracking-widest group-hover/btn:text-white">Dịch vụ</div>
             </a>
-            <a href="/admin/" class="group/btn bg-slate-50 hover:bg-emerald-600 p-6 rounded-[2rem] text-center transition-all duration-500">
+            <a href="{% url 'dashboard:video_list' %}" class="group/btn bg-slate-50 hover:bg-emerald-600 p-6 rounded-[2rem] text-center transition-all duration-500">
                 <div class="text-3xl mb-3 group-hover/btn:scale-125 transition-transform duration-500">🎥</div>
                 <div class="text-[10px] font-black text-slate-900 uppercase tracking-widest group-hover/btn:text-white">Video</div>
             </a>

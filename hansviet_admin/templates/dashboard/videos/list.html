@@ -1,0 +1,90 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Video bài tập - HandsViet Dashboard{% endblock %}
+{% block breadcrumbs %}
+<span class="text-slate-900 font-extrabold">Video bài tập</span>
+{% endblock %}
+{% block content %}
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Quản lý Video bài tập</h1>
+        <p class="text-gray-500 mt-1">Danh sách video theo quyền truy cập và tình trạng hiển thị.</p>
+    </div>
+    <a href="{% url 'dashboard:video_create' %}"
+        class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-teal-500/20 transition-all">
+        + Thêm video
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Tổng video</p>
+        <p class="text-3xl font-black text-slate-900 mt-2">{{ total_videos }}</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Miễn phí</p>
+        <p class="text-3xl font-black text-emerald-600 mt-2">{{ total_free }}</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Trả phí</p>
+        <p class="text-3xl font-black text-indigo-600 mt-2">{{ total_paid }}</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 pt-6 flex flex-wrap gap-2">
+        <a href="{% url 'dashboard:video_list' %}" class="px-4 py-2 rounded-xl border text-xs font-bold uppercase tracking-wider {% if not current_access %}bg-slate-900 text-white border-slate-900{% else %}border-slate-200 text-slate-500 hover:text-slate-800{% endif %}">Tất cả</a>
+        <a href="{% url 'dashboard:video_list' %}?access=free" class="px-4 py-2 rounded-xl border text-xs font-bold uppercase tracking-wider {% if current_access == 'free' %}bg-emerald-600 text-white border-emerald-600{% else %}border-slate-200 text-slate-500 hover:text-slate-800{% endif %}">Free</a>
+        <a href="{% url 'dashboard:video_list' %}?access=paid" class="px-4 py-2 rounded-xl border text-xs font-bold uppercase tracking-wider {% if current_access == 'paid' %}bg-indigo-600 text-white border-indigo-600{% else %}border-slate-200 text-slate-500 hover:text-slate-800{% endif %}">Paid</a>
+    </div>
+    <div class="overflow-x-auto text-sm mt-4">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-gray-50/50">
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px]">Video</th>
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px]">Danh mục</th>
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px]">Provider</th>
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px]">Truy cập</th>
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px]">Trạng thái</th>
+                    <th class="px-8 py-5 font-bold text-gray-400 uppercase tracking-widest text-[10px] text-right">Hành động</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for video in videos %}
+                <tr class="hover:bg-gray-50/40 transition-colors">
+                    <td class="px-8 py-5">
+                        <div class="font-bold text-gray-900">{{ video.title }}</div>
+                        <div class="text-[11px] text-gray-400 mt-1">{{ video.slug }}</div>
+                    </td>
+                    <td class="px-8 py-5">{{ video.category.name|default:"Khác" }}</td>
+                    <td class="px-8 py-5 uppercase text-xs font-bold text-slate-500">{{ video.provider }}</td>
+                    <td class="px-8 py-5">
+                        {% if video.access == 'free' %}
+                        <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">Miễn phí</span>
+                        {% else %}
+                        <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100">Trả phí</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-8 py-5">
+                        {% if video.is_active %}
+                        <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-bold bg-teal-50 text-teal-600 border border-teal-100">Đang hiển thị</span>
+                        {% else %}
+                        <span class="inline-flex px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500 border border-slate-200">Đang ẩn</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-8 py-5 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <a href="{% url 'dashboard:video_edit' video.pk %}" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-blue-600 rounded-xl transition-all">✏️</a>
+                            <a href="{% url 'dashboard:video_delete' video.pk %}" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-xl transition-all">🗑️</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-8 py-16 text-center text-slate-400 font-medium">Chưa có video nào.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
