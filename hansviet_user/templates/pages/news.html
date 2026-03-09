@@ -61,7 +61,7 @@
             <a href="{% url 'news:news_detail' slug=featured_news.slug %}"
                 class="block relative h-[500px] w-full rounded-3xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
                 <div class="absolute inset-0">
-                    <img src="{% if featured_news.thumbnail %}{{ featured_news.thumbnail.url }}{% else %}https://placehold.co/1200x800/teal/white?text=Featured{% endif %}"
+                    <img src="{% if featured_news.thumbnail %}{{ featured_news.thumbnail.url }}{% else %}{% static 'images/assets/clinic-desk.jpg' %}{% endif %}"
                         alt="{{ featured_news.title }}"
                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                 </div>
@@ -108,7 +108,7 @@
                 <!-- Image Wrapper -->
                 <a href="{% url 'news:news_detail' slug=article.slug %}"
                     class="relative aspect-video overflow-hidden block">
-                    <img src="{% if article.thumbnail %}{{ article.thumbnail.url }}{% else %}https://placehold.co/600x400/e2e8f0/1e293b?text=News{% endif %}"
+                                <img src="{% if article.thumbnail %}{{ article.thumbnail.url }}{% else %}{% static 'images/assets/rehab-wellness.jpg' %}{% endif %}"
                         alt="{{ article.title }}"
                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                     {% if article.category %}
