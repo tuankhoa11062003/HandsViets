@@ -10,7 +10,7 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
-<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" style="z-index:45;"></div>
 
 <header class="bg-[#EAEDEC] shadow-md sticky top-0 z-50 header-slide-down font-sans">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
@@ -102,7 +102,7 @@
 </header>
 
 <!-- Mobile navigation (toggle) -->
-<div class="lg:hidden hidden bg-white border-t border-slate-200 px-4 py-3 space-y-2 shadow" id="mobileMenu">
+<div class="lg:hidden hidden bg-white border-t border-slate-200 px-4 py-3 space-y-2 shadow relative z-50" id="mobileMenu">
     <div class="flex flex-col gap-2">
         <a href="/" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Trang chủ</a>
         <a href="{% url 'pages:services' %}" class="text-sm font-semibold text-slate-700 hover:text-blue-600">Dịch vụ</a>
