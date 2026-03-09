@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lĩnh vực phục hồi - Bệnh viện HandsViet</title>
+    <title>Lĩnh vực điều trị phục hồi - Bệnh viện HandsViet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,7 +56,7 @@
 
     <main class="min-h-screen">
         <!-- Hero Section -->
-        <section class="relative h-[40vh] min-h-[400px] flex items-center justify-center overflow-hidden">
+        <section class="relative h-[42vh] min-h-[320px] md:min-h-[400px] flex items-center justify-center overflow-hidden">
             <div class="absolute inset-0">
                 <img src="{% static 'images/medical-bg.jpg' %}" 
                     class="w-full h-full object-cover" alt="Lĩnh vực phục hồi">
@@ -67,36 +67,36 @@
                 <div class="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 font-bold text-xs uppercase tracking-[0.2em] mb-6 animate-fade-in-up">
                     Chuyên môn & Tận tâm
                 </div>
-                <h1 class="text-4xl md:text-6xl font-black text-white mb-6 animate-fade-in-up delay-100 uppercase tracking-tight">
-                    Lĩnh vực <span class="text-teal-400">Phục hồi</span>
+                <h1 class="text-3xl sm:text-4xl md:text-6xl font-black text-white mb-4 md:mb-6 animate-fade-in-up delay-100 uppercase tracking-tight">
+                    Lĩnh vực <span class="text-teal-400">Điều trị</span>
                 </h1>
-                <p class="text-lg text-slate-200/90 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-200">
-                    HandsViet cung cấp các giải pháp phục hồi chức năng toàn diện cho nhiều nhóm bệnh lý, giúp bệnh nhân sớm trở lại cuộc sống bình thường.
+                <p class="text-base md:text-lg text-slate-200/90 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-200">
+                    Đây là trang giới thiệu các lĩnh vực điều trị phục hồi tại HandsViet theo từng nhóm bệnh lý, giúp người bệnh dễ chọn đúng chuyên khoa cần thăm khám.
                 </p>
             </div>
         </section>
 
         <!-- Main Content -->
-        <section class="py-20">
+        <section class="py-12 md:py-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="mb-16 text-center reveal">
-                    <h2 class="text-teal-600 font-black text-sm uppercase tracking-[0.3em] mb-4">Danh mục điều trị</h2>
-                    <h3 class="text-3xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">CÁC BỆNH ĐIỀU TRỊ</h3>
+                    <h2 class="text-teal-600 font-black text-sm uppercase tracking-[0.3em] mb-4">Danh mục lĩnh vực điều trị</h2>
+                    <h3 class="text-3xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">CÁC LĨNH VỰC ĐIỀU TRỊ PHỤC HỒI</h3>
                     <div class="w-20 h-1.5 bg-teal-500 mx-auto mt-6 rounded-full"></div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-10">
+                <div class="grid md:grid-cols-2 gap-6 md:gap-10">
                     <!-- Category 1 -->
-                    <a href="{% url 'services:category_detail' slug='co-xuong-khop' %}" class="category-card group reveal block">
+                    <a id="co-xuong-khop" href="{% url 'rehab:detail' slug='co-xuong-khop' %}" class="category-card group reveal block scroll-mt-28">
                         <div class="image-container">
-                            <img src="https://images.unsplash.com/photo-1576091160550-21735999181c?auto=format&fit=crop&q=80&w=1000" alt="Cơ xương khớp">
+                            <img src="https://images.unsplash.com/photo-1576091160550-21735999181c?auto=format&fit=crop&q=80&w=1000" alt="Cơ xương khớp" data-fallback="{% static 'images/medical-bg.jpg' %}">
                             <div class="gradient-overlay"></div>
                             <div class="absolute bottom-6 left-8 text-white">
                                 <span class="bg-teal-500 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full mb-3 inline-block">Chuyên sâu</span>
                                 <h4 class="text-2xl font-bold leading-tight">Phục hồi chức năng <br> bệnh lý cơ xương khớp</h4>
                             </div>
                         </div>
-                        <div class="p-8">
+                        <div class="p-6 md:p-8">
                             <p class="text-slate-600 leading-relaxed mb-6">
                                 Điều trị các bệnh lý như thoát vị đĩa đệm, thoái hóa khớp, viêm quanh khớp vai, hội chứng ống cổ tay... thông qua các phương pháp vật lý trị liệu hiện đại.
                             </p>
@@ -114,16 +114,16 @@
                     </a>
 
                     <!-- Category 2 -->
-                    <a href="{% url 'services:category_detail' slug='chan-thuong-chinh-hinh' %}" class="category-card group reveal delay-100 block">
+                    <a id="chan-thuong-chinh-hinh" href="{% url 'rehab:detail' slug='chan-thuong-chinh-hinh' %}" class="category-card group reveal delay-100 block scroll-mt-28">
                         <div class="image-container">
-                            <img src="https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&q=80&w=1000" alt="Chấn thương chỉnh hình">
+                            <img src="https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&q=80&w=1000" alt="Chấn thương chỉnh hình" data-fallback="{% static 'images/medical-bg.jpg' %}">
                             <div class="gradient-overlay"></div>
                             <div class="absolute bottom-6 left-8 text-white">
                                 <span class="bg-blue-500 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full mb-3 inline-block">Hiệu quả</span>
                                 <h4 class="text-2xl font-bold leading-tight">Phục hồi chức năng <br> chấn thương chỉnh hình</h4>
                             </div>
                         </div>
-                        <div class="p-8">
+                        <div class="p-6 md:p-8">
                             <p class="text-slate-600 leading-relaxed mb-6">
                                 Tập trung vào việc phục hồi sau các chấn thương thể thao, gãy xương, trật khớp, giúp tái tạo mô và củng cố sức mạnh cơ bắp bị tổn thương.
                             </p>
@@ -141,16 +141,16 @@
                     </a>
 
                     <!-- Category 3 -->
-                    <a href="{% url 'services:category_detail' slug='than-kinh' %}" class="category-card group reveal block">
+                    <a id="than-kinh" href="{% url 'rehab:detail' slug='than-kinh' %}" class="category-card group reveal block scroll-mt-28">
                         <div class="image-container">
-                            <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=1000" alt="Tổn thương thần kinh">
+                            <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=1000" alt="Tổn thương thần kinh" data-fallback="{% static 'images/medical-bg.jpg' %}">
                             <div class="gradient-overlay"></div>
                             <div class="absolute bottom-6 left-8 text-white">
                                 <span class="bg-indigo-500 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full mb-3 inline-block">Chăm sóc</span>
                                 <h4 class="text-2xl font-bold leading-tight">Phục hồi chức năng <br> tổn thương thần kinh</h4>
                             </div>
                         </div>
-                        <div class="p-8">
+                        <div class="p-6 md:p-8">
                             <p class="text-slate-600 leading-relaxed mb-6">
                                 Can thiệp cho các trường hợp liệt dây thần kinh, đau thần kinh tọa, tổn thương tủy sống, giúp kích thích tái tạo dẫn truyền thần kinh.
                             </p>
@@ -168,16 +168,17 @@
                     </a>
 
                     <!-- Category 4 -->
-                    <a href="{% url 'services:category_detail' slug='sau-phau-thuat' %}" class="category-card group reveal delay-100 block">
+                    <span id="sau-tai-bien" class="block scroll-mt-28"></span>
+                    <a id="sau-phau-thuat" href="{% url 'rehab:detail' slug='sau-phau-thuat' %}" class="category-card group reveal delay-100 block scroll-mt-28">
                         <div class="image-container">
-                            <img src="https://images.unsplash.com/photo-1581056771107-24ca5f033742?auto=format&fit=crop&q=80&w=1000" alt="Sau phẫu thuật">
+                            <img src="https://images.unsplash.com/photo-1581056771107-24ca5f033742?auto=format&fit=crop&q=80&w=1000" alt="Sau phẫu thuật" data-fallback="{% static 'images/medical-bg.jpg' %}">
                             <div class="gradient-overlay"></div>
                             <div class="absolute bottom-6 left-8 text-white">
                                 <span class="bg-red-500 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full mb-3 inline-block">Quan trọng</span>
                                 <h4 class="text-2xl font-bold leading-tight">Phục hồi chức năng sau can thiệp/phẫu thuật và sau tai biến</h4>
                             </div>
                         </div>
-                        <div class="p-8">
+                        <div class="p-6 md:p-8">
                             <p class="text-slate-600 leading-relaxed mb-6">
                                 Quy trình phục hồi sớm cho bệnh nhân sau phẫu thuật dây chằng, thay khớp, hoặc sau tai biến mạch máu não để tối ưu hóa kết quả điều trị.
                             </p>
@@ -198,7 +199,7 @@
         </section>
 
         <!-- Final CTA -->
-        <section class="py-20 bg-slate-900 text-white reveal border-t border-slate-800">
+        <section class="py-14 md:py-20 bg-slate-900 text-white reveal border-t border-slate-800">
             <div class="max-w-4xl mx-auto px-4 text-center">
                 <h2 class="text-3xl md:text-5xl font-black mb-8 uppercase tracking-tighter italic">Bắt đầu hành trình phục hồi ngay</h2>
                 <p class="text-slate-400 text-lg mb-12 font-medium">Đừng để những hạn chế vận động làm giảm chất lượng cuộc sống của bạn. Hãy liên hệ với chuyên gia HandsViet để được tư vấn lộ trình phù hợp nhất.</p>
@@ -226,6 +227,11 @@
         }
         window.addEventListener("scroll", reveal);
         reveal();
+        document.addEventListener("error", function (e) {
+            if (e.target && e.target.tagName === "IMG" && e.target.dataset.fallback) {
+                e.target.src = e.target.dataset.fallback;
+            }
+        }, true);
     </script>
 </body>
 

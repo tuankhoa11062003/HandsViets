@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timezone
 
 
 class ServiceCategory(models.Model):
@@ -200,6 +201,40 @@ class ProgressNote(models.Model):
 
     def __str__(self):
         return f"Note {self.recorded_at}"
+
+
+class ExerciseProfile(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    goals = models.TextField(blank=True)
+    contraindications = models.TextField(blank=True)
+    current_level = models.CharField(max_length=100, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Exercise Profile"
+        verbose_name_plural = "Exercise Profiles"
+
+    def __str__(self):
+        return f"Exercise Profile {self.user}"
+
+
+class ExerciseLog(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    exercise_name = models.CharField(max_length=255)
+    category = models.CharField(max_length=255, blank=True)
+    duration_minutes = models.PositiveIntegerField(default=0)
+    pain_score = models.PositiveSmallIntegerField(default=0)
+    notes = models.TextField(blank=True)
+    trained_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Exercise Log"
+        verbose_name_plural = "Exercise Logs"
+        ordering = ["-trained_at", "-created_at"]
+
+    def __str__(self):
+        return f"{self.user} - {self.exercise_name}"
 
 
 class Transaction(models.Model):

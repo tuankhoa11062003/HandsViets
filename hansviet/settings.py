@@ -45,10 +45,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'hansviet_user.middleware.LoginRequiredMiddleware',
+    'hansviet_user.middleware_i18n.GlobalContentTranslationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -109,7 +111,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'vi'
+
+LANGUAGES = [
+    ('vi', 'Tiếng Việt'),
+    ('en', 'English'),
+]
 
 TIME_ZONE = 'UTC'
 
@@ -138,6 +145,7 @@ LOGIN_EXEMPT_URLS = [
     '/services/', '/services/category/', '/news/', '/news/category/',
     '/contact/', '/booking/', '/exercise-library/', '/partners/',
     '/visit-guide/', '/faq/', '/therapies/', '/rehab/',
+    '/i18n/',
 ]
 
 # Default primary key field type

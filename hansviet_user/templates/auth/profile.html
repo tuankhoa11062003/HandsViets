@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Người Dùng - HandsViet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="bg-slate-50 text-slate-800">
+    {% include 'pages/header_tailwind.html' %}
+    <main class="max-w-4xl mx-auto px-4 py-10">
+        <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+            <h1 class="text-2xl font-extrabold text-slate-900">Trang thông tin người dùng</h1>
+            <div class="mt-6 grid sm:grid-cols-2 gap-4 text-sm">
+                <div class="rounded-xl bg-slate-50 border border-slate-200 p-4">
+                    <p class="text-slate-500">Tên đăng nhập</p>
+                    <p class="mt-1 font-semibold text-slate-900">{{ request.user.username }}</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 border border-slate-200 p-4">
+                    <p class="text-slate-500">Email</p>
+                    <p class="mt-1 font-semibold text-slate-900">{{ request.user.email|default:"Chưa cập nhật" }}</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 border border-slate-200 p-4">
+                    <p class="text-slate-500">Họ tên</p>
+                    <p class="mt-1 font-semibold text-slate-900">{{ request.user.get_full_name|default:"Chưa cập nhật" }}</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 border border-slate-200 p-4">
+                    <p class="text-slate-500">Ngày tham gia</p>
+                    <p class="mt-1 font-semibold text-slate-900">{{ request.user.date_joined|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    {% include 'pages/footer.html' %}
+</body>
+</html>
