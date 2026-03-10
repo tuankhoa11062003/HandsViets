@@ -1,6 +1,7 @@
 import uuid
 from datetime import timedelta
 from datetime import datetime
+from urllib.parse import parse_qs, urlparse
 
 from django.conf import settings
 from django.contrib import messages
@@ -11,6 +12,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import get_language
 from django.http import Http404, HttpResponse
+from django.db.models import F
+from django.core.paginator import Paginator
 
 from django.views.decorators.csrf import csrf_exempt
 from hansviet_admin.models import (
@@ -37,6 +40,14 @@ DEFAULT_NEWS_CATEGORIES = [
     ("Tư vấn PHCN", "tu-van-phcn"),
     ("Khuyến mãi sự kiện", "khuyen-mai-su-kien"),
 ]
+
+NEWS_HERO_DESCRIPTIONS = {
+    "tin-tuc-y-khoa": "Cập nhật kiến thức y khoa, xu hướng điều trị và các nghiên cứu hữu ích cho phục hồi chức năng.",
+    "cau-chuyen-khach-hang": "Những câu chuyện phục hồi thực tế từ bệnh nhân và gia đình, truyền cảm hứng mỗi ngày.",
+    "tin-truyen-thong": "Thông tin báo chí, hoạt động truyền thông và các dấu mốc nổi bật của HandsViet.",
+    "tu-van-phcn": "Góc tư vấn chuyên môn về phục hồi chức năng: triệu chứng, lộ trình và cách chăm sóc đúng.",
+    "khuyen-mai-su-kien": "Thông báo ưu đãi, workshop, sự kiện cộng đồng và chương trình đồng hành cùng người bệnh.",
+}
 
 DEFAULT_SERVICE_CATEGORIES = [
     ("PHCN Co Xuong Khop", "co-xuong-khop"),
@@ -332,18 +343,77 @@ def contact(request):
 
 def exercise_library(request):
     can_paid = _user_can_view_paid(request.user)
+
+    def normalize_provider_id(video_obj):
+        raw = (video_obj.provider_id or "").strip()
+        if not raw:
+            return ""
+        if "://" not in raw:
+            return raw
+
+        parsed = urlparse(raw)
+        host = (parsed.netloc or "").lower().replace("www.", "")
+        path = parsed.path.strip("/")
+
+        if video_obj.provider == Video.PROVIDER_YT:
+            if host == "youtu.be" and path:
+                return path.split("/")[0]
+            if host in {"youtube.com", "m.youtube.com"}:
+                if path == "watch":
+                    return parse_qs(parsed.query).get("v", [""])[0]
+                if path.startswith("embed/") or path.startswith("shorts/"):
+                    return path.split("/", 1)[1].split("/")[0]
+
+        if video_obj.provider == Video.PROVIDER_VI:
+            if host == "vimeo.com" and path:
+                return path.split("/")[0]
+            if host == "player.vimeo.com" and path.startswith("video/"):
+                return path.split("/", 1)[1].split("/")[0]
+
+        return raw
+
     videos = Video.objects.filter(is_active=True).select_related("category").order_by("title")
-    free_videos = [v for v in videos if v.access == Video.ACCESS_FREE]
-    paid_videos = [v for v in videos if v.access == Video.ACCESS_PAID]
-    # Build category list for legacy template filters
-    category_names = sorted({(v.category.name if v.category else "Khác") for v in videos})
-    exercises = [{"category": name, "videos": []} for name in category_names]
+    normalized_videos = []
+    for v in videos:
+        provider_id = normalize_provider_id(v)
+        if v.provider == Video.PROVIDER_YT and provider_id:
+            embed_url = f"https://www.youtube.com/embed/{provider_id}"
+            thumb_url = f"https://img.youtube.com/vi/{provider_id}/hqdefault.jpg"
+            watch_url = f"https://www.youtube.com/watch?v={provider_id}"
+        elif v.provider == Video.PROVIDER_VI and provider_id:
+            embed_url = f"https://player.vimeo.com/video/{provider_id}"
+            thumb_url = ""
+            watch_url = f"https://vimeo.com/{provider_id}"
+        else:
+            embed_url = ""
+            thumb_url = ""
+            watch_url = ""
+
+        normalized_videos.append(
+            {
+                "pk": v.pk,
+                "title": v.title,
+                "duration": v.duration,
+                "category": v.category.name if v.category else "Khác",
+                "provider": v.provider,
+                "provider_id": provider_id,
+                "embed_url": embed_url,
+                "watch_url": watch_url,
+                "thumb_url": thumb_url,
+                "access": v.access,
+                "can_watch": (v.access == Video.ACCESS_FREE) or can_paid,
+            }
+        )
+
+    grouped_videos = {}
+    for v in normalized_videos:
+        grouped_videos.setdefault(v["category"], []).append(v)
+    exercises = [{"category": key, "videos": grouped_videos[key]} for key in sorted(grouped_videos.keys())]
+
     return render(
         request,
         "pages/exercise_library.html",
         {
-            "free_videos": free_videos,
-            "paid_videos": paid_videos,
             "can_watch_paid": can_paid,
             "exercises": exercises,
         },
@@ -369,15 +439,30 @@ def faq(request):
 
 def news_list(request, category_slug=None):
     ensure_news_categories()
-    qs = NewsArticle.objects.filter(is_published=True).select_related("category", "author")
+    qs = NewsArticle.objects.filter(is_published=True).select_related("category", "author").order_by("-published_at", "-id")
     current_category = None
     if category_slug:
         current_category = get_object_or_404(NewsCategory, slug=category_slug)
         qs = qs.filter(category=current_category)
+    page_number = request.GET.get("page")
+    if qs.count() >= 2:
+        featured = qs.first()
+        latest_qs = qs[1:]
+    else:
+        featured = None
+        latest_qs = qs
+    page_obj = Paginator(latest_qs, 9).get_page(page_number)
+    hero_description = (
+        NEWS_HERO_DESCRIPTIONS.get(current_category.slug)
+        if current_category
+        else "Nơi chia sẻ kiến thức, kinh nghiệm và những câu chuyện truyền cảm hứng trên hành trình phục hồi sức khỏe toàn diện."
+    )
     context = {
         "current_category": current_category,
-        "featured_news": qs.first(),
-        "articles": qs[1:],
+        "hero_description": hero_description,
+        "featured_news": featured,
+        "latest_news": page_obj.object_list,
+        "page_obj": page_obj,
         "categories": NewsCategory.objects.all(),
     }
     return render(request, "pages/news.html", context)
@@ -394,10 +479,12 @@ def news_detail(request, slug=None):
         slug=slug,
         is_published=True,
     )
+    NewsArticle.objects.filter(pk=article.pk).update(view_count=F("view_count") + 1)
+    article.refresh_from_db(fields=["view_count"])
     related = (
         NewsArticle.objects.filter(category=article.category, is_published=True)
         .exclude(pk=article.pk)
-        .order_by("-published_at")[:3]
+        .order_by("-published_at", "-id")[:3]
     )
     return render(request, "pages/news_detail.html", {"article": article, "related_articles": related})
 

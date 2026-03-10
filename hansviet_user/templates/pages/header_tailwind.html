@@ -15,7 +15,7 @@
     <div class="h-full flex flex-col">
         <div class="px-4 py-4 border-b border-slate-200 flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <img src="{% static 'images/logo.png' %}" alt="HandsViet Logo" class="h-9 w-9 object-contain">
+                <img src="{% static 'images/logohv.png' %}" alt="HandsViet Logo" class="h-9 w-9 object-contain">
                 <span class="font-bold text-slate-900">HandsViet</span>
             </div>
             <button id="mobileMenuClose" class="p-2 rounded-lg hover:bg-slate-100" aria-label="Đóng menu">
@@ -25,6 +25,12 @@
         <nav class="flex-1 overflow-y-auto no-scrollbar px-4 py-4 space-y-1">
             <a href="{% url 'pages:home' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Trang chủ</a>
             <a href="{% url 'pages:about' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Giới thiệu</a>
+            <a href="{% url 'pages:about' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">&#8505;&#65039; V&#7873; ch&#250;ng t&#244;i</a>
+            <a href="{% url 'pages:experts' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">&#128101; &#272;&#7897;i ng&#361; B&#225;c s&#297; - KTV</a>
+            <a href="{% url 'pages:faq' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">&#10010; C&#226;u h&#7887;i th&#432;&#7901;ng g&#7863;p</a>
+            <a href="{% url 'pages:facilities' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">&#127973; C&#417; s&#7903; v&#7853;t ch&#7845;t</a>
+            <a href="{% url 'pages:partners' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">&#129309; &#272;&#7889;i t&#225;c</a>
+            <a href="{% url 'pages:visit_guide' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">&#128205; H&#432;&#7899;ng d&#7851;n th&#259;m kh&#225;m</a>
             <a href="{% url 'pages:rehab_fields' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Lĩnh vực điều trị</a>
             <a href="{% url 'rehab:detail' slug='co-xuong-khop' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">🦳 PHCN Cơ xương khớp</a>
             <a href="{% url 'rehab:detail' slug='chan-thuong-chinh-hinh' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">🩺 PHCN Chấn thương chỉnh hình</a>
@@ -63,19 +69,12 @@
     </div>
 </aside>
 
-<header class="bg-[#EAEDEC] shadow-md sticky top-0 z-50 header-slide-down font-sans">
+<header class="bg-[#EAEDEC] shadow-md fixed top-0 inset-x-0 z-40 header-slide-down font-sans">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         <a href="/" class="flex items-center gap-2 flex-shrink-0 group">
-            <img src="{% static 'images/assets/logo-medical.png' %}" alt="HandsViet Logo" class="h-10 w-auto group-hover:scale-110 transition-transform duration-300">
+            <img src="{% static 'images/logohv.png' %}" alt="HandsViet Logo" class="h-10 w-10 object-contain group-hover:scale-110 transition-transform duration-300">
             <span class="text-xl font-extrabold bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent drop-shadow-lg hover:drop-shadow-2xl transition-all duration-300 hover:scale-105">HandsViet</span>
         </a>
-
-        <!-- Mobile toggle -->
-        <button class="lg:hidden p-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100" id="mobileMenuBtn" aria-label="Mở menu">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
 
         <!-- Desktop Navigation -->
         <nav class="hidden lg:flex items-center gap-4 xl:gap-8 justify-center">
@@ -84,7 +83,9 @@
             <div class="relative group">
                 <button class="{% if request.resolver_match.url_name == 'about' %}text-blue-600 border-b-2 border-[#14B8A6]{% else %}text-gray-700 hover:text-blue-600{% endif %} transition font-medium flex items-center gap-1 whitespace-nowrap">
                     Giới thiệu
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="group-hover:translate-y-0.5 transition-all duration-150" style="width:14px;height:14px;min-width:14px;display:inline-block;color:#475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                    </svg>
                 </button>
                 <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <a href="{% url 'pages:about' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">ℹ️ Về chúng tôi</a>
@@ -99,21 +100,25 @@
             <div class="relative group">
                 <button class="text-gray-700 hover:text-blue-600 transition font-medium flex items-center gap-1 whitespace-nowrap">
                     Lĩnh vực điều trị
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="group-hover:translate-y-0.5 transition-all duration-150" style="width:14px;height:14px;min-width:14px;display:inline-block;color:#475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                    </svg>
                 </button>
                 <div class="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <a href="{% url 'rehab:detail' slug='co-xuong-khop' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">🦳 PHCN Cơ Xương Khớp</a>
-                    <a href="{% url 'rehab:detail' slug='chan-thuong-chinh-hinh' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">🩺 PHCN Chấn thương Chỉnh hình</a>
-                    <a href="{% url 'rehab:detail' slug='than-kinh' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">🧠 PHCN Tổn thương Thần kinh</a>
-                    <a href="{% url 'rehab:detail' slug='sau-tai-bien' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">💚 PHCN Sau tai biến</a>
-                    <a href="{% url 'rehab:detail' slug='sau-phau-thuat' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-b-lg">✂️ PHCN Sau phẫu thuật</a>
+                    <a href="{% url 'rehab:detail' slug='co-xuong-khop' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">🦳 PHCN cơ xương Khớp</a>
+                    <a href="{% url 'rehab:detail' slug='chan-thuong-chinh-hinh' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">🩺 PHCN chấn thương chỉnh hình</a>
+                    <a href="{% url 'rehab:detail' slug='than-kinh' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">🧠 PHCN tổn thương thần kinh</a>
+                    <a href="{% url 'rehab:detail' slug='sau-tai-bien' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">💚 PHCN sau tai biến</a>
+                    <a href="{% url 'rehab:detail' slug='sau-phau-thuat' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-b-lg">✂️ PHCN sau phẫu thuật</a>
                 </div>
             </div>
 
             <div class="relative group">
                 <button class="text-gray-700 hover:text-blue-600 transition font-medium flex items-center gap-1 whitespace-nowrap">
                     Phương pháp trị liệu
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="group-hover:translate-y-0.5 transition-all duration-150" style="width:14px;height:14px;min-width:14px;display:inline-block;color:#475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                    </svg>
                 </button>
                 <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <a href="{% url 'pages:exercise_library' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">📓 Bài tập & Tờ khai</a>
@@ -126,7 +131,9 @@
             <div class="relative group">
                 <button class="{% if 'news' in request.resolver_match.app_name or '/news/' in request.path %}text-blue-600 border-b-2 border-[#14B8A6]{% else %}text-gray-700 hover:text-blue-600{% endif %} transition font-medium flex items-center gap-1 whitespace-nowrap">
                     Tin tức
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="group-hover:translate-y-0.5 transition-all duration-150" style="width:14px;height:14px;min-width:14px;display:inline-block;color:#475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                    </svg>
                 </button>
                 <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <a href="{% url 'news:news_category' category_slug='tin-tuc-y-khoa' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">📰 Tin tức Y khoa</a>
@@ -169,6 +176,7 @@
         </button>
     </div>
 </header>
+<div class="h-[72px]" aria-hidden="true"></div>
 
 <script>
     // Global image fallback: catches broken images immediately and for future DOM updates.
@@ -178,6 +186,8 @@
         const openBtn = document.getElementById('mobileMenuOpen');
         const closeBtn = document.getElementById('mobileMenuClose');
         const drawerLinks = drawer ? drawer.querySelectorAll('a') : [];
+                // Keep mobile submenu labels clean without auto carets.
+
         function openMenu() {
             if (!overlay || !drawer) return;
             overlay.classList.add('active');

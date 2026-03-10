@@ -10,10 +10,6 @@
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <style>
-        .contact-hero {
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-        }
-
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -28,6 +24,26 @@
 
         .fade-in-up {
             animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .menu-hero-copy h1 {
+            font-size: clamp(2.25rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
+
+        .menu-hero-copy p {
+            font-size: clamp(1.05rem, 2vw, 1.35rem);
+            line-height: 1.65;
+            color: rgba(226, 232, 240, 0.92);
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
         }
 
         @keyframes pulse {
@@ -74,9 +90,20 @@
 
     <main>
         <!-- Contact Page Hero Section -->
-        <section class="contact-hero text-white py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center fade-in-up">
+        <section class="relative h-[58vh] min-h-[430px] flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0">
+                <img src="{% static 'images/assets/clinic-desk.jpg' %}" class="w-full h-full object-cover scale-105"
+                    alt="Liên hệ HandsViet">
+                <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-[1px]"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/50 to-slate-900/40"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <div
+                    class="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-10 fade-in-up">
+                    Liên hệ tư vấn
+                </div>
+                <div class="text-center fade-in-up menu-hero-copy">
                     <h1 class="text-4xl md:text-5xl font-bold mb-4">Liên hệ với chúng tôi</h1>
                     <p class="text-xl text-blue-100 max-w-3xl mx-auto">
                         Chúng tôi luôn sẵn sàng lắng nghe và giải đáp mọi thắc mắc của bạn về dịch vụ phục hồi chức năng.
@@ -236,7 +263,7 @@
                 </div>
             </div>
         </section>
-        <section class="py-12">
+        <!-- <section class="py-12">
             <div class="max-w-3xl mx-auto bg-white shadow rounded-2xl p-8">
                 <h2 class="text-2xl font-bold mb-4">Đăng ký tư vấn nhanh</h2>
                 <form method="post" class="space-y-4">
@@ -252,7 +279,7 @@
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Gửi yêu cầu</button>
                 </form>
             </div>
-        </section>
+        </section> -->
     </main>
 
     <!-- Footer -->

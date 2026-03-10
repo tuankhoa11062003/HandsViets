@@ -10,10 +10,23 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load .env (simple parser) so local dev can set API keys without exporting env vars.
+ENV_PATH = BASE_DIR / ".env"
+if ENV_PATH.exists():
+    for raw_line in ENV_PATH.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        os.environ.setdefault(key, value)
 
 
 # Quick-start development settings - unsuitable for production
@@ -50,7 +63,6 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'hansviet_user.middleware.LoginRequiredMiddleware',
-    'hansviet_user.middleware_i18n.GlobalContentTranslationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -152,3 +164,10 @@ LOGIN_EXEMPT_URLS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# External AI news sync (Perplexity-compatible endpoint)
+PPLX_BASE_URL = os.getenv("PPLX_BASE_URL", "https://v98store.com")
+PPLX_API_KEY = os.getenv("PPLX_API_KEY", "")
+PPLX_MODEL = os.getenv("PPLX_MODEL", "sonar")
+PPLX_TIMEOUT = int(os.getenv("PPLX_TIMEOUT", "45"))
+PPLX_AUTO_PUBLISH = os.getenv("PPLX_AUTO_PUBLISH", "false").lower() in {"1", "true", "yes", "on"}

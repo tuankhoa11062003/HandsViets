@@ -65,7 +65,13 @@ class NewsArticle(models.Model):
     thumbnail = models.FileField(upload_to="news/", blank=True, null=True)
     author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     published_at = models.DateTimeField(auto_now_add=True)
+    view_count = models.PositiveIntegerField(default=0)
     is_published = models.BooleanField(default=False)
+    source_url = models.URLField(blank=True)
+    source_name = models.CharField(max_length=255, blank=True)
+    ai_source = models.CharField(max_length=100, blank=True)
+    is_auto_generated = models.BooleanField(default=False)
+    needs_review = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["-published_at"]

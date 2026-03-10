@@ -7,10 +7,8 @@ from django.utils.translation import get_language
 
 class GlobalContentTranslationMiddleware(MiddlewareMixin):
     """
-    Whole-site EN overlay for HTML responses.
-    Priority:
-    1) phrase-level replacements (natural wording)
-    2) fallback token translation to avoid mixed VI/EN output
+    - EN mode: phrase + token translation for HTML text nodes/attributes.
+    - All modes: repair mojibake artifacts (UTF-8 decoded as latin-1/cp1252).
     """
 
     PHRASE_REPLACEMENTS = [
@@ -100,19 +98,16 @@ class GlobalContentTranslationMiddleware(MiddlewareMixin):
         "hoat": "occupational",
         "dong": "activity",
         "ngon": "speech",
-        "ngu": "language",
         "bai": "exercise",
         "tap": "training",
         "to": "form",
         "khai": "form",
         "co": "facility",
         "so": "infrastructure",
-        "doi": "partner",
         "tac": "partner",
         "huong": "guide",
         "dan": "guide",
         "tham": "visit",
-        "lich": "history",
         "su": "history",
         "tien": "progress",
         "trien": "progress",
@@ -145,7 +140,6 @@ class GlobalContentTranslationMiddleware(MiddlewareMixin):
         if not self.VI_CHAR_RE.search(out):
             return out
 
-        # Fallback: token-level conversion on remaining Vietnamese.
         def repl_word(match):
             word = match.group(0)
             if not self.VI_CHAR_RE.search(word) and word.isascii():
@@ -153,7 +147,6 @@ class GlobalContentTranslationMiddleware(MiddlewareMixin):
             base = self._strip_vi(word).lower()
             mapped = self.TOKEN_MAP.get(base)
             if not mapped:
-                # Keep neutral token placeholder for unknown Vietnamese words.
                 return "__EN__"
             if word[:1].isupper():
                 return mapped[:1].upper() + mapped[1:]
@@ -165,18 +158,33 @@ class GlobalContentTranslationMiddleware(MiddlewareMixin):
         out = re.sub(r"\s{2,}", " ", out).strip()
         if "__EN__" in out:
             return "This content is available in English."
-        # Final strict gate: English mode must not expose non-English glyphs.
         if any(ord(ch) > 126 for ch in out):
             return "This content is available in English."
-        if not out:
-            return "Content is being translated."
-        return out
+        return out or "Content is being translated."
+
+    def _repair_mojibake(self, text):
+        if not text or not self.MOJIBAKE_RE.search(text):
+            return text
+
+        def marker_count(s):
+            return len(self.MOJIBAKE_RE.findall(s or ""))
+
+        best = text
+        best_score = marker_count(text)
+        for _ in range(2):
+            try:
+                candidate = best.encode("latin1", errors="ignore").decode("utf-8", errors="ignore")
+            except Exception:
+                break
+            cand_score = marker_count(candidate)
+            if cand_score < best_score and candidate.strip():
+                best = candidate
+                best_score = cand_score
+            else:
+                break
+        return best
 
     def process_response(self, request, response):
-        lang = (get_language() or "").lower()
-        if not lang.startswith("en"):
-            return response
-
         content_type = (response.get("Content-Type") or "").lower()
         if "text/html" not in content_type:
             return response
@@ -186,16 +194,22 @@ class GlobalContentTranslationMiddleware(MiddlewareMixin):
         except Exception:
             return response
 
-        for vi_text, en_text in self.PHRASE_REPLACEMENTS:
-            html = html.replace(vi_text, en_text)
+        # Always repair mojibake for both admin and user pages.
+        html = self._repair_mojibake(html)
 
-        html = self.TEXT_NODE_RE.sub(lambda m: ">" + self._translate_fragment(m.group(1)) + "<", html)
-        html = self.ATTR_RE.sub(
-            lambda m: m.group(1) + self._translate_fragment(m.group(2)) + m.group(3),
-            html,
-        )
+        lang = (get_language() or "").lower()
+        if lang.startswith("en"):
+            for vi_text, en_text in self.PHRASE_REPLACEMENTS:
+                html = html.replace(vi_text, en_text)
+
+            html = self.TEXT_NODE_RE.sub(lambda m: ">" + self._translate_fragment(m.group(1)) + "<", html)
+            html = self.ATTR_RE.sub(
+                lambda m: m.group(1) + self._translate_fragment(m.group(2)) + m.group(3),
+                html,
+            )
 
         response.content = html.encode("utf-8")
         if response.has_header("Content-Length"):
             response["Content-Length"] = str(len(response.content))
         return response
+

@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.paginator import Paginator
 
 from .forms import (
     NewsArticleForm,
@@ -290,8 +291,24 @@ def therapy_delete(request, pk):
 # News
 @staff_required
 def news_list(request):
-    articles = list(NewsArticle.objects.select_related("category", "author").all())
-    return render(request, "dashboard/news/list.html", {"articles": articles})
+    category_slug = (request.GET.get("category") or "").strip()
+    page_number = request.GET.get("page")
+    articles_qs = NewsArticle.objects.select_related("category", "author").all().order_by("-published_at", "-id")
+    if category_slug:
+        articles_qs = articles_qs.filter(category__slug=category_slug)
+    paginator = Paginator(articles_qs, 12)
+    page_obj = paginator.get_page(page_number)
+    categories = list(NewsCategory.objects.all().order_by("name"))
+    return render(
+        request,
+        "dashboard/news/list.html",
+        {
+            "articles": page_obj.object_list,
+            "page_obj": page_obj,
+            "categories": categories,
+            "current_category": category_slug,
+        },
+    )
 
 
 @staff_required

@@ -1,5 +1,7 @@
 from django import forms
 from django.utils.text import slugify
+from urllib.parse import parse_qs, urlparse
+
 from .models import Package, Service, ServiceCategory, NewsArticle, NewsCategory, Video
 
 
@@ -117,6 +119,8 @@ class NewsArticleForm(forms.ModelForm):
 
 
 class VideoForm(StyledFormMixin, forms.ModelForm):
+    slug = forms.CharField(required=False)
+
     class Meta:
         model = Video
         fields = [
@@ -140,7 +144,7 @@ class VideoForm(StyledFormMixin, forms.ModelForm):
             "is_active": "Đang hoạt động",
         }
         help_texts = {
-            "provider_id": "Ví dụ YouTube: dQw4w9WgXcQ, Vimeo: 123456789",
+            "provider_id": "Dán ID hoặc full URL YouTube/Vimeo, hệ thống sẽ tự nhận diện.",
             "is_active": "Bật để hiển thị video ngoài website.",
         }
 
@@ -149,8 +153,52 @@ class VideoForm(StyledFormMixin, forms.ModelForm):
         slug = self.cleaned_data.get("slug") or slugify(title, allow_unicode=False)
         slug = slugify(slug, allow_unicode=False)
         if not slug:
-            raise forms.ValidationError("Slug khÃ´ng há»£p lá»‡; vui lÃ²ng dÃ¹ng chá»¯, sá»‘, dáº¥u '-' hoáº·c '_'.")
+            raise forms.ValidationError("Slug không hợp lệ; vui lòng dùng chữ, số, dấu '-' hoặc '_'.")
         return _unique_slug(Video, slug, self.instance)
+
+    def clean_provider_id(self):
+        raw = (self.cleaned_data.get("provider_id") or "").strip()
+        provider = self.cleaned_data.get("provider")
+        if not raw:
+            raise forms.ValidationError("Vui lòng nhập mã video hoặc URL.")
+
+        if provider == Video.PROVIDER_YT:
+            return self._extract_youtube_id(raw)
+        if provider == Video.PROVIDER_VI:
+            return self._extract_vimeo_id(raw)
+        return raw
+
+    def _extract_youtube_id(self, value):
+        if "://" not in value:
+            return value
+
+        parsed = urlparse(value)
+        host = (parsed.netloc or "").lower().replace("www.", "")
+        path = parsed.path.strip("/")
+
+        if host == "youtu.be" and path:
+            return path.split("/")[0]
+        if host in {"youtube.com", "m.youtube.com"}:
+            if path == "watch":
+                vid = parse_qs(parsed.query).get("v", [None])[0]
+                if vid:
+                    return vid
+            if path.startswith("embed/") or path.startswith("shorts/"):
+                return path.split("/", 1)[1].split("/")[0]
+
+        raise forms.ValidationError("URL YouTube không hợp lệ.")
+
+    def _extract_vimeo_id(self, value):
+        if "://" not in value:
+            return value
+        parsed = urlparse(value)
+        host = (parsed.netloc or "").lower().replace("www.", "")
+        path = parsed.path.strip("/")
+        if host == "vimeo.com" and path:
+            return path.split("/")[0]
+        if host == "player.vimeo.com" and path.startswith("video/"):
+            return path.split("/", 1)[1].split("/")[0]
+        raise forms.ValidationError("URL Vimeo không hợp lệ.")
 
 
 class PackageForm(StyledFormMixin, forms.ModelForm):
@@ -177,5 +225,5 @@ class PackageForm(StyledFormMixin, forms.ModelForm):
         slug = self.cleaned_data.get("slug") or slugify(name, allow_unicode=False)
         slug = slugify(slug, allow_unicode=False)
         if not slug:
-            raise forms.ValidationError("Slug khÃ´ng há»£p lá»‡; vui lÃ²ng dÃ¹ng chá»¯, sá»‘, dáº¥u '-' hoáº·c '_'.")
+            raise forms.ValidationError("Slug không hợp lệ; vui lòng dùng chữ, số, dấu '-' hoặc '_'.")
         return _unique_slug(Package, slug, self.instance)

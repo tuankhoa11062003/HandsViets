@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -165,7 +165,7 @@
             <img src="{{ article.thumbnail.url }}" class="w-full h-full object-cover opacity-50 contrast-125 scale-105"
                 alt="{{ article.title }}">
             {% else %}
-            <img src="{% static 'images/assets/clinic-desk.jpg' %}" class="w-full h-full object-cover opacity-50 contrast-125 scale-105"
+            <img src="{% static 'images/rehabilitation.png' %}" class="w-full h-full object-cover opacity-50 contrast-125 scale-105"
                 alt="{{ article.title }}">
             {% endif %}
             <!-- Dark Mesh Gradient Overlay -->
@@ -204,8 +204,7 @@
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                             </path>
                         </svg>
-                        <span>{{ article.created_at|date:"d" }} tháng {{ article.created_at|date:"m, Y"
-                            }}</span>
+                        <span>{{ article.published_at|date:"d" }} tháng {{ article.published_at|date:"m, Y" }}</span>
                     </div>
                     <div
                         class="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/10">
@@ -216,7 +215,7 @@
                                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
                             </path>
                         </svg>
-                        <span>{{ article.view_count }} lượt đọc</span>
+                        <span>{{ article.view_count|default:0 }} lượt đọc</span>
                     </div>
                 </div>
             </div>
@@ -306,11 +305,11 @@
                     </h3>
 
                     <div class="space-y-6">
-                        {% if related_news %}
-                        {% for related in related_news %}
+                        {% if related_articles %}
+                        {% for related in related_articles %}
                         <a href="{% url 'news:news_detail' slug=related.slug %}" class="group flex gap-4 items-start">
                             <div class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200">
-                                <img src="{% if related.thumbnail %}{{ related.thumbnail.url }}{% else %}{% static 'images/assets/rehab-wellness.jpg' %}{% endif %}"
+                                <img src="{% if related.thumbnail %}{{ related.thumbnail.url }}{% else %}{% static 'images/rehabilitation.png' %}{% endif %}"
                                     alt="{{ related.title }}"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             </div>
@@ -319,7 +318,7 @@
                                     class="font-bold text-slate-800 text-sm leading-snug group-hover:text-teal-600 transition-colors line-clamp-2 mb-1">
                                     {{ related.title }}
                                 </h4>
-                                <span class="text-xs text-gray-400">{{ related.created_at|date:"d/m/Y" }}</span>
+                                <span class="text-xs text-gray-400">{{ related.published_at|date:"d/m/Y" }}</span>
                             </div>
                         </a>
                         {% endfor %}
@@ -365,3 +364,4 @@
 </body>
 
 </html>
+

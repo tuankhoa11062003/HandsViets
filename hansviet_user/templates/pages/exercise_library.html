@@ -74,7 +74,7 @@
                     Bài tập & Tờ khai
                 </div>
                 <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tracking-tight animate-fade-in-up delay-100">
-                    Hành trình <span class="text-teal-400">Phục hồi</span>
+                    Hành trình <span class="text-teal-400">phục hồi</span>
                 </h1>
                 <p class="text-lg md:text-xl text-slate-200/90 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-200 px-4">
                     Kết hợp bài tập video từ chuyên gia và tờ khai đánh giá sức khỏe để có liệu trình điều trị hiệu quả nhất.
@@ -103,13 +103,25 @@
                         <div class="grid md:grid-cols-2 gap-8" id="video-grid">
                             {% for group in exercises %}
                                 {% for video in group.videos %}
-                                <div class="video-card reveal group cursor-pointer" data-category="{{ group.category|slugify }}" onclick="playVideo('{{ video.id }}', '{{ video.title }}')">
+                                <div class="video-card reveal group cursor-pointer {% if not video.can_watch %}opacity-90{% endif %}" data-category="{{ group.category|slugify }}" {% if video.can_watch and video.embed_url %}onclick="playVideo('{{ video.embed_url }}', '{{ video.watch_url }}', '{{ video.title|escapejs }}')"{% else %}onclick="window.location.href='/services/'"{% endif %}>
                                     <div class="relative rounded-[2rem] overflow-hidden aspect-video bg-slate-100 mb-6 shadow-xl shadow-slate-200/50">
-                                        <img src="https://img.youtube.com/vi/{{ video.id }}/maxresdefault.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ video.title }}">
+                                        {% if video.thumb_url %}
+                                        <img src="{{ video.thumb_url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ video.title }}">
+                                        {% else %}
+                                        <img src="{% static 'images/assets/rehab-wellness.jpg' %}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ video.title }}">
+                                        {% endif %}
                                         <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white text-xl border border-white/30 scale-75 group-hover:scale-100 transition-transform">▶</div>
                                         </div>
                                         <div class="absolute bottom-4 right-4 px-3 py-1 bg-slate-900/80 backdrop-blur-md rounded-lg text-[10px] font-black text-white">{{ video.duration }}</div>
+                                        <div class="absolute top-4 left-4 px-3 py-1 rounded-lg text-[10px] font-black {% if video.access == 'paid' %}bg-amber-100 text-amber-700{% else %}bg-emerald-100 text-emerald-700{% endif %}">
+                                            {% if video.access == 'paid' %}Trả phí{% else %}Miễn phí{% endif %}
+                                        </div>
+                                        {% if not video.can_watch %}
+                                        <div class="absolute inset-0 bg-slate-900/50 flex items-center justify-center">
+                                            <span class="px-3 py-1 bg-white/90 text-slate-900 rounded-lg text-xs font-bold">Khóa - mua gói để xem</span>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     <h3 class="text-lg font-black text-slate-900 leading-tight group-hover:text-teal-600 transition-colors">{{ video.title }}</h3>
                                     <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-2">{{ group.category }}</p>
@@ -126,7 +138,12 @@
                             <div class="video-container mb-8">
                                 <iframe id="player-iframe" src="" allowfullscreen></iframe>
                             </div>
-                            <h2 id="player-title" class="text-3xl font-black text-white tracking-tight"></h2>
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <h2 id="player-title" class="text-3xl font-black text-white tracking-tight"></h2>
+                                <a id="player-open-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-sm font-semibold hover:bg-white/20 transition">
+                                    Mở trên nền tảng gốc
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -221,65 +238,6 @@
             </div>
         </section>
 
-        <!-- Dynamic video library -->
-        <section class="py-16 bg-gray-50">
-            <div class="max-w-6xl mx-auto px-4 space-y-10">
-                <div>
-                    <h2 class="text-3xl font-bold mb-4">Video miễn phí</h2>
-                    <div class="grid md:grid-cols-3 gap-6">
-                        {% for v in free_videos %}
-                        <div class="bg-white rounded-2xl shadow p-4">
-                            <h3 class="font-semibold mb-2">{{ v.title }}</h3>
-                            {% if v.provider == 'youtube' %}
-                            <div class="aspect-video">
-                                <iframe class="w-full h-full rounded-lg" src="https://www.youtube.com/embed/{{ v.provider_id }}" allowfullscreen></iframe>
-                            </div>
-                            {% else %}
-                            <p class="text-sm text-gray-500">Video provider {{ v.provider }}</p>
-                            {% endif %}
-                        </div>
-                        {% empty %}
-                        <p class="col-span-3 text-gray-500">Chưa có video miễn phí.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class="text-3xl font-bold mb-4">Video trả phí</h2>
-                    {% if not can_watch_paid %}
-                        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl mb-4">
-                            <p>Bạn cần mua gói tập để xem video trả phí. <a href="/services/" class="text-blue-600 underline">Chọn gói</a></p>
-                        </div>
-                    {% endif %}
-                    <div class="grid md:grid-cols-3 gap-6">
-                        {% for v in paid_videos %}
-                        <div class="bg-white rounded-2xl shadow p-4">
-                            <h3 class="font-semibold mb-2">{{ v.title }}</h3>
-                            {% if can_watch_paid %}
-                                {% if v.provider == 'vimeo' %}
-                                <div class="aspect-video">
-                                    <iframe class="w-full h-full rounded-lg" src="https://player.vimeo.com/video/{{ v.provider_id }}" allowfullscreen></iframe>
-                                </div>
-                                {% elif v.provider == 'youtube' %}
-                                <div class="aspect-video">
-                                    <iframe class="w-full h-full rounded-lg" src="https://www.youtube.com/embed/{{ v.provider_id }}" allowfullscreen></iframe>
-                                </div>
-                                {% else %}
-                                <p class="text-sm text-gray-500">Provider {{ v.provider }}</p>
-                                {% endif %}
-                            {% else %}
-                                <div class="aspect-video bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
-                                    Khoá - mua gói để xem
-                                </div>
-                            {% endif %}
-                        </div>
-                        {% empty %}
-                        <p class="col-span-3 text-gray-500">Chưa có video trả phí.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     {% include 'pages/footer.html' %}
@@ -304,13 +262,16 @@
             });
         }
 
-        function playVideo(id, title) {
+        function playVideo(embedUrl, watchUrl, title) {
             const player = document.getElementById('video-player');
             const iframe = document.getElementById('player-iframe');
             const titleEl = document.getElementById('player-title');
-            
-            iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+            const openLink = document.getElementById('player-open-link');
+
+            const joinChar = embedUrl.includes('?') ? '&' : '?';
+            iframe.src = `${embedUrl}${joinChar}autoplay=1`;
             titleEl.innerText = title;
+            openLink.href = watchUrl || '#';
             player.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
