@@ -1,0 +1,286 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vật lý trị liệu chuyên sâu - Bệnh viện HandsViet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style type="text/tailwindcss">
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        
+        .service-content h2 {
+            @apply text-3xl md:text-4xl font-black text-slate-900 mb-8 tracking-tighter uppercase flex items-center gap-4;
+        }
+
+        .service-content h2::before {
+            @apply content-[''] w-2 h-10 bg-teal-500 rounded-full inline-block;
+        }
+
+        .service-content p {
+            @apply text-lg text-slate-600 leading-relaxed mb-6 font-medium;
+        }
+
+        .service-content h3 {
+            @apply text-2xl font-extrabold text-slate-800 mb-4 mt-8 uppercase tracking-tight;
+        }
+
+        .service-content ul {
+            @apply space-y-4 mb-10;
+        }
+        
+        .service-content li {
+            @apply flex items-start gap-3 text-slate-600 text-lg;
+        }
+
+        .service-content li svg {
+            @apply w-6 h-6 text-teal-500 mt-1 flex-shrink-0;
+        }
+
+        .image-card {
+            @apply relative rounded-[3rem] overflow-hidden shadow-2xl transition-all duration-700 hover:scale-[1.01] border-4 border-white;
+        }
+
+        .zig-zag-section {
+            @apply py-24 md:py-32 relative overflow-hidden;
+        }
+
+        .reveal.active {
+            @apply opacity-100 translate-y-0 transition-all duration-1000;
+        }
+        
+        .reveal {
+            @apply opacity-0 translate-y-10;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .method-card {
+            @apply bg-white p-10 rounded-[3rem] shadow-xl border border-slate-100 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl flex flex-col h-full border-t-4 border-t-transparent hover:border-t-teal-500;
+        }
+
+        .highlight-box {
+            @apply bg-teal-50 p-8 rounded-3xl border-l-4 border-teal-500 mb-8;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-slate-800 antialiased overflow-x-hidden">
+    {% include 'includes/loader.html' %}
+    {% include 'pages/header_tailwind.html' %}
+
+    <main class="bg-white min-h-screen">
+        <!-- Hero Section (Strictly matching Exercise Library Proportions) -->
+        <section class="relative h-[60vh] min-h-[550px] flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0">
+                <img src="https://myrehab-matsuoka.com/wp-content/uploads/2023/06/homepage_1-2.png" 
+                    class="w-full h-full object-cover" alt="Vật lý trị liệu chuyên sâu">
+                <div class="absolute inset-0 bg-slate-900/65 backdrop-blur-[2px]"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900/40"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+                <div class="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 font-bold text-xs uppercase tracking-[0.2em] mb-10 animate-fade-in-up">
+                    Phục hồi chức năng chuẩn quốc tế
+                </div>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tracking-tight animate-fade-in-up delay-100">
+                    Vật lý <span class="text-teal-400">trị liệu</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-200/90 max-w-4xl mx-auto leading-relaxed animate-fade-in-up delay-200 px-4 font-light italic">
+                    "Giải quyết triệt để căn nguyên cơn đau thông qua khoa học vận động và công nghệ phục hồi hiện đại."
+                </p>
+            </div>
+        </section>
+
+        <!-- Main Content Area -->
+        <div class="relative z-20">
+            
+            <!-- 1. Vật lý trị liệu là gì? -->
+            <section class="zig-zag-section reveal">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid lg:grid-cols-2 gap-20 items-center">
+                        <div class="image-card lg:order-1 h-[450px] md:h-[600px]">
+                            <img src="https://myrehab-matsuoka.com/wp-content/uploads/2024/05/bai-tap-vat-ly-tri-lieu-khop-goi.jpg" alt="Định nghĩa Vật lý trị liệu" class="w-full h-full object-cover">
+                        </div>
+                        <div class="service-content lg:order-2">
+                            <h2>VẬT LÝ TRỊ LIỆU LÀ GÌ?</h2>
+                            <p>Vật lý trị liệu (Physical Therapy - PT) là một chuyên ngành y khoa chuyên biệt sử dụng các tác nhân vật lý tự nhiên và nhân tạo nhằm khôi phục năng lực vận động, sức mạnh và sự linh hoạt của cơ thể mà không lạm dụng thuốc hay các biện pháp xâm lấn.</p>
+                            
+                            <div class="highlight-box">
+                                <p class="mb-0 text-slate-800 font-bold italic">"Chúng tôi không chỉ chữa lành vùng tổn thương, chúng tôi phục hồi phong độ sống của bạn."</p>
+                            </div>
+
+                            <p>Tại HandsViet, triết lý Vật lý trị liệu của chúng tôi dựa trên cơ sở <strong>Biomechanics (Cơ sinh học)</strong>. Bằng cách phân tích tỉ mỉ các chuyển động của khớp và cơ, các kỹ thuật viên sẽ xác định chính xác mất cân bằng cơ thể để thiết kế lộ trình can thiệp chuyên biệt, giúp tái thiết lập sự cân bằng tự nhiên cho hệ vận động.</p>
+                            
+                            <p>Đây là phương pháp ưu việt cho các tình trạng đau cơ mãn tính, thoái hoá khớp, và phục hồi chức năng sau các chấn thương thể thao hoặc phẫu thuật chỉnh hình phức tạp.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Vai trò của vật lý trị liệu -->
+            <section class="zig-zag-section bg-slate-50 reveal border-y border-slate-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid lg:grid-cols-2 gap-20 items-center">
+                        <div class="service-content order-2 lg:order-1">
+                            <h2>VAI TRÒ CỦA VẬT LÝ TRỊ LIỆU</h2>
+                            <p>Vật lý trị liệu đóng vai trò trái tim trong chu trình phục hồi chức năng toàn diện, mang lại những thay đổi tích cực về cả cấu trúc lẫn chức năng cơ thể:</p>
+                            
+                            <div class="grid md:grid-cols-1 gap-6">
+                                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                                    <h3 class="!mt-0 !text-xl text-teal-600">Kiểm soát cơn đau & Kháng viêm</h3>
+                                    <p class="text-sm mb-0">Sử dụng sóng âm, xung điện và nhiệt để ức chế các thụ thể gây đau, đồng thời tăng lưu thông máu để đẩy nhanh quá trình đào thải dịch hỏng, giảm sưng tấy và viêm nhiễm cục bộ.</p>
+                                </div>
+                                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                                    <h3 class="!mt-0 !text-xl text-blue-600">Tái lập Biên độ vận động (ROM)</h3>
+                                    <p class="text-sm mb-0">Các kỹ thuật di động khớp (Joint Mobilization) được thiết kế để tách rời các mảng xơ dính, kéo giãn các bao khớp bị co rút, giúp khớp tìm lại tầm vận động tối đa vốn có.</p>
+                                </div>
+                                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                                    <h3 class="!mt-0 !text-xl text-slate-800">Củng cố hệ thống Bảo vệ khớp</h3>
+                                    <p class="text-sm mb-0">Tăng cường sức mạnh các nhóm cơ ổn định (Stabilizing muscles) để giảm tải áp lực trực tiếp lên mặt sụn khớp, ngăn ngừa quá trình thoái hoá sớm và tái phát chấn thương.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="image-card order-1 lg:order-2 h-[450px] md:h-[600px]">
+                            <img src="https://myrehab-matsuoka.com/wp-content/uploads/2023/06/Thiet-ke-chua-co-ten-4-1024x683.png" alt="Vai trò chuyên sâu" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Phương pháp Vật lý trị liệu tại HandsViet -->
+            <section class="zig-zag-section reveal">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="service-content text-center mb-24">
+                        <h2 class="justify-center">PHƯƠNG PHÁP VẬT LÝ TRỊ LIỆU TẠI HANDSVIET</h2>
+                        <p class="max-w-3xl mx-auto mt-6 text-slate-500">Chúng tôi tự hào sở hữu hệ sinh thái phục hồi đa dạng, kết hợp giữa tinh hoa kỹ thuật tay và sự hỗ trợ của các máy móc trị liệu tiên tiến nhất thế giới.</p>
+                        <div class="w-24 h-1 bg-teal-500 mx-auto mt-8 rounded-full"></div>
+                    </div>
+                    
+                    <div class="grid lg:grid-cols-3 gap-10">
+                        <!-- Chuyên gia Overview -->
+                        <div class="lg:col-span-3 mb-16">
+                            <div class="bg-slate-900 rounded-[4rem] overflow-hidden flex flex-col lg:row items-stretch shadow-2xl">
+                                <div class="lg:w-1/2 h-[500px]">
+                                    <img src="https://myrehab-matsuoka.com/wp-content/uploads/2024/01/chuyen-gia-tri-lieu-vakazono-kenichi-lam-viec-tai-trung-tam-myrehab-matsuoka-4.jpg" class="w-full h-full object-cover opacity-90" alt="Đội ngũ chuyên gia">
+                                </div>
+                                <div class="lg:w-1/2 p-16 text-white flex flex-col justify-center">
+                                    <span class="text-teal-400 font-bold uppercase tracking-widest text-sm mb-6">Tiêu chuẩn quốc tế</span>
+                                    <h3 class="text-4xl font-black mb-8 text-white">CHUYÊN GIA DẪN DẮT PHỤC HỒI</h3>
+                                    <p class="text-slate-400 text-lg leading-relaxed mb-8">Dưới sự cố vấn của các chuyên gia hàng đầu, mỗi bài tập tại HandsViet không chỉ là vận động cơ bắp, mà là sự can thiệp y khoa có tính toán về cường độ, nhịp điệu và góc độ để đạt hiệu quả phục hồi sinh lý cao nhất.</p>
+                                    <div class="flex gap-4">
+                                        <div class="w-12 h-1 bg-teal-500"></div>
+                                        <div class="w-12 h-1 bg-teal-500/30"></div>
+                                        <div class="w-12 h-1 bg-teal-500/30"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 1. Bài tập tăng sức mạnh cơ -->
+                        <div class="method-card">
+                            <div class="mb-8">
+                                <h3 class="text-teal-600">Các bài tập tăng sức mạnh cơ</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">Không chỉ là gym hay vận động đơn thuần, đây là các bài tập <strong>Therapeutic Exercise</strong>. Kỹ thuật viên sẽ hướng dẫn bạn các bài tập kháng lực (Resistance training) hoặc bài tập đồng tâm-li tâm (Concentric-Eccentric) nhằm khôi phục sự cân bằng lực giữa các nhóm cơ đối kháng.</p>
+                            </div>
+                            <img src="https://myrehab-matsuoka.com/wp-content/uploads/2024/05/bai-tap-vat-ly-tri-lieu-khop-goi.jpg" class="w-full h-48 object-cover rounded-3xl mt-auto" alt="Bài tập sức mạnh">
+                        </div>
+
+                        <!-- 2. Trị liệu bằng tay -->
+                        <div class="method-card">
+                            <div class="mb-8">
+                                <h3 class="text-blue-600">Trị liệu bằng tay (Manual Therapy)</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">Sử dụng đôi bàn tay điêu luyện để thực hiện kỹ thuật di động mô mềm (Soft Tissue Mobilization) và di động khớp cấp độ cao giúp giải phóng các điểm Trigger Point, làm mềm các xơ hoá cơ và điều chỉnh lại vị trí sinh lý của các đốt sống bị sai lệch nhẹ.</p>
+                            </div>
+                            <img src="https://myrehab-matsuoka.com/wp-content/uploads/2024/05/phuong-phap-di-dong-mo-mem-2.jpg" class="w-full h-48 object-cover rounded-3xl mt-auto" alt="Manual Therapy">
+                        </div>
+
+                        <!-- 3. Kéo giãn cột sống -->
+                        <div class="method-card">
+                            <div class="mb-8">
+                                <h3 class="text-slate-800">Kéo giãn giảm áp cột sống</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">Sử dụng hệ thống máy kéo giãn tự động Enraf-Nonius giúp tạo áp suất âm trong lòng đĩa đệm. Cơ chế này giúp thu hồi một phần nhân nhầy đĩa đệm bị thoát vị, giải phóng sự chèn ép rễ thần kinh và tăng cường thẩm thấu dinh dưỡng nuôi dưỡng cột sống.</p>
+                            </div>
+                            <img src="https://myrehab-matsuoka.com/wp-content/uploads/2024/05/may-enraf-2.jpeg" class="w-full h-48 object-cover rounded-3xl mt-auto" alt="Kéo giãn cột sống">
+                        </div>
+
+                        <!-- 4. Trị liệu Laser -->
+                        <div class="method-card">
+                            <div class="mb-8">
+                                <h3 class="text-teal-600">Trị liệu Laser cường độ cao</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">Công nghệ <strong>High Intensity Laser</strong> thâm nhập sâu vào các lớp mô trong. Ánh sáng laser kích thích ty thể tế bào sản sinh ATP (năng lượng sinh học), từ đó đẩy nhanh quá trình làm lành vết thương và tái tạo các sợi collagen bị đứt gãy.</p>
+                            </div>
+                            <img src="https://myrehab-matsuoka.com/wp-content/uploads/2024/05/dieu-tri-bang-tia-laser.jpg" class="w-full h-48 object-cover rounded-3xl mt-auto" alt="Laser Therapy">
+                        </div>
+
+                        <!-- 5. Sóng xung kích -->
+                        <div class="method-card">
+                            <div class="mb-8">
+                                <h3 class="text-blue-600">Trị liệu Sóng xung kích (Shockwave)</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">Sử dụng các xung áp lực cực mạnh tác động trực tiếp vào các vùng vôi hoá, gai xương hoặc các vùng viêm mãn tính. Sóng xung kích làm vỡ các mảng canxi, kích thích tân tạo mạch máu và khởi động lại quá trình tự chữa lành của cơ thể tại các điểm đau cứng đầu nhất.</p>
+                            </div>
+                            <img src="https://myrehab-matsuoka.com/wp-content/uploads/2024/05/lieu-phap-xung-kich.jpg" class="w-full h-48 object-cover rounded-3xl mt-auto" alt="Shockwave Therapy">
+                        </div>
+
+                        <!-- 6. Máy móc hiện đại -->
+                        <div class="method-card">
+                            <div class="mb-8">
+                                <h3 class="text-slate-800">Hệ thống máy móc hiện đại</h3>
+                                <p class="text-slate-600 text-sm leading-relaxed">Phòng máy trị liệu tại HandsViet hội tụ đầy đủ các thiết bị Điện xung, Điện phân, Siêu âm và Vi sóng đạt tiêu chuẩn Châu Âu. Hệ thống này cho phép can thiệp sâu vào các cấp độ mô khác nhau, mang lại cảm giác dễ chịu và hiệu quả trị liệu rõ rệt ngay từ buổi đầu tiên.</p>
+                            </div>
+                            <img src="https://myrehab-matsuoka.com/wp-content/uploads/2023/06/May-dien-xung-dien-phan-ket-hop-sieu-am-BTL-5825S-CombiBTL-5825S-Combi.jpg" class="w-full h-48 object-cover rounded-3xl mt-auto" alt="Thiết bị y khoa">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Final CTA -->
+            <section class="py-32 bg-slate-900 text-white reveal relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-blue-500 to-teal-500 opacity-30"></div>
+                <div class="max-w-5xl mx-auto px-4 text-center relative z-10">
+                    <span class="text-teal-400 font-black uppercase tracking-[0.3em] text-sm mb-6 block">HandsViet đồng hành cùng bạn</span>
+                    <h2 class="text-white !mt-0 justify-center text-4xl md:text-6xl mb-10 leading-tight">ĐỪNG ĐỂ CƠN ĐAU <br> TRỞ THÀNH RÀO CẢN</h2>
+                    <p class="text-slate-400 text-xl mb-16 max-w-3xl mx-auto font-medium leading-relaxed">Phục hồi chức năng là một hành trình cần sự kiến trì và chuyên môn đúng đắn. Hãy để đội ngũ HandsViet thắp lại hy vọng cuộc sống năng động cho bạn ngay hôm nay.</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-8 justify-center">
+                        <a href="{% url 'pages:booking' %}" class="px-16 py-5 bg-teal-500 text-slate-900 rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-teal-400 transition-all shadow-xl shadow-teal-500/20">Đặt lịch thăm khám</a>
+                        <a href="{% url 'pages:contact' %}" class="px-16 py-5 bg-white/5 text-white border border-white/20 rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all">Liên hệ tư vấn</a>
+                    </div>
+                </div>
+                <div class="absolute bottom-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-[120px] -mb-48 -mr-48"></div>
+            </section>
+        </div>
+    </main>
+
+    {% include 'pages/footer.html' %}
+
+    <script>
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
+    </script>
+</body>
+</html>

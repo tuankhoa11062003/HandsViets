@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đội ngũ Chuyên gia - HandsViet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style type="text/tailwindcss">
+        body { @apply font-sans; }
+        
+        .doctor-card {
+            @apply transition-all duration-700 bg-white;
+        }
+
+        .filter-btn {
+            @apply px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest border border-slate-200 text-slate-400 transition-all duration-300 bg-white;
+        }
+
+        .filter-btn.active {
+            @apply border-teal-500 bg-teal-500 text-white shadow-lg shadow-teal-500/30;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-slate-800 antialiased overflow-x-hidden selection:bg-teal-100">
+    {% include 'includes/loader.html' %}
+
+    {% include 'pages/header_tailwind.html' %}
+
+    <!-- Hero Section -->
+    <section class="relative h-[60vh] min-h-[450px] flex items-center justify-center overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop" 
+                class="w-full h-full object-cover scale-105" alt="Đội ngũ HandsViet">
+            <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-[1px]"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900/40"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+            <div class="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-10 animate-reveal">
+                Đội ngũ chuyên gia
+            </div>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tracking-tight animate-reveal" style="animation-delay: 0.1s;">
+                Đội ngũ <span class="text-teal-400">Tinh hoa</span> <br>
+                Tâm đức sáng ngời
+            </h1>
+            <p class="text-lg md:text-xl text-slate-200/90 max-w-3xl mx-auto leading-relaxed animate-reveal" style="animation-delay: 0.2s;">
+                Nơi hội tụ những chuyên gia đầu ngành, tận tâm vì sứ mệnh phục hồi và nâng tầm chất lượng sống Việt.
+            </p>
+        </div>
+    </section>
+
+    <main class="bg-white">
+        <!-- Dynamic Filter & Grid -->
+        <section class="max-w-7xl mx-auto px-4 py-32">
+            <!-- Professional Filter Bar -->
+            <div class="flex flex-wrap justify-center gap-3 mb-20 animate-reveal" style="animation-delay: 0.3s;">
+                <button class="filter-btn active" data-filter="all">Tất cả chuyên khoa</button>
+                {% for category in categories %}
+                <button class="filter-btn" data-filter="{{ category.slug }}">{{ category.name }}</button>
+                {% endfor %}
+            </div>
+
+            <!-- Doctor Grid -->
+            <div class="grid grid-cols-1 gap-12 opacity-0 transform translate-y-10 transition-all duration-1000" id="doctorGrid">
+                {% for doctor in doctors %}
+                <div class="doctor-card group doctor-item bg-white rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100/50 hover:shadow-[0_40px_80px_rgba(45,212,191,0.15)] transition-all duration-700" data-specialty="{{ doctor.specialty }}">
+                    <div class="flex flex-col lg:flex-row">
+                        <!-- Left: Image Section -->
+                        <div class="lg:w-2/5 relative h-[400px] lg:h-auto overflow-hidden">
+                            <img src="{{ doctor.image }}" alt="{{ doctor.name }}" 
+                                class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+                            
+                            <!-- Badges Overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex flex-col justify-end p-8">
+                                <div class="flex flex-wrap gap-2 mb-2">
+                                    {% for achievement in doctor.achievements %}
+                                    <span class="px-3 py-1 bg-teal-500/90 backdrop-blur-md rounded-full text-[10px] font-bold text-white uppercase tracking-wider shadow-lg">
+                                        {{ achievement }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Info Section -->
+                        <div class="lg:w-3/5 p-8 lg:p-16 flex flex-col justify-center relative">
+                            <!-- Background Decoration -->
+                            <div class="absolute top-0 right-0 p-8 opacity-[0.03] select-none pointer-events-none">
+                                <svg class="w-40 h-40 text-teal-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            </div>
+
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <span class="px-4 py-1.5 bg-teal-50 text-teal-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-teal-100">
+                                        {{ doctor.role }}
+                                    </span>
+                                    <div class="h-px w-12 bg-slate-200"></div>
+                                    <span class="text-slate-400 font-bold text-[10px] uppercase tracking-widest flex items-center gap-2">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2.5"></path></svg>
+                                        {{ doctor.exp }} kinh nghiệm
+                                    </span>
+                                </div>
+
+                                <h3 class="text-4xl lg:text-5xl font-black text-slate-900 mb-2 tracking-tight group-hover:text-teal-600 transition-colors duration-500">
+                                    {{ doctor.name }}
+                                </h3>
+                                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-8">{{ doctor.education }}</p>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                                    <div>
+                                        <h4 class="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                                            Thế mạnh chuyên môn
+                                        </h4>
+                                        <p class="text-sm text-slate-600 leading-relaxed font-medium">
+                                            {{ doctor.strengths }}
+                                        </p>
+                                    </div>
+                                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100/50">
+                                        <p class="text-xs text-slate-500 italic leading-relaxed relative">
+                                            <svg class="absolute -top-4 -left-2 w-6 h-6 text-teal-200/50" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                                            "{{ doctor.bio }}"
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-6">
+                                    <a href="{% url 'pages:booking' %}?doctor={{ doctor.id }}" 
+                                        class="group/btn relative inline-flex items-center justify-center px-8 py-4 bg-teal-500 text-white rounded-full text-xs font-black uppercase tracking-widest overflow-hidden transition-all hover:bg-teal-600 hover:shadow-xl hover:shadow-teal-500/40">
+                                        <span class="relative z-10 flex items-center gap-2">
+                                             Đặt lịch hẹn ngay
+                                            <svg class="w-4 h-4 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-width="2.5"></path></svg>
+                                        </span>
+                                    </a>
+                                    <button class="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-teal-600 transition-colors">
+                                        Xem hồ sơ chi tiết
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Technicians Section -->
+        <section class="bg-gray-50 py-40 border-y border-gray-100">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-24">
+                    <span class="text-teal-600 font-black text-[10px] uppercase tracking-[0.4em] mb-4 inline-block">Support Team</span>
+                    <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">Đội ngũ <span class="text-teal-500">Kỹ thuật viên</span></h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {% for ktv in technicians %}
+                    <div class="bg-white p-10 rounded-[3rem] border border-slate-100/50 shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:shadow-[0_30px_60px_rgba(45,212,191,0.1)] hover:-translate-y-2 transition-all duration-700 group relative overflow-hidden">
+                        <!-- Decoration -->
+                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-teal-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+                        <div class="relative z-10">
+                            <div class="w-32 h-32 rounded-[2.5rem] overflow-hidden mb-8 mx-auto ring-4 ring-teal-50 shadow-lg group-hover:scale-105 transition-transform duration-700">
+                                <img src="{{ ktv.image }}" alt="{{ ktv.name }}" class="w-full h-full object-cover">
+                            </div>
+
+                            <div class="text-center mb-8">
+                                <span class="inline-block px-3 py-1 bg-teal-50 text-teal-600 rounded-full text-[9px] font-black uppercase tracking-widest mb-3">
+                                    {{ ktv.exp }} kinh nghiệm
+                                </span>
+                                <h4 class="text-2xl font-black text-slate-900 group-hover:text-teal-600 transition-colors">{{ ktv.name }}</h4>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ ktv.role }}</p>
+                            </div>
+
+                            <div class="space-y-4 pt-6 border-t border-slate-50">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-5 h-5 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="3"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Chứng chỉ</p>
+                                        <p class="text-[11px] font-bold text-slate-600 leading-tight">{{ ktv.cert }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-5 h-5 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <svg class="w-3 h-3 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2.5"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Thế mạnh</p>
+                                        <p class="text-[11px] font-bold text-slate-600 leading-tight">{{ ktv.strengths }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Standards Section -->
+        <section class="py-40 overflow-hidden relative">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid lg:grid-cols-2 gap-24 items-center">
+                    <div class="order-2 lg:order-1 relative">
+                        <div class="absolute -inset-10 bg-teal-500/10 rounded-full blur-[100px]"></div>
+                        <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop" class="rounded-[4rem] relative z-10 shadow-2xl" alt="Expert Care">
+                    </div>
+                    <div class="order-1 lg:order-2">
+                        <span class="text-teal-600 font-black text-xs uppercase tracking-[0.4em] mb-6 inline-block">Professional Quality</span>
+                        <h2 class="text-4xl md:text-6xl font-black text-slate-900 mb-10 tracking-tighter">Tiêu chuẩn quốc tế, y đức hàng đầu</h2>
+                        <div class="space-y-12">
+                            <div class="flex gap-6">
+                                <div class="w-14 h-14 flex-shrink-0 bg-teal-500 rounded-3xl flex items-center justify-center text-white shadow-lg shadow-teal-500/30">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a2 2 0 00-1.96 1.414l-.477 2.387a2 2 0 00.547 1.022l2.387 2.387a2 2 0 002.828 0l2.387-2.387a2 2 0 000-2.828l-2.387-2.387z" stroke-width="2"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-black text-slate-900 mb-2">Đào tạo chuyên sâu</h4>
+                                    <p class="text-slate-500 text-sm leading-relaxed font-medium">Đội ngũ bác sĩ được tuyển chọn khắt khe và đào tạo tại các bệnh viện phục hồi chức năng hàng đầu Nhật Bản, Mỹ...</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-6">
+                                <div class="w-14 h-14 flex-shrink-0 bg-slate-900 rounded-3xl flex items-center justify-center text-teal-400 shadow-lg shadow-slate-900/10">
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-width="2"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-black text-slate-900 mb-2">Đồng hành trọn đời</h4>
+                                    <p class="text-slate-500 text-sm leading-relaxed font-medium">Không chỉ là điều trị, chúng tôi còn là người bạn đồng hành, giúp bệnh nhân tái hòa nhập cộng đồng với tâm thế tự tin nhất.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    {% include 'pages/footer.html' %}
+
+    <script>
+        // Init reveal
+        window.addEventListener('load', () => {
+            const grid = document.getElementById('doctorGrid');
+            setTimeout(() => {
+                grid.style.opacity = '1';
+                grid.style.transform = 'translateY(0)';
+            }, 600);
+        });
+
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.filter-btn');
+            const items = document.querySelectorAll('.doctor-item');
+            const grid = document.getElementById('doctorGrid');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const filter = btn.getAttribute('data-filter');
+
+                    grid.style.opacity = '0';
+                    grid.style.transform = 'translateY(10px)';
+
+                    setTimeout(() => {
+                        items.forEach(item => {
+                            if (filter === 'all' || item.getAttribute('data-specialty') === filter) {
+                                item.style.display = 'block';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+                        grid.style.opacity = '1';
+                        grid.style.transform = 'translateY(0)';
+                    }, 400);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

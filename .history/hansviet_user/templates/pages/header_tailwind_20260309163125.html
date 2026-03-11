@@ -1,0 +1,126 @@
+{% load static %}
+<style>
+    .mobile-menu-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.45); opacity: 0; visibility: hidden; transition: all .25s; z-index: 40; }
+    .mobile-menu-overlay.active { opacity: 1; visibility: visible; }
+    .mobile-drawer { position: fixed; top: 0; right: 0; height: 100dvh; width: min(88vw, 360px); transform: translateX(100%); transition: transform .25s ease; z-index: 50; }
+    .mobile-drawer.active { transform: translateX(0); }
+</style>
+
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+<aside id="mobileDrawer" class="mobile-drawer bg-white shadow-2xl border-l border-slate-200">
+    <div class="h-full flex flex-col">
+        <div class="px-4 py-4 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <img src="{% static 'images/logo.png' %}" alt="HandsViet Logo" class="h-9 w-9 object-contain rounded" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%230ea5e9%22/><text x=%2250%25%22 y=%2256%25%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2232%22 fill=%22white%22>HV</text></svg>'">
+                <span class="font-bold text-slate-900">HandsViet</span>
+            </div>
+            <button id="mobileMenuClose" class="p-2 rounded-lg hover:bg-slate-100" aria-label="Đóng menu">
+                <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-1 text-[15px]">
+            <a href="{% url 'pages:home' %}" class="block px-3 py-2 rounded-lg hover:bg-sky-50 text-slate-700">Trang chủ</a>
+            <a href="{% url 'pages:about' %}" class="block px-3 py-2 rounded-lg hover:bg-sky-50 text-slate-700">Giới thiệu</a>
+            <a href="{% url 'pages:rehab_fields' %}" class="block px-3 py-2 rounded-lg hover:bg-sky-50 text-slate-700">Lĩnh vực điều trị</a>
+            <a href="{% url 'rehab:detail' slug='co-xuong-khop' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">• Cơ xương khớp</a>
+            <a href="{% url 'rehab:detail' slug='chan-thuong-chinh-hinh' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">• Chấn thương chỉnh hình</a>
+            <a href="{% url 'rehab:detail' slug='than-kinh' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">• Tổn thương thần kinh</a>
+            <a href="{% url 'rehab:detail' slug='sau-tai-bien' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">• Sau tai biến</a>
+            <a href="{% url 'rehab:detail' slug='sau-phau-thuat' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">• Sau phẫu thuật</a>
+            <a href="{% url 'pages:services' %}" class="block px-3 py-2 rounded-lg hover:bg-sky-50 text-slate-700">Dịch vụ</a>
+            <a href="{% url 'news:news_list' %}" class="block px-3 py-2 rounded-lg hover:bg-sky-50 text-slate-700">Tin tức</a>
+            <a href="{% url 'pages:contact' %}" class="block px-3 py-2 rounded-lg hover:bg-sky-50 text-slate-700">Liên hệ</a>
+        </nav>
+        <div class="px-4 py-4 border-t border-slate-200">
+            {% if request.user.is_authenticated %}
+                <p class="text-sm text-slate-600 mb-3">Xin chào, <span class="font-semibold text-slate-900">{{ request.user.get_username }}</span></p>
+                <a href="{% url 'auth:logout' %}" class="block text-center px-4 py-2 rounded-xl bg-slate-800 text-white font-semibold">Đăng xuất</a>
+            {% else %}
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{% url 'auth:login' %}" class="text-center px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold">Đăng nhập</a>
+                    <a href="{% url 'auth:register' %}" class="text-center px-4 py-2 rounded-xl bg-sky-600 text-white font-semibold">Đăng ký</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</aside>
+
+<header class="bg-[#EAEDEC] shadow-md sticky top-0 z-30 font-sans">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+        <a href="{% url 'pages:home' %}" class="flex items-center gap-2 min-w-0">
+            <img src="{% static 'images/logo.png' %}" alt="HandsViet Logo" class="h-10 w-10 object-contain rounded shrink-0" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%230ea5e9%22/><text x=%2250%25%22 y=%2256%25%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2232%22 fill=%22white%22>HV</text></svg>'">
+            <span class="text-lg md:text-xl font-extrabold bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent truncate">HandsViet</span>
+        </a>
+
+        <nav class="hidden lg:flex items-center gap-5 xl:gap-7 text-[15px]">
+            <a href="{% url 'pages:home' %}" class="text-slate-700 hover:text-blue-600 font-medium">Trang chủ</a>
+            <a href="{% url 'pages:about' %}" class="text-slate-700 hover:text-blue-600 font-medium">Giới thiệu</a>
+            <div class="relative group">
+                <button class="text-slate-700 hover:text-blue-600 font-medium flex items-center gap-1">
+                    Lĩnh vực điều trị
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <a href="{% url 'rehab:detail' slug='co-xuong-khop' %}" class="block px-4 py-2 hover:bg-sky-50 text-slate-700 rounded-t-lg">PHCN Cơ xương khớp</a>
+                    <a href="{% url 'rehab:detail' slug='chan-thuong-chinh-hinh' %}" class="block px-4 py-2 hover:bg-sky-50 text-slate-700">PHCN Chấn thương chỉnh hình</a>
+                    <a href="{% url 'rehab:detail' slug='than-kinh' %}" class="block px-4 py-2 hover:bg-sky-50 text-slate-700">PHCN Tổn thương thần kinh</a>
+                    <a href="{% url 'rehab:detail' slug='sau-tai-bien' %}" class="block px-4 py-2 hover:bg-sky-50 text-slate-700">PHCN Sau tai biến</a>
+                    <a href="{% url 'rehab:detail' slug='sau-phau-thuat' %}" class="block px-4 py-2 hover:bg-sky-50 text-slate-700 rounded-b-lg">PHCN Sau phẫu thuật</a>
+                </div>
+            </div>
+            <a href="{% url 'pages:services' %}" class="text-slate-700 hover:text-blue-600 font-medium">Dịch vụ</a>
+            <a href="{% url 'news:news_list' %}" class="text-slate-700 hover:text-blue-600 font-medium">Tin tức</a>
+            <a href="{% url 'pages:contact' %}" class="text-slate-700 hover:text-blue-600 font-medium">Liên hệ</a>
+        </nav>
+
+        <div class="hidden lg:flex items-center gap-3">
+            {% if request.user.is_authenticated %}
+                <span class="text-sm text-slate-600">Xin chào, <strong class="text-slate-900">{{ request.user.get_username }}</strong></span>
+                <a href="{% url 'auth:logout' %}" class="px-3 py-2 rounded-xl bg-slate-800 text-white text-sm font-semibold">Đăng xuất</a>
+            {% else %}
+                <a href="{% url 'auth:login' %}" class="text-slate-700 hover:text-blue-600 font-medium">Đăng nhập</a>
+                <a href="{% url 'auth:register' %}" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold text-sm">Đăng ký</a>
+            {% endif %}
+        </div>
+
+        <button id="mobileMenuOpen" class="lg:hidden inline-flex items-center justify-center p-2 rounded-lg bg-white border border-slate-300 shadow-sm" aria-label="Mở menu">
+            <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </div>
+</header>
+
+<script>
+    (function () {
+        const overlay = document.getElementById('mobileMenuOverlay');
+        const drawer = document.getElementById('mobileDrawer');
+        const openBtn = document.getElementById('mobileMenuOpen');
+        const closeBtn = document.getElementById('mobileMenuClose');
+
+        function openMenu() {
+            overlay.classList.add('active');
+            drawer.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMenu() {
+            overlay.classList.remove('active');
+            drawer.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (openBtn) openBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeMenu();
+        });
+
+        function applyFallback(img) {
+            if (!img || img.dataset.fallbackApplied === '1') return;
+            img.dataset.fallbackApplied = '1';
+            img.src = "{% static 'images/logo.png' %}";
+        }
+        document.addEventListener('error', function (event) {
+            if (event.target && event.target.tagName === 'IMG') applyFallback(event.target);
+        }, true);
+    })();
+</script>

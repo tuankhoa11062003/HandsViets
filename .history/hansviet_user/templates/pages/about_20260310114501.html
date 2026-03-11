@@ -1,0 +1,437 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Về chúng tôi - Bệnh viện HandsViet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="bg-white text-slate-800 antialiased overflow-x-hidden">
+    {% include 'includes/loader.html' %}
+
+    {% include 'pages/header_tailwind.html' %}
+
+    <!-- Hero Section -->
+    <section class="relative h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053&auto=format&fit=crop"
+                class="w-full h-full object-cover scale-105" alt="Bệnh viện HandsViet">
+            <div class="absolute inset-0 bg-slate-900/65 backdrop-blur-[1px]"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900/40"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+            <div
+                class="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-10 animate-fade-in-up">
+                Về chúng tôi
+            </div>
+            <h1
+                class="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-15 leading-[1.5] tracking-tight animate-fade-in-up delay-100">
+                BỆNH VIỆN PHỤC HỒI CHỨC NĂNG - Y HỌC THỂ THAO <br>
+                <span class="text-teal-400 inline-block mt-3">HANDSVIET</span>
+            </h1>
+            <p
+                class="text-lg md:text-xl text-slate-200/90 max-w-4xl mx-auto leading-[1.8] animate-fade-in-up delay-200 px-4">
+                Chúng tôi là đơn vị tiên phong trong lĩnh vực phục hồi chức năng tại Việt Nam, kết hợp phương pháp điều trị hiện đại từ Nhật Bản với sự tận tâm của đội ngũ y bác sĩ giàu kinh nghiệm.
+            </p>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                <div
+                    class="reveal bg-gradient-to-br from-teal-50 to-emerald-50 rounded-3xl p-10 shadow-xl border border-teal-100/50 group hover:scale-[1.02] transition-transform duration-500">
+                    <div
+                        class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg mb-8 group-hover:rotate-6 transition-transform">
+                        <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Sứ mệnh</h2>
+                    <p class="text-slate-600 text-lg leading-relaxed">
+                        Mang đến dịch vụ phục hồi chức năng chất lượng cao, giúp bệnh nhân lấy lại sức khỏe, tự tin và chất lượng cuộc sống tốt nhất. Chúng tôi cam kết đồng hành cùng bệnh nhân trên mọi bước đường phục hồi.
+                    </p>
+                </div>
+
+                <div
+                    class="reveal bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-10 shadow-xl border border-blue-100/50 group hover:scale-[1.02] transition-transform duration-500 delay-100">
+                    <div
+                        class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg mb-8 group-hover:-rotate-6 transition-transform">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Tầm nhìn</h2>
+                    <p class="text-slate-600 text-lg leading-relaxed">
+                        Trở thành bệnh viện phục hồi chức năng hàng đầu tại Việt Nam, được công nhận về chất lượng dịch vụ và sự chuyên nghiệp. Chúng tôi hướng tới việc mở rộng mạng lưới để phục vụ nhiều bệnh nhân hơn.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values -->
+    <section class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-extrabold text-slate-900 mb-4">Giá trị cốt lõi</h2>
+                <div class="w-20 h-1.5 bg-teal-500 mx-auto rounded-full mb-6"></div>
+                <p class="text-slate-600 max-w-2xl mx-auto text-lg">Những giá trị định hướng mọi hoạt động và quyết định của chúng tôi tại HandsViet</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                <!-- Value 1 -->
+                <div
+                    class="reveal bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 text-center border border-slate-100 group">
+                    <div
+                        class="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-teal-500 transition-colors duration-300">
+                        <svg class="w-8 h-8 text-teal-600 group-hover:text-white transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Tận tâm</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Đặt lợi ích và sự phục hồi của bệnh nhân lên hàng
+                        đầu trong mọi quyết định điều trị.</p>
+                </div>
+                <!-- Value 2 -->
+                <div
+                    class="reveal bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 text-center border border-slate-100 group delay-100">
+                    <div
+                        class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-600 transition-colors duration-300">
+                        <svg class="w-8 h-8 text-blue-600 group-hover:text-white transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Chuyên nghiệp</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Đội ngũ được đào tạo bài bản theo tiêu chuẩn quốc tế, áp dụng khoa học tiên tiến.</p>
+                </div>
+                <!-- Value 3 -->
+                <div
+                    class="reveal bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 text-center border border-slate-100 group delay-200">
+                    <div
+                        class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-indigo-600 transition-colors duration-300">
+                        <svg class="w-8 h-8 text-indigo-600 group-hover:text-white transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Đồng hành</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Cùng bệnh nhân và người thân trên mọi chặng đường, không bỏ rơi bất kỳ ai.</p>
+                </div>
+                <!-- Value 4 -->
+                <div
+                    class="reveal bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 text-center border border-slate-100 group delay-300">
+                    <div
+                        class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-emerald-600 transition-colors duration-300">
+                        <svg class="w-8 h-8 text-emerald-600 group-hover:text-white transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Cải tiến</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">Không ngừng học hỏi, cập nhật công nghệ và phương pháp mới nhất toàn cầu.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements -->
+    <section class="py-24 bg-slate-900 text-white relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+            <div class="absolute top-10 left-10 w-64 h-64 bg-teal-500 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-10 right-10 w-80 h-80 bg-blue-600 rounded-full blur-[140px]"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-4xl font-bold mb-6">Thành tựu của chúng tôi</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto text-lg">Những con số minh chứng cho sự nỗ lực không ngừng nghỉ và sự tin tưởng từ quý bệnh nhân.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8">
+                <div class="text-center reveal">
+                    <div class="text-5xl md:text-6xl font-black text-teal-400 mb-4 tabular-nums">10+</div>
+                    <div class="text-slate-300 font-medium uppercase tracking-wider text-sm">Năm kinh nghiệm</div>
+                </div>
+                <div class="text-center reveal delay-100">
+                    <div class="text-5xl md:text-6xl font-black text-blue-400 mb-4 tabular-nums">5000+</div>
+                    <div class="text-slate-300 font-medium uppercase tracking-wider text-sm">Bệnh nhân điều trị</div>
+                </div>
+                <div class="text-center reveal delay-200">
+                    <div class="text-5xl md:text-6xl font-black text-emerald-400 mb-4 tabular-nums">95%</div>
+                    <div class="text-slate-300 font-medium uppercase tracking-wider text-sm">Tỷ lệ hài lòng</div>
+                </div>
+                <div class="text-center reveal delay-300">
+                    <div class="text-5xl md:text-6xl font-black text-indigo-400 mb-4 tabular-nums">50+</div>
+                    <div class="text-slate-300 font-medium uppercase tracking-wider text-sm">Chuyên gia y tế</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section class="py-24 bg-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <div class="flex-1 reveal">
+                    <div class="relative">
+                        <div class="absolute -top-4 -left-4 w-24 h-24 bg-teal-500/10 rounded-full -z-10"></div>
+                        <h2 class="text-4xl font-extrabold text-slate-900 mb-8 leading-tight">Hành trình hơn 10 năm
+                            <br>xây dựng niềm tin
+                        </h2>
+                        <div class="space-y-6 text-slate-600 text-lg leading-relaxed">
+                            <p>
+                                HandsViet bắt đầu từ một văn phòng nhỏ vào năm 2014 với mong muốn mang đến dịch vụ phục hồi chức năng đạt chuẩn quốc tế cho người Việt Nam. Xuất phát từ thực trạng thiếu hụt trầm trọng các cơ sở PHCN chuyên sâu, chúng tôi đã không ngừng nỗ lực để trở thành điểm tựa vững chắc cho bệnh nhân.
+                            </p>
+                            <p>
+                                Với sự tư vấn và chuyển giao kỹ thuật từ các chuyên gia phục hồi chức năng hàng đầu **Nhật Bản**, chúng tôi đã xây dựng hệ thống điều trị đa chuyên khoa, kết hợp giữa máy móc hiện đại và kỹ thuật can thiệp bằng tay chuyên sâu.
+                            </p>
+                            <p
+                                class="font-medium text-slate-900 bg-slate-50 p-6 rounded-2xl border-l-4 border-teal-500 italic">
+                                \"Mỗi nụ cười và mỗi bước chân của bệnh nhân là phần thưởng lớn nhất mà đội ngũ HandsViet hướng tới suốt 10 năm qua.\"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 reveal delay-200 relative">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-4 pt-12">
+                            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
+                                class="rounded-3xl shadow-lg border-4 border-white" alt="PHCN">
+                            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop"
+                                class="rounded-3xl shadow-lg border-4 border-white" alt="Doctor">
+                        </div>
+                        <div class="space-y-4">
+                            <img src="https://images.unsplash.com/photo-1581056771107-24ca5f033842?q=80&w=2070&auto=format&fit=crop"
+                                class="rounded-3xl shadow-lg border-4 border-white" alt="Care">
+                            <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?q=80&w=2034&auto=format&fit=crop"
+                                class="rounded-3xl shadow-lg border-4 border-white" alt="Rehab">
+                        </div>
+                    </div>
+                    <div class="absolute -bottom-8 -right-8 w-40 h-40 bg-teal-500/10 rounded-full -z-10 animate-pulse">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-slate-50 overflow-hidden relative">
+        <div class="max-w-5xl mx-auto px-4 text-center reveal">
+            <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Sẵn sàng để phục hồi?</h2>
+            <p class="text-xl text-slate-600 mb-12 max-w-3xl mx-auto">Chúng tôi luôn ở đây để lắng nghe và đồng hành cùng bạn. Đừng để nỗi đau cản trở cuộc sống của bạn thêm nữa.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a href="{% url 'pages:contact' %}"
+                    class="px-10 py-5 bg-teal-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-teal-500/30 hover:bg-teal-700 hover:-translate-y-1 transition-all duration-300">Liên hệ tư vấn</a>
+                <a href="https://zalo.me/0281234567"
+                    class="px-10 py-5 bg-white text-teal-600 border-2 border-teal-600 rounded-2xl font-black text-lg hover:bg-teal-50 hover:-translate-y-1 transition-all duration-300">Liên hệ ngay qua Zalo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'pages/footer.html' %}
+
+    <!-- Mobile Menu Overlay (Full Screen) -->
+    <div id="mobileMenu"
+        class="fixed inset-0 bg-white z-50 transform translate-x-full transition-transform duration-300 lg:hidden">
+        <!-- Mobile Header -->
+        <div class="flex items-center justify-between p-4 border-b">
+            <div class="flex items-center gap-2">
+                <img src="{% static 'images/logo.png' %}" alt="HandsViet Logo" class="h-8 w-auto">
+                <span
+                    class="text-lg font-extrabold bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent drop-shadow-lg">HandsViet</span>
+            </div>
+            <button id="closeMobileMenu" class="text-gray-700 p-2 hover:bg-gray-100 rounded-lg transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Items -->
+        <nav class="flex flex-col p-4 overflow-y-auto" style="max-height: calc(100vh - 200px);">
+            <a href="/" class="py-3 border-b text-gray-700 hover:text-blue-600 transition">Trang chủ</a>
+
+            <!-- Giới thiệu (Mobile Accordion) -->
+            <div class="border-b">
+                <button
+                    class="w-full flex items-center justify-between py-3 text-gray-700 hover:text-blue-600 transition mobile-dropdown-toggle">
+                    <span>Giới thiệu</span>
+                    <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="hidden bg-gray-50 pl-4 pb-2 flex flex-col">
+                    <a href="{% url 'pages:about' %}" class="py-2 text-gray-600 text-sm">ℹ️ Về chúng tôi</a>
+                    <a href="#" class="py-2 text-gray-600 text-sm">👥 Đội ngũ Bác sĩ - KTV</a>
+                    <a href="#" class="py-2 text-gray-600 text-sm">❓ FAQ</a>
+                    <a href="#" class="py-2 text-gray-600 text-sm">🏥 Cơ sở vật chất</a>
+                    <a href="#" class="py-2 text-gray-600 text-sm">🤝 Đối tác</a>
+                </div>
+            </div>
+
+            <a href="{% url 'pages:services' %}" class="py-3 border-b text-gray-700 hover:text-blue-600 transition">Dịch
+                vụ</a>
+
+            <!-- Lĩnh vực (Mobile Accordion) -->
+            <div class="border-b">
+                <button
+                    class="w-full flex items-center justify-between py-3 text-gray-700 hover:text-blue-600 transition mobile-dropdown-toggle">
+                    <span>Lĩnh vực phục hồi</span>
+                    <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="hidden bg-gray-50 pl-4 pb-2 flex flex-col">
+                    <a href="#" class="py-2 text-gray-600 text-sm">🦴 PHCN cơ xương khớp</a>
+                    <a href="#" class="py-2 text-gray-600 text-sm">🩺 PHCN chấn thương</a>
+                    <a href="#" class="py-2 text-gray-600 text-sm">🧠 PHCN thần kinh</a>
+                </div>
+            </div>
+
+            <a href="{% url 'news:news_list' %}" class="py-3 border-b text-gray-700 hover:text-blue-600 transition">Tin
+                tức</a>
+            <a href="{% url 'pages:contact' %}" class="py-3 border-b text-gray-700 hover:text-blue-600 transition">Liên
+                hệ</a>
+        </nav>
+    </div>
+
+    <script>
+        // Use the exactly same scripts from home.html
+        let pageLoadTime = Date.now();
+
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('pageLoader');
+            if (loader) {
+                const elapsedTime = Date.now() - pageLoadTime;
+                const minDisplayTime = 500; // 0.5 seconds minimum
+                const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 600);
+                }, remainingTime);
+            }
+        });
+
+        // Tailwind Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                mobileMenu.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        if (closeMobileMenu && mobileMenu) {
+            closeMobileMenu.addEventListener('click', function () {
+                mobileMenu.classList.add('translate-x-full');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Mobile accordion dropdowns
+        const mobileDropdownToggles = document.querySelectorAll('.mobile-dropdown-toggle');
+        mobileDropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function () {
+                const content = this.nextElementSibling;
+                const arrow = this.querySelector('svg');
+                content.classList.toggle('hidden');
+                arrow.style.transform = content.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            });
+        });
+
+        // User dropdown menu toggle
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userDropdown = document.getElementById('userDropdown');
+        const userMenuArrow = document.getElementById('userMenuArrow');
+
+        if (userMenuBtn && userDropdown) {
+            userMenuBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const isVisible = userDropdown.classList.contains('opacity-100');
+                if (isVisible) {
+                    userDropdown.classList.remove('opacity-100', 'visible');
+                    userDropdown.classList.add('opacity-0', 'invisible');
+                    userMenuArrow.style.transform = 'rotate(0deg)';
+                } else {
+                    userDropdown.classList.remove('opacity-0', 'invisible');
+                    userDropdown.classList.add('opacity-100', 'visible');
+                    userMenuArrow.style.transform = 'rotate(180deg)';
+                }
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove('opacity-100', 'visible');
+                    userDropdown.classList.add('opacity-0', 'invisible');
+                    userMenuArrow.style.transform = 'rotate(0deg)';
+                }
+            });
+        }
+
+        // Reveal animations on scroll
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
+    </script>
+</body>
+
+</html>

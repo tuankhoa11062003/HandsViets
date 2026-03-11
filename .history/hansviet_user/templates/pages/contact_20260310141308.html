@@ -1,0 +1,271 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên hệ - Bệnh viện HandsViet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style>
+        .contact-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .5;
+            }
+        }
+
+        .pulse-ring {
+            animation: ring-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes ring-pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.6s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    {% include 'includes/loader.html' %}
+
+    <!-- Mobile Menu Overlay -->
+    {% include 'pages/header_tailwind.html' %}
+
+
+    <main>
+        <!-- Contact Page Hero Section -->
+        <section class="contact-hero text-white py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center fade-in-up">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Liên hệ với chúng tôi</h1>
+                    <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+                        Chúng tôi luôn sẵn sàng lắng nghe và giải đáp mọi thắc mắc của bạn về dịch vụ phục hồi chức năng.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-2 gap-12">
+                    <!-- Contact Info -->
+                    <div class="space-y-6 fade-in-up" style="animation-delay: 0.1s;">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Thông tin liên hệ</h2>
+
+                        <div
+                            class="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300">
+                            <div class="flex items-start space-x-4">
+                                <div class="bg-teal-50 p-3 rounded-lg text-teal-600">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                        </path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 mb-1">Địa chỉ</h3>
+                                    <p class="text-gray-600">123 Đường ABC, Quận 1, TP. Hồ Chí Minh, Việt Nam</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300">
+                            <div class="flex items-start space-x-4">
+                                <div class="bg-blue-50 p-3 rounded-lg text-blue-600">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 mb-1">Điện thoại</h3>
+                                    <p class="text-gray-600">028 1234 567</p>
+                                    <p class="text-red-600 font-semibold">Khẩn cấp: 1900-1234</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300">
+                            <div class="flex items-start space-x-4">
+                                <div class="bg-purple-50 p-3 rounded-lg text-purple-600">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 mb-1">Email</h3>
+                                    <p class="text-gray-600">info@handsviet.vn</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300">
+                            <div class="flex items-start space-x-4">
+                                <div class="bg-green-50 p-3 rounded-lg text-green-600">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 mb-1">Giờ làm việc</h3>
+                                    <p class="text-gray-600">Thứ 2 - Thứ 6: 8:00 - 20:00</p>
+                                    <p class="text-gray-600">Thứ 7 - CN: 8:00 - 17:00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="bg-white rounded-2xl p-8 shadow-xl fade-in-up" style="animation-delay: 0.2s;">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Gửi tin nhắn cho chúng tôi</h2>
+
+                        <div id="successMessage" class="hidden text-center py-12">
+                            <div
+                                class="text-6xl mb-4 bg-green-100 w-24 h-24 flex items-center justify-center rounded-full mx-auto">
+                                ✅</div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Đã nhận được tin nhắn!</h3>
+                            <p class="text-gray-600">Chúng tôi sẽ phản hồi lại bạn sớm nhất có thể.</p>
+                            <button onclick="resetForm()" class="mt-6 text-blue-600 font-semibold hover:underline">Gửi
+                                tin nhắn khác</button>
+                        </div>
+
+                        <form id="contactForm" onsubmit="handleContactSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Họ và tên *</label>
+                                <input type="text" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                    placeholder=" Nhập họ tên của bạn">
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Email *</label>
+                                <input type="email" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                    placeholder="example@email.com">
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Số điện thoại
+                                    *</label>
+                                <input type="tel" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+                                    placeholder="0123 456 789">
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Lời nhắn *</label>
+                                <textarea required rows="4"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none transition"
+                                    placeholder=" Bạn cần chúng tôi giúp gì?"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-4 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center group transform hover:scale-[1.02] active:scale-[0.98]">
+                                <svg class="w-5 h-5 mr-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
+                                <span>Gửi tin nhắn</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <section class="py-16 bg-white overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Vị trí của chúng tôi</h2>
+                <div
+                    class="bg-gray-100 rounded-2xl overflow-hidden h-[450px] shadow-inner relative border-4 border-gray-50">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4602324283416!2d106.6921313148!3d10.775658662145!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3922370001%3A0xe530462bb011505d!2zMTIzIABCeeG6v24gTmdow6ksIELhur9uIFRow6BuaCwgUXXhuq1uIDEsIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaCwgVmlldG5hbQ!5e0!3m2!1sen!2s!4v1620000000000!5m2!1sen!2s"
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </section>
+        <!-- <section class="py-12">
+            <div class="max-w-3xl mx-auto bg-white shadow rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-4">Đăng ký tư vấn nhanh</h2>
+                <form method="post" class="space-y-4">
+                    {% csrf_token %}
+                    <div>{{ lead_form.non_field_errors }}</div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>{{ lead_form.name }}</div>
+                        <div>{{ lead_form.phone }}</div>
+                    </div>
+                    <div>{{ lead_form.email }}</div>
+                    <div>{{ lead_form.message }}</div>
+                    {{ lead_form.page }}
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Gửi yêu cầu</button>
+                </form>
+            </div>
+        </section> -->
+    </main>
+
+    <!-- Footer -->
+    {% include 'pages/footer.html' %}
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('pageLoader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 700);
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>
