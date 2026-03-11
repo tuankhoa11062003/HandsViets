@@ -1,0 +1,283 @@
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+RSS error 'https://vnexpress.net/rss/suc-khoe.rss': <urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions>
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+RSS error 'https://thanhnien.vn/rss/suc-khoe.rss': <urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions>
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': <urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions>
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': <urlopen error [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions>
+Done RSS sync. created=0, skipped=0, mode=publish, at=2026-03-10 04:07:45.640622+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=4, skipped=0, mode=publish, at=2026-03-10 04:08:22.327084+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:09:05.779206+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=2, skipped=2, mode=publish, at=2026-03-10 04:10:04.912314+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:11:04.968959+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:12:05.939300+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:13:04.653934+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=2, skipped=2, mode=publish, at=2026-03-10 04:14:05.841319+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:15:06.120051+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:16:05.185863+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:17:04.929174+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:18:04.933826+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:19:04.706183+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:20:03.570937+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=2, skipped=2, mode=publish, at=2026-03-10 04:21:04.149611+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:22:04.675290+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:23:04.246214+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:24:03.876856+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+RSS error 'https://tuoitre.vn/rss/suc-khoe.rss': <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)>
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/rss
+RSS error 'https://www.medicalnewstoday.com/rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/rss-feeds
+RSS error 'https://www.who.int/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=4, mode=publish, at=2026-03-10 04:25:47.808090+00:00
+D:\N8N\BV_HansViet\Handviets\.venv\Lib\site-packages\django\db\models\fields\__init__.py:1670: RuntimeWarning: DateTimeField NewsArticle.published_at received a naive datetime (2026-03-10 10:07:29) while time zone support is active.
+  warnings.warn(
+D:\N8N\BV_HansViet\Handviets\.venv\Lib\site-packages\django\db\models\fields\__init__.py:1670: RuntimeWarning: DateTimeField NewsArticle.published_at received a naive datetime (2026-03-10 08:31:40) while time zone support is active.
+  warnings.warn(
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=3, skipped=3, mode=publish, at=2026-03-10 04:54:05.653386+00:00
+D:\N8N\BV_HansViet\Handviets\.venv\Lib\site-packages\django\db\models\fields\__init__.py:1670: RuntimeWarning: DateTimeField NewsArticle.published_at received a naive datetime (2026-03-10 12:09:52) while time zone support is active.
+  warnings.warn(
+D:\N8N\BV_HansViet\Handviets\.venv\Lib\site-packages\django\db\models\fields\__init__.py:1670: RuntimeWarning: DateTimeField NewsArticle.published_at received a naive datetime (2026-03-10 11:21:54) while time zone support is active.
+  warnings.warn(
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=3, skipped=3, mode=publish, at=2026-03-10 06:24:06.795660+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=6, mode=publish, at=2026-03-10 06:54:04.938497+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=1, skipped=5, mode=publish, balanced=False, at=2026-03-10 07:24:07.447843+00:00
+D:\N8N\BV_HansViet\Handviets\.venv\Lib\site-packages\django\db\models\fields\__init__.py:1670: RuntimeWarning: DateTimeField NewsArticle.published_at received a naive datetime (2026-03-10 14:00:41) while time zone support is active.
+  warnings.warn(
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=3, skipped=3, mode=publish, balanced=False, at=2026-03-10 07:54:07.230032+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=6, mode=publish, balanced=False, at=2026-03-10 08:24:05.191791+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=6, mode=publish, balanced=False, at=2026-03-10 08:54:06.292725+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=1, skipped=5, mode=publish, balanced=False, at=2026-03-10 09:24:05.184922+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=6, mode=publish, balanced=False, at=2026-03-10 09:54:06.131217+00:00
+D:\N8N\BV_HansViet\Handviets\.venv\Lib\site-packages\django\db\models\fields\__init__.py:1670: RuntimeWarning: DateTimeField NewsArticle.published_at received a naive datetime (2026-03-10 18:22:40) while time zone support is active.
+  warnings.warn(
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=5, skipped=1, mode=publish, balanced=False, at=2026-03-10 15:12:04.598554+00:00
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=0, skipped=6, mode=publish, balanced=False, at=2026-03-10 15:24:05.164891+00:00
+D:\N8N\BV_HansViet\Handviets\.venv\Lib\site-packages\django\db\models\fields\__init__.py:1670: RuntimeWarning: DateTimeField NewsArticle.published_at received a naive datetime (2026-03-10 21:41:27) while time zone support is active.
+  warnings.warn(
+Syncing RSS: https://vnexpress.net/rss/suc-khoe.rss
+Syncing RSS: https://tuoitre.vn/rss/suc-khoe.rss
+Syncing RSS: https://thanhnien.vn/rss/suc-khoe.rss
+Syncing RSS: https://www.medicalnewstoday.com/articles.rss
+RSS error 'https://www.medicalnewstoday.com/articles.rss': HTTP Error 404: Not Found
+Syncing RSS: https://www.who.int/news-room/rss-feeds
+RSS error 'https://www.who.int/news-room/rss-feeds': HTTP Error 404: Not Found
+Done RSS sync. created=5, skipped=1, mode=publish, balanced=False, at=2026-03-11 01:24:07.579981+00:00

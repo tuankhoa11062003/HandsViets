@@ -1,0 +1,217 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câu hỏi thường gặp - HandsViet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            opacity: 0;
+        }
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+            opacity: 1;
+            padding-bottom: 2rem;
+        }
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+            background-color: #0d9488;
+            color: white;
+        }
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: revealUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        @keyframes revealUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body class="bg-white text-slate-800 antialiased overflow-x-hidden">
+    {% include 'includes/loader.html' %}
+    {% include 'pages/header_tailwind.html' %}
+
+    <main class="bg-white min-h-screen">
+        <!-- Hero Section -->
+        <section class="relative h-[60vh] min-h-[450px] flex items-center justify-center overflow-hidden">
+            <!-- Background Image with Overlay -->
+            <div class="absolute inset-0">
+                <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop" 
+                    class="w-full h-full object-cover scale-105" alt="FAQ HandsViet">
+                <div class="absolute inset-0 bg-slate-900/65 backdrop-blur-[1px]"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900/40"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+                <div class="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-10 animate-fade-in-up">
+                    Hỗ trợ khách hàng
+                </div>
+                <h1 class="text-3xl md:text-5xl lg:text-7xl font-black text-white mb-8 leading-tight tracking-tight animate-fade-in-up delay-100">
+                    Giải đáp <span class="text-teal-400">Thắc mắc</span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-200/90 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-200 px-4">
+                    Tìm kiếm nhanh các câu trả lời cho quy trình điều trị, chi phí và các chính sách tại HandsViet.
+                </p>
+            </div>
+        </section>
+
+        <!-- Quick Search -->
+        <section class="max-w-2xl mx-auto px-4 -mt-10 relative z-30 reveal">
+            <div class="relative group">
+                <input type="text" placeholder="Bạn đang thắc mắc điều gì?..." 
+                    class="w-full pl-14 pr-6 py-6 bg-white rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100 focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all text-sm font-bold placeholder:text-slate-300">
+                <div class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-teal-500 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="3"></path></svg>
+                </div>
+            </div>
+        </section>
+
+        <section class="max-w-4xl mx-auto px-4 py-32">
+            <div class="grid gap-16">
+                <!-- Category 1 -->
+                <div class="reveal">
+                    <div class="flex items-center gap-4 mb-10">
+                        <div class="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-teal-500/20 font-black">?</div>
+                        <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest">Quy trình & Điều trị</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- FAQ Item 1 -->
+                        <div class="accordion-item bg-white rounded-[2rem] border border-slate-100 hover:border-teal-100 transition-all duration-300 group shadow-sm overflow-hidden">
+                            <button class="w-full flex items-center justify-between p-8 text-left focus:outline-none" onclick="toggleAccordion(this)">
+                                <span class="text-lg md:text-xl font-extrabold text-slate-800 pr-10 leading-snug group-hover:text-teal-700 transition-colors">Đặt lịch khám tại HandsViet như thế nào?</span>
+                                <div class="accordion-icon w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 transition-all duration-300 shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="3"></path></svg>
+                                </div>
+                            </button>
+                            <div class="accordion-content px-8">
+                                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-500 font-medium leading-relaxed">
+                                    Bạn có thể đặt lịch vô cùng dễ dàng thông qua:
+                                    <ul class="mt-4 space-y-2 list-disc list-inside text-teal-700 font-bold">
+                                        <li>Website: Nút "Đặt lịch khám"</li>
+                                        <li>Hotline: 028.XXXX.XXXX</li>
+                                        <li>Zalo OA: HandsViet Clinic</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ Item 2 -->
+                        <div class="accordion-item bg-white rounded-[2rem] border border-slate-100 hover:border-teal-100 transition-all duration-300 group shadow-sm overflow-hidden">
+                            <button class="w-full flex items-center justify-between p-8 text-left focus:outline-none" onclick="toggleAccordion(this)">
+                                <span class="text-lg md:text-xl font-extrabold text-slate-800 pr-10 leading-snug group-hover:text-teal-700 transition-colors">Một liệu trình thường kéo dài bao lâu?</span>
+                                <div class="accordion-icon w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 transition-all duration-300 shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="3"></path></svg>
+                                </div>
+                            </button>
+                            <div class="accordion-content px-8">
+                                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-500 font-medium leading-relaxed">
+                                    Thời gian phụ thuộc hoàn toàn vào tình trạng lâm sàng của bệnh nhân. Thông thường một liệu trình cơ bản diễn ra từ 6-12 buổi, mỗi buổi kéo dài 60-90 phút.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 2 -->
+                <div class="reveal">
+                    <div class="flex items-center gap-4 mb-10">
+                        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20 font-black">$</div>
+                        <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest">Chi phí & Chính sách</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="accordion-item bg-white rounded-[2rem] border border-slate-100 hover:border-blue-100 transition-all duration-300 group shadow-sm overflow-hidden">
+                            <button class="w-full flex items-center justify-between p-8 text-left focus:outline-none" onclick="toggleAccordion(this)">
+                                <span class="text-lg md:text-xl font-extrabold text-slate-800 pr-10 leading-snug group-hover:text-blue-700 transition-colors">HandsViet có áp dụng BHYT không?</span>
+                                <div class="accordion-icon w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 transition-all duration-300 shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="3"></path></svg>
+                                </div>
+                            </button>
+                            <div class="accordion-content px-8">
+                                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-500 font-medium leading-relaxed">
+                                    Hiện chúng tôi chưa trực tiếp thanh toán BHYT nhà nước. Tuy nhiên, HandsViet hỗ trợ xuất hóa đơn tài chính đầy đủ và hồ sơ bệnh án để bệnh nhân thanh toán với các loại Bảo hiểm sức khỏe tư nhân.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Call to Action -->
+        <section class="max-w-7xl mx-auto px-4 pb-40">
+            <div class="bg-slate-900 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden reveal">
+                <div class="relative z-10">
+                    <h2 class="text-3xl md:text-5xl font-black text-white mb-8 tracking-tight">Vẫn còn thắc mắc khác?</h2>
+                    <p class="text-slate-400 text-lg font-medium mb-12 max-w-xl mx-auto">Đừng ngần ngại, đội ngũ chuyên gia của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7.</p>
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+                        <a href="{% url 'pages:contact' %}" class="px-10 py-5 bg-teal-500 hover:bg-teal-400 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-teal-500/20 transition-all">Liên hệ ngay</a>
+                        <a href="tel:028XXXX" class="text-white font-black hover:text-teal-400 transition-colors flex items-center gap-3">
+                            <span class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">📞</span>
+                            028.XXXX.XXXX
+                        </a>
+                    </div>
+                </div>
+                <div class="absolute -right-20 -bottom-20 w-80 h-80 border-[40px] border-white/5 rounded-full"></div>
+            </div>
+        </section>
+    </main>
+
+    {% include 'pages/footer.html' %}
+
+    <script>
+        function toggleAccordion(btn) {
+            const item = btn.parentElement;
+            const isOpen = item.classList.contains('active');
+            
+            // Toggle current item
+            item.classList.toggle('active');
+        }
+
+        // Search underline (simple mockup)
+        const searchInput = document.querySelector('input[type="text"]');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const val = e.target.value.toLowerCase();
+                document.querySelectorAll('.accordion-item').forEach(item => {
+                    const text = item.innerText.toLowerCase();
+                    item.style.display = text.includes(val) ? 'block' : 'none';
+                });
+            });
+        }
+
+        // Reveal animations on scroll
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
+    </script>
+</body>
+
+</html>

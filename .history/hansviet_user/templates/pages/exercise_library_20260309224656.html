@@ -1,0 +1,304 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thư viện bài tập & Tờ khai - HandsViet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 2rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background-color: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 1rem;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #0f172a;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #14b8a6;
+            box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
+        }
+        .cat-btn.active {
+            background-color: #0f172a;
+            color: white;
+            border-color: #0f172a;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-slate-800 antialiased overflow-x-hidden">
+    {% include 'includes/loader.html' %}
+    {% include 'pages/header_tailwind.html' %}
+
+    <main class="bg-white min-h-screen">
+        <!-- Hero Section -->
+        <section class="relative h-[60vh] min-h-[450px] flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0">
+                <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2040&auto=format&fit=crop" 
+                    class="w-full h-full object-cover scale-105" alt="Rehab Exercise">
+                <div class="absolute inset-0 bg-slate-900/65 backdrop-blur-[1px]"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900/40"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+                <div class="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-10 animate-fade-in-up">
+                    Bài tập & Tờ khai
+                </div>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tracking-tight animate-fade-in-up delay-100">
+                    Hành trình <span class="text-teal-400">Phục hồi</span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-200/90 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-200 px-4">
+                    Kết hợp bài tập video từ chuyên gia và tờ khai đánh giá sức khỏe để có liệu trình điều trị hiệu quả nhất.
+                </p>
+            </div>
+        </section>
+
+        <section class="max-w-7xl mx-auto px-4 py-32">
+            <!-- Main Content Area -->
+            <div class="flex flex-col lg:flex-row gap-20">
+                <!-- Left: Video Library -->
+                <div class="lg:w-2/3 space-y-16 reveal">
+                    <div>
+                        <h2 class="text-3xl font-black text-slate-900 mb-6 tracking-tight uppercase">Thư viện bài tập chuyên sâu</h2>
+                        <p class="text-slate-500 font-medium mb-12">Hệ thống bài tập được phân loại theo từng vùng cơ thể và mục đích điều trị. Hãy chọn danh mục bạn quan tâm.</p>
+                        
+                        <!-- Category Tabs -->
+                        <div class="flex flex-wrap gap-3 mb-12">
+                            <button onclick="filterVideos('all')" class="cat-btn active px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest border border-slate-200 transition-all hover:border-teal-500">Tất cả</button>
+                            {% for group in exercises %}
+                            <button onclick="filterVideos('{{ group.category|slugify }}')" class="cat-btn px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest border border-slate-200 transition-all hover:border-teal-500">{{ group.category }}</button>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Video Grid -->
+                        <div class="grid md:grid-cols-2 gap-8" id="video-grid">
+                            {% for group in exercises %}
+                                {% for video in group.videos %}
+                                <div class="video-card reveal group cursor-pointer {% if not video.can_watch %}opacity-90{% endif %}" data-category="{{ group.category|slugify }}" {% if video.can_watch and video.embed_url %}onclick="playVideo('{{ video.embed_url }}', '{{ video.watch_url }}', '{{ video.title|escapejs }}')"{% else %}onclick="window.location.href='/services/'"{% endif %}>
+                                    <div class="relative rounded-[2rem] overflow-hidden aspect-video bg-slate-100 mb-6 shadow-xl shadow-slate-200/50">
+                                        {% if video.thumb_url %}
+                                        <img src="{{ video.thumb_url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ video.title }}">
+                                        {% else %}
+                                        <img src="{% static 'images/assets/rehab-wellness.jpg' %}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{ video.title }}">
+                                        {% endif %}
+                                        <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white text-xl border border-white/30 scale-75 group-hover:scale-100 transition-transform">▶</div>
+                                        </div>
+                                        <div class="absolute bottom-4 right-4 px-3 py-1 bg-slate-900/80 backdrop-blur-md rounded-lg text-[10px] font-black text-white">{{ video.duration }}</div>
+                                        <div class="absolute top-4 left-4 px-3 py-1 rounded-lg text-[10px] font-black {% if video.access == 'paid' %}bg-amber-100 text-amber-700{% else %}bg-emerald-100 text-emerald-700{% endif %}">
+                                            {% if video.access == 'paid' %}Trả phí{% else %}Miễn phí{% endif %}
+                                        </div>
+                                        {% if not video.can_watch %}
+                                        <div class="absolute inset-0 bg-slate-900/50 flex items-center justify-center">
+                                            <span class="px-3 py-1 bg-white/90 text-slate-900 rounded-lg text-xs font-bold">Khóa - mua gói để xem</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <h3 class="text-lg font-black text-slate-900 leading-tight group-hover:text-teal-600 transition-colors">{{ video.title }}</h3>
+                                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-2">{{ group.category }}</p>
+                                </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Main Player Modal (Hidden by default) -->
+                    <div id="video-player" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/95 backdrop-blur-sm">
+                        <button onclick="closePlayer()" class="absolute top-10 right-10 text-white text-4xl hover:rotate-90 transition-transform">&times;</button>
+                        <div class="w-full max-w-5xl">
+                            <div class="video-container mb-8">
+                                <iframe id="player-iframe" src="" allowfullscreen></iframe>
+                            </div>
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <h2 id="player-title" class="text-3xl font-black text-white tracking-tight"></h2>
+                                <a id="player-open-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white text-sm font-semibold hover:bg-white/20 transition">
+                                    Mở trên nền tảng gốc
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-teal-50 rounded-[3rem] p-12 border border-teal-100">
+                        <h4 class="text-teal-900 font-black mb-6 flex items-center gap-4 text-xl">
+                            <span class="text-3xl">💡</span> Lưu ý quan trọng
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-8 text-sm font-medium text-teal-800">
+                            <p>Dừng lại ngay nếu cảm thấy đau nhói hoặc khó chịu bất thường.</p>
+                            <p>Tập luyện trên bề mặt phẳng, không trơn trượt để đảm bảo an toàn.</p>
+                            <p>Nên có người thân hỗ trợ nếu bạn đang trong giai đoạn đầu phục hồi.</p>
+                            <p>Kết hợp với chế độ dinh dưỡng và nghỉ ngơi theo chỉ dẫn của bác sĩ.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Comprehensive Medical Declaration Form (Sidebar Style) -->
+                <div class="lg:w-1/3 reveal delay-300">
+                    <div class="sticky top-10">
+                        <div class="bg-white rounded-[3rem] p-8 shadow-2xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden">
+                            <!-- Medical Record Style Header -->
+                            <div class="absolute top-0 left-0 right-0 h-2 bg-teal-500"></div>
+                            
+                            <div class="flex items-center gap-4 mb-8">
+                                <div class="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 text-2xl font-black">✚</div>
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-900 tracking-tight">Tờ khai sức khỏe</h3>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Medical Assessment Form</p>
+                                </div>
+                            </div>
+
+                            <form action="#" method="POST" class="space-y-6">
+                                {% csrf_token %}
+                                
+                                <!-- Personal Info Section -->
+                                <div class="space-y-4">
+                                    <h4 class="text-[11px] font-black text-teal-600 uppercase tracking-[0.2em] pb-2 border-b border-slate-50">1. Thông tin cá nhân</h4>
+                                    <div>
+                                        <input type="text" name="name" class="form-input" placeholder="Họ và tên bệnh nhân" required>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <input type="tel" name="phone" class="form-input" placeholder="Số điện thoại" required>
+                                        <input type="number" name="age" class="form-input" placeholder="Năm sinh" required>
+                                    </div>
+                                    <div>
+                                        <select name="gender" class="form-input">
+                                            <option value="">Giới tính</option>
+                                            <option value="male">Nam</option>
+                                            <option value="female">Nữ</option>
+                                            <option value="other">Khác</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Condition Section -->
+                                <div class="space-y-4">
+                                    <h4 class="text-[11px] font-black text-teal-600 uppercase tracking-[0.2em] pb-2 border-b border-slate-50">2. Tình trạng sức khỏe</h4>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase ml-1">Vùng đau / Cần phục hồi</label>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            {% for group in exercises %}
+                                            <label class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-500 transition-colors cursor-pointer group">
+                                                <input type="checkbox" name="area" value="{{ group.category }}" class="w-4 h-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500">
+                                                <span class="text-[11px] font-bold text-slate-600 group-hover:text-teal-700">{{ group.category }}</span>
+                                            </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <textarea name="history" class="form-input h-24 text-sm" placeholder="Tiền sử bệnh lý (Phẫu thuật, chấn thương cũ...)"></textarea>
+                                    </div>
+                                    <div>
+                                        <select name="duration" class="form-input text-sm">
+                                            <option value="">Thời gian đau / gặp khó khăn</option>
+                                            <option value="1w">Dưới 1 tuần</option>
+                                            <option value="1m">Khoảng 1 tháng</option>
+                                            <option value="6m">Trên 6 tháng (Mãn tính)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full py-5 bg-slate-900 hover:bg-teal-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-slate-900/20 active:scale-95 flex items-center justify-center gap-3 group">
+                                    Gửi tờ khai cho bác sĩ
+                                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-width="2.5"></path></svg>
+                                </button>
+                                
+                                <p class="text-[9px] text-center text-slate-400 font-medium italic">Handsviet cam kết bảo mật mọi dữ liệu y tế của khách hàng theo quy định.</p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    {% include 'pages/footer.html' %}
+
+    <script>
+        function filterVideos(category) {
+            // Update buttons
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.innerText.toLowerCase() === category.replace(/-/g, ' ').toLowerCase() || (category === 'all' && btn.innerText === 'Tất cả')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Filter grid
+            document.querySelectorAll('.video-card').forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function playVideo(embedUrl, watchUrl, title) {
+            const player = document.getElementById('video-player');
+            const iframe = document.getElementById('player-iframe');
+            const titleEl = document.getElementById('player-title');
+            const openLink = document.getElementById('player-open-link');
+
+            const joinChar = embedUrl.includes('?') ? '&' : '?';
+            iframe.src = `${embedUrl}${joinChar}autoplay=1`;
+            titleEl.innerText = title;
+            openLink.href = watchUrl || '#';
+            player.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePlayer() {
+            const player = document.getElementById('video-player');
+            const iframe = document.getElementById('player-iframe');
+            
+            iframe.src = '';
+            player.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
+    </script>
+</body>
+
+</html>

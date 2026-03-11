@@ -1,0 +1,242 @@
+{% load static %}
+<style>
+    html { scrollbar-width: thin !important; scrollbar-color: #14b8a6 #f1f5f9 !important; }
+    ::-webkit-scrollbar { width: 14px !important; height: 14px !important; display: block !important; }
+    ::-webkit-scrollbar-track { background: #f1f5f9 !important; border-radius: 100px !important; }
+    ::-webkit-scrollbar-thumb { background: #14b8a6 !important; border-radius: 100px !important; border: 3px solid #f1f5f9 !important; }
+    ::-webkit-scrollbar-thumb:hover { background: #0d9488 !important; }
+    .mobile-menu-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: all .3s; z-index: 40; }
+    .mobile-menu-overlay.active { opacity: 1; visibility: visible; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+<aside id="mobileDrawer" class="fixed top-0 right-0 h-screen w-[85vw] max-w-[360px] bg-white border-l border-slate-200 shadow-2xl translate-x-full transition-transform duration-300 z-50 lg:hidden">
+    <div class="h-full flex flex-col">
+        <div class="px-4 py-4 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <img src="{% static 'images/logohv.png' %}" alt="HandsViet Logo" class="h-9 w-9 object-contain">
+                <span class="font-bold text-slate-900">HandsViet</span>
+            </div>
+            <button id="mobileMenuClose" class="p-2 rounded-lg hover:bg-slate-100" aria-label="Đóng menu">
+                <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto no-scrollbar px-4 py-4 space-y-1">
+            <a href="{% url 'pages:home' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Trang chủ</a>
+            <a href="{% url 'pages:about' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Giới thiệu</a>
+            <a href="{% url 'pages:rehab_fields' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Lĩnh vực điều trị</a>
+            <a href="{% url 'rehab:detail' slug='co-xuong-khop' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">🦳 PHCN Cơ xương khớp</a>
+            <a href="{% url 'rehab:detail' slug='chan-thuong-chinh-hinh' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">🩺 PHCN Chấn thương chỉnh hình</a>
+            <a href="{% url 'rehab:detail' slug='than-kinh' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">🧠 PHCN Tổn thương thần kinh</a>
+            <a href="{% url 'rehab:detail' slug='sau-tai-bien' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">💚 PHCN Sau tai biến</a>
+            <a href="{% url 'rehab:detail' slug='sau-phau-thuat' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">✂️ PHCN Sau phẫu thuật</a>
+            <a href="{% url 'pages:exercise_library' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Phương pháp trị liệu</a>
+            <a href="{% url 'pages:exercise_library' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">📋 Bài tập & Tờ khai</a>
+            <a href="{% url 'pages:physical_therapy' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">💪 Vật lý trị liệu</a>
+            <a href="{% url 'pages:occupational_therapy' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">👥 Hoạt động trị liệu</a>
+            <a href="{% url 'pages:speech_therapy' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">💬 Ngôn ngữ trị liệu</a>
+            <a href="{% url 'pages:services' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Dịch vụ</a>
+            <a href="{% url 'news:news_list' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Tin tức</a>
+            <a href="{% url 'news:news_category' category_slug='tin-tuc-y-khoa' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">📰 Tin tức Y khoa</a>
+            <a href="{% url 'news:news_category' category_slug='cau-chuyen-khach-hang' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">🧑 Câu chuyện khách hàng</a>
+            <a href="{% url 'news:news_category' category_slug='tin-truyen-thong' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">📰 Tin truyền thông</a>
+            <a href="{% url 'news:news_category' category_slug='tu-van-phcn' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">📖 Tư vấn PHCN</a>
+            <a href="{% url 'news:news_category' category_slug='khuyen-mai-su-kien' %}" class="block pl-6 pr-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">🎁 Khuyến mãi sự kiện</a>
+            <a href="{% url 'pages:contact' %}" class="block px-3 py-2 rounded-lg hover:bg-blue-50 text-slate-700">Liên hệ</a>
+        </nav>
+        <div class="px-4 py-4 border-t border-slate-200">
+            {% if request.user.is_authenticated %}
+                <p class="text-sm text-slate-600 mb-3">Xin chào, <strong class="text-slate-900">{{ request.user.get_username }}</strong></p>
+                <div class="grid grid-cols-1 gap-2">
+                    <a href="{% url 'auth:care_management' %}" class="text-center px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold">Quản lý chăm sóc</a>
+                    <a href="{% url 'auth:profile' %}" class="text-center px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold">Thông tin người dùng</a>
+                    <a href="{% url 'auth:logout' %}" class="text-center px-4 py-2 rounded-xl bg-slate-800 text-white font-semibold">Đăng xuất</a>
+                </div>
+            {% else %}
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{% url 'auth:login' %}" class="text-center px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold">Đăng nhập</a>
+                    <a href="{% url 'auth:register' %}" class="text-center px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold">Đăng ký</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</aside>
+
+<header class="bg-[#EAEDEC] shadow-md fixed top-0 inset-x-0 z-40 header-slide-down font-sans">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <a href="/" class="flex items-center gap-2 flex-shrink-0 group">
+            <img src="{% static 'images/logohv.png' %}" alt="HandsViet Logo" class="h-10 w-10 object-contain group-hover:scale-110 transition-transform duration-300">
+            <span class="text-xl font-extrabold bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent drop-shadow-lg hover:drop-shadow-2xl transition-all duration-300 hover:scale-105">HandsViet</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden lg:flex items-center gap-4 xl:gap-8 justify-center">
+            <a href="/" class="{% if request.resolver_match.url_name == 'home' %}text-blue-600 border-b-2 border-[#14B8A6]{% else %}text-gray-700 hover:text-blue-600{% endif %} transition font-medium whitespace-nowrap">Trang chủ</a>
+
+            <div class="relative group">
+                <button class="{% if request.resolver_match.url_name == 'about' %}text-blue-600 border-b-2 border-[#14B8A6]{% else %}text-gray-700 hover:text-blue-600{% endif %} transition font-medium flex items-center gap-1 whitespace-nowrap">
+                    Giới thiệu
+                    <svg class="group-hover:translate-y-0.5 transition-all duration-150" style="width:14px;height:14px;min-width:14px;display:inline-block;color:#475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                    </svg>
+                </button>
+                <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <a href="{% url 'pages:about' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">ℹ️ Về chúng tôi</a>
+                    <a href="{% url 'pages:experts' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">👥 Đội ngũ Bác sĩ - KTV</a>
+                    <a href="{% url 'pages:faq' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">✚ Câu hỏi thường gặp</a>
+                    <a href="{% url 'pages:facilities' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">🏥 Cơ sở vật chất</a>
+                    <a href="{% url 'pages:partners' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">🤝 Đối tác</a>
+                    <a href="{% url 'pages:visit_guide' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-b-lg">📍 Hướng dẫn thăm khám</a>
+                </div>
+            </div>
+
+            <div class="relative group">
+                <button class="text-gray-700 hover:text-blue-600 transition font-medium flex items-center gap-1 whitespace-nowrap">
+                    Lĩnh vực điều trị
+                    <svg class="group-hover:translate-y-0.5 transition-all duration-150" style="width:14px;height:14px;min-width:14px;display:inline-block;color:#475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                    </svg>
+                </button>
+                <div class="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <a href="{% url 'rehab:detail' slug='co-xuong-khop' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">🦳 PHCN Cơ Xương Khớp</a>
+                    <a href="{% url 'rehab:detail' slug='chan-thuong-chinh-hinh' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">🩺 PHCN Chấn thương Chỉnh hình</a>
+                    <a href="{% url 'rehab:detail' slug='than-kinh' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">🧠 PHCN Tổn thương Thần kinh</a>
+                    <a href="{% url 'rehab:detail' slug='sau-tai-bien' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">💚 PHCN Sau tai biến</a>
+                    <a href="{% url 'rehab:detail' slug='sau-phau-thuat' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-b-lg">✂️ PHCN Sau phẫu thuật</a>
+                </div>
+            </div>
+
+            <div class="relative group">
+                <button class="text-gray-700 hover:text-blue-600 transition font-medium flex items-center gap-1 whitespace-nowrap">
+                    Phương pháp trị liệu
+                    <svg class="group-hover:translate-y-0.5 transition-all duration-150" style="width:14px;height:14px;min-width:14px;display:inline-block;color:#475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                    </svg>
+                </button>
+                <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <a href="{% url 'pages:exercise_library' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">📓 Bài tập & Tờ khai</a>
+                    <a href="{% url 'pages:physical_therapy' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">💪 Vật lý trị liệu</a>
+                    <a href="{% url 'pages:occupational_therapy' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">👥 Hoạt động trị liệu</a>
+                    <a href="{% url 'pages:speech_therapy' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-b-lg">💬 Ngôn ngữ trị liệu</a>
+                </div>
+            </div>
+
+            <div class="relative group">
+                <button class="{% if 'news' in request.resolver_match.app_name or '/news/' in request.path %}text-blue-600 border-b-2 border-[#14B8A6]{% else %}text-gray-700 hover:text-blue-600{% endif %} transition font-medium flex items-center gap-1 whitespace-nowrap">
+                    Tin tức
+                    <svg class="group-hover:translate-y-0.5 transition-all duration-150" style="width:14px;height:14px;min-width:14px;display:inline-block;color:#475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                    </svg>
+                </button>
+                <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <a href="{% url 'news:news_category' category_slug='tin-tuc-y-khoa' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">📰 Tin tức Y khoa</a>
+                    <a href="{% url 'news:news_category' category_slug='cau-chuyen-khach-hang' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">🧑 Câu chuyện khách hàng</a>
+                    <a href="{% url 'news:news_category' category_slug='tin-truyen-thong' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">📰 Tin truyền thông</a>
+                    <a href="{% url 'news:news_category' category_slug='tu-van-phcn' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">📖 Tư vấn PHCN</a>
+                    <a href="{% url 'news:news_category' category_slug='khuyen-mai-su-kien' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-b-lg">🎁 Khuyến mãi sự kiện</a>
+                </div>
+            </div>
+
+            <a href="{% url 'pages:services' %}" class="{% if request.resolver_match.url_name == 'services' %}text-blue-600 border-b-2 border-[#14B8A6]{% else %}text-gray-700 hover:text-blue-600{% endif %} transition font-medium whitespace-nowrap">Dịch vụ</a>
+            <a href="{% url 'pages:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}text-blue-600 border-b-2 border-[#14B8A6]{% else %}text-gray-700 hover:text-blue-600{% endif %} transition font-medium whitespace-nowrap">Liên hệ</a>
+        </nav>
+
+        <div class="hidden lg:flex items-center gap-4 flex-shrink-0">
+            <form action="/i18n/setlang/" method="post" class="flex items-center gap-1">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" name="language" value="vi" class="px-2 py-1 text-xs rounded-md border border-slate-300">VI</button>
+                <button type="submit" name="language" value="en" class="px-2 py-1 text-xs rounded-md border border-slate-300">EN</button>
+            </form>
+            {% if request.user.is_authenticated %}
+                <div class="relative group">
+                    <button class="text-sm text-gray-700 hover:text-blue-600 font-medium">
+                        Xin chào, <strong>{{ request.user.get_username }}</strong>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        <a href="{% url 'auth:care_management' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Quản lý chăm sóc</a>
+                        <a href="{% url 'auth:profile' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-t-lg">Thông tin người dùng</a>
+                        <a href="{% url 'auth:logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-b-lg">Đăng xuất</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'auth:login' %}" class="text-gray-700 hover:text-blue-600 font-medium">Đăng nhập</a>
+                <a href="{% url 'auth:register' %}" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold shadow">Đăng ký</a>
+            {% endif %}
+        </div>
+        <button id="mobileMenuOpen" class="lg:hidden inline-flex items-center justify-center p-2 rounded-lg bg-white border border-slate-300 shadow-sm" aria-label="Mở menu">
+            <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </div>
+</header>
+<div class="h-[72px]" aria-hidden="true"></div>
+
+<script>
+    // Global image fallback: catches broken images immediately and for future DOM updates.
+    (function () {
+        const overlay = document.getElementById('mobileMenuOverlay');
+        const drawer = document.getElementById('mobileDrawer');
+        const openBtn = document.getElementById('mobileMenuOpen');
+        const closeBtn = document.getElementById('mobileMenuClose');
+        const drawerLinks = drawer ? drawer.querySelectorAll('a') : [];
+        if (drawer) {
+            const topLevelLinks = drawer.querySelectorAll('nav > a');
+            topLevelLinks.forEach(function (link) {
+                const next = link.nextElementSibling;
+                const hasChildren = next && next.classList.contains('pl-6');
+                if (hasChildren && !link.dataset.hasCaret) {
+                    link.dataset.hasCaret = '1';
+                    link.insertAdjacentHTML('beforeend', '<span class="ml-1 text-slate-400">▾</span>');
+                }
+            });
+        }
+        function openMenu() {
+            if (!overlay || !drawer) return;
+            overlay.classList.add('active');
+            drawer.classList.remove('translate-x-full');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMenu() {
+            if (!overlay || !drawer) return;
+            overlay.classList.remove('active');
+            drawer.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+        }
+        if (openBtn) {
+            openBtn.addEventListener('click', function () {
+                if (drawer.classList.contains('translate-x-full')) {
+                    openMenu();
+                } else {
+                    closeMenu();
+                }
+            });
+        }
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+        drawerLinks.forEach(function (link) { link.addEventListener('click', closeMenu); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeMenu();
+        });
+
+        function applyFallback(img) {
+            if (!img || img.dataset.fallbackApplied === '1') return;
+            img.dataset.fallbackApplied = '1';
+            img.src = "{% static 'images/logo.png' %}";
+        }
+
+        document.addEventListener('error', function (event) {
+            if (event.target && event.target.tagName === 'IMG') {
+                applyFallback(event.target);
+            }
+        }, true);
+
+        window.addEventListener('load', function () {
+            document.querySelectorAll('img').forEach(function (img) {
+                if (img.complete && img.naturalWidth === 0) {
+                    applyFallback(img);
+                }
+            });
+        });
+    })();
+</script>
