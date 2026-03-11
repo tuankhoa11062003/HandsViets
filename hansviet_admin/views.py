@@ -1,14 +1,19 @@
 from datetime import datetime
 from types import SimpleNamespace
 
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Q
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 
 from .forms import (
+    DashboardUserCreateForm,
+    DashboardUserUpdateForm,
     NewsArticleForm,
     NewsCategoryForm,
     PackageForm,
@@ -21,14 +26,139 @@ from .models import Lead, NewsArticle, NewsCategory, Package, Service, ServiceCa
 
 def staff_required(view_func):
     """Ensure user is staff/superuser and authenticated."""
-    check_staff = user_passes_test(lambda u: u.is_staff or u.is_superuser, login_url="/auth/login/")
-    return login_required(check_staff(view_func), login_url="/auth/login/")
+    admin_login_url = getattr(settings, "ADMIN_LOGIN_URL", "/hansviet_admin/login/")
+    check_staff = user_passes_test(lambda u: u.is_staff or u.is_superuser, login_url=admin_login_url)
+    return login_required(check_staff(view_func), login_url=admin_login_url)
+
+
+def admin_login_view(request):
+    """Dedicated login screen for staff/admin users."""
+    default_next = "/hansviet_admin/"
+    next_url = request.GET.get("next") or request.POST.get("next") or default_next
+
+    if request.user.is_authenticated:
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect(next_url)
+        messages.error(request, "Tai khoan hien tai khong co quyen quan tri.")
+        return redirect("/")
+
+    form = AuthenticationForm(request, data=request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            user = form.get_user()
+            if user.is_staff or user.is_superuser:
+                login(request, user)
+                return redirect(next_url)
+            messages.error(request, "Tai khoan nay khong co quyen quan tri.")
+        else:
+            messages.error(request, "Ten dang nhap hoac mat khau khong dung.")
+
+    return render(request, "admin/admin_login.html", {"form": form, "next": next_url})
+
+
+def dashboard_logout(request):
+    logout(request)
+    admin_login_url = getattr(settings, "ADMIN_LOGIN_URL", "/hansviet_admin/login/")
+    return redirect(f"{admin_login_url}?next=/hansviet_admin/")
+
+
+def _greeting_by_local_time():
+    hour = timezone.localtime().hour
+    if 5 <= hour < 12:
+        return "Chào buổi sáng"
+    if 12 <= hour < 18:
+        return "Chào buổi chiều"
+    return "Chào buổi tối"
+
+
+def _initials(text):
+    raw = (text or "").strip()
+    if not raw:
+        return "NA"
+    parts = [part for part in raw.replace("_", " ").split() if part]
+    if len(parts) >= 2:
+        return f"{parts[0][0]}{parts[-1][0]}".upper()
+    return raw[:2].upper()
+
+
+def _relative_time_label(dt):
+    if not dt:
+        return "Vừa xong"
+    if timezone.is_naive(dt):
+        dt = timezone.make_aware(dt, timezone.get_current_timezone())
+    seconds = max(int((timezone.now() - dt).total_seconds()), 0)
+    if seconds < 60:
+        return "Vừa xong"
+    minutes = seconds // 60
+    if minutes < 60:
+        return f"{minutes} phút trước"
+    hours = minutes // 60
+    if hours < 24:
+        return f"{hours} giờ trước"
+    days = hours // 24
+    if days < 7:
+        return f"{days} ngày trước"
+    return timezone.localtime(dt).strftime("%d/%m/%Y %H:%M")
+
+
+def _event_sort_key(dt):
+    if not dt:
+        return 0
+    if timezone.is_naive(dt):
+        dt = timezone.make_aware(dt, timezone.get_current_timezone())
+    return dt.timestamp()
 
 
 @staff_required
 def dashboard_home(request):
     User = get_user_model()
     today = timezone.localdate()
+    news_today = NewsArticle.objects.filter(is_published=True, published_at__date=today).count()
+    leads_today = Lead.objects.filter(created_at__date=today).count()
+
+    on_duty_qs = User.objects.filter(Q(is_staff=True) | Q(is_superuser=True), is_active=True).order_by("-last_login", "username")
+    on_duty_count = on_duty_qs.count()
+    on_duty_badges = [_initials(user.get_full_name() or user.username) for user in on_duty_qs[:3]]
+    on_duty_extra_count = max(on_duty_count - len(on_duty_badges), 0)
+
+    events = []
+
+    for article in NewsArticle.objects.filter(is_published=True).order_by("-published_at")[:6]:
+        events.append(
+            {
+                "event_time": article.published_at,
+                "title": "Bản tin mới",
+                "description": f'Đã đăng bài "{article.title}".',
+                "dot_class": "bg-teal-100",
+            }
+        )
+
+    for lead in Lead.objects.order_by("-created_at")[:6]:
+        lead_contact = lead.email or lead.phone or lead.name
+        source_page = lead.page or "website"
+        events.append(
+            {
+                "event_time": lead.created_at,
+                "title": "Yêu cầu hỗ trợ mới",
+                "description": f"{lead_contact} vừa gửi yêu cầu từ trang {source_page}.",
+                "dot_class": "bg-blue-100",
+            }
+        )
+
+    for user_obj in User.objects.filter(is_staff=False, is_superuser=False).order_by("-date_joined")[:6]:
+        user_contact = user_obj.email or user_obj.username
+        events.append(
+            {
+                "event_time": user_obj.date_joined,
+                "title": "Người dùng mới",
+                "description": f"{user_contact} vừa đăng ký tài khoản.",
+                "dot_class": "bg-amber-100",
+            }
+        )
+
+    recent_activities = sorted(events, key=lambda item: _event_sort_key(item.get("event_time")), reverse=True)[:6]
+    for item in recent_activities:
+        item["time_label"] = _relative_time_label(item.get("event_time"))
 
     context = {
         "total_users": User.objects.count(),
@@ -36,8 +166,13 @@ def dashboard_home(request):
         "total_news": NewsArticle.objects.count(),
         "total_therapies": Package.objects.filter(is_active=True).count(),
         "total_services": Service.objects.count(),
-        "new_news_today": NewsArticle.objects.filter(published_at__date=today).count(),
-        "new_leads_today": Lead.objects.filter(created_at__date=today).count(),
+        "new_news_today": news_today,
+        "new_leads_today": leads_today,
+        "greeting_text": _greeting_by_local_time(),
+        "on_duty_count": on_duty_count,
+        "on_duty_badges": on_duty_badges,
+        "on_duty_extra_count": on_duty_extra_count,
+        "recent_activities": recent_activities,
     }
     return render(request, "dashboard/index.html", context)
 
@@ -67,25 +202,70 @@ def user_list(request):
 
 
 @staff_required
+def user_create(request):
+    form = DashboardUserCreateForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        created_user = form.save()
+        messages.success(request, f'Đã tạo tài khoản "{created_user.username}".')
+        return redirect("dashboard:user_list")
+
+    return render(
+        request,
+        "dashboard/users/form.html",
+        {
+            "form": form,
+            "title": "Thêm nhân viên",
+            "button_text": "Tạo tài khoản",
+            "is_create": True,
+        },
+    )
+
+
+@staff_required
 def user_edit(request, pk):
     User = get_user_model()
-    user_obj = User.objects.filter(pk=pk).first()
-    if user_obj:
-        user = SimpleNamespace(
-            pk=user_obj.pk,
-            username=user_obj.username,
-            email=user_obj.email,
-            role="staff" if user_obj.is_staff or user_obj.is_superuser else "user",
-        )
-    else:
-        user = None
-    return render(request, "dashboard/users/form.html", {"target_user": user})
+    user_obj = get_object_or_404(User, pk=pk)
+    form = DashboardUserUpdateForm(request.POST or None, instance=user_obj)
+
+    if request.method == "POST" and form.is_valid():
+        if request.user.pk == user_obj.pk:
+            role = form.cleaned_data.get("role")
+            is_active = form.cleaned_data.get("is_active")
+            if role != "staff":
+                form.add_error("role", "Không thể hạ quyền chính tài khoản đang đăng nhập.")
+            if not is_active:
+                form.add_error("is_active", "Không thể khóa chính tài khoản đang đăng nhập.")
+
+        if not form.errors:
+            form.save()
+            messages.success(request, "Đã cập nhật tài khoản.")
+            return redirect("dashboard:user_list")
+
+    return render(
+        request,
+        "dashboard/users/form.html",
+        {
+            "form": form,
+            "target_user": user_obj,
+            "title": f"Chỉnh sửa: {user_obj.username}",
+            "button_text": "Lưu",
+            "is_create": False,
+        },
+    )
 
 
 @staff_required
 def user_delete(request, pk):
     User = get_user_model()
-    user_obj = User.objects.filter(pk=pk).first()
+    user_obj = get_object_or_404(User, pk=pk)
+    if request.method == "POST":
+        if request.user.pk == user_obj.pk:
+            messages.error(request, "Không thể xóa chính tài khoản đang đăng nhập.")
+            return redirect("dashboard:user_list")
+        username = user_obj.username
+        user_obj.delete()
+        messages.success(request, f'Đã xóa tài khoản "{username}".')
+        return redirect("dashboard:user_list")
     return render(request, "dashboard/users/confirm_delete.html", {"target_user": user_obj})
 
 

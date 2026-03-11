@@ -595,10 +595,15 @@ def login_view(request):
         )
         return redirect(target)
 
+    admin_login_url = getattr(settings, "ADMIN_LOGIN_URL", "/hansviet_admin/login/")
     form = AuthenticationForm(request, data=request.POST or None)
     if request.method == "POST":
         if form.is_valid():
             user = form.get_user()
+            if user.is_staff or user.is_superuser:
+                messages.info(request, "Tai khoan quan tri vui long dang nhap tai trang admin.")
+                target_admin = request.GET.get("next") or settings.LOGIN_REDIRECT_URL
+                return redirect(f"{admin_login_url}?next={target_admin}")
             login(request, user)
 
             target = request.GET.get("next") or (

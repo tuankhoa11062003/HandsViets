@@ -38,7 +38,10 @@ SECRET_KEY = 'django-insecure-ix6^2#xu44uhjcb5_5*uxx!lgd9lb^#8n#%m(o8ab$#zrxf1@f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "handsviet.imagentu.cloud",
+    "165.99.16.48"
+]
 
 
 # Application definition
@@ -146,12 +149,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Authentication defaults
 LOGIN_URL = '/auth/login/'
+ADMIN_LOGIN_URL = '/hansviet_admin/login/'
 # Send staff/admin to custom admin area
 LOGIN_REDIRECT_URL = '/hansviet_admin/'
 LOGOUT_REDIRECT_URL = '/'
 # URL prefixes that do not require authentication
 LOGIN_EXEMPT_URLS = [
     '/', '/auth/login/', '/auth/register/', '/auth/logout/',
+    '/hansviet_admin/login/',
     '/admin/', '/static/', '/media/', '/favicon.ico',
     # Public marketing pages
     '/services/', '/services/category/', '/news/', '/news/category/',

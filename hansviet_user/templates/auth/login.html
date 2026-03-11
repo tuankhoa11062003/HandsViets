@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HandsViet - Đăng Nhập CMS</title>
+    <title>HandsViet - Dang Nhap Nguoi Dung</title>
     <style>
         * {
             margin: 0;
@@ -271,7 +271,7 @@
     <div class="container">
         <div class="login-box">
             <div class="login-header">
-                <h1>HandsViet CMS</h1>
+                <h1>HandsViet User Portal</h1>
                 <p>Hệ thống quản lý nội dung</p>
             </div>
 
@@ -337,6 +337,8 @@
             </div>
 
             <div class="login-footer">
+                <p>Tai khoan quan tri? <a href="{% url 'dashboard:login' %}"
+                        style="color: #667eea; text-decoration: none; font-weight: 600;">Dang nhap admin</a></p>
                 <p>Chưa có tài khoản? <a href="{% url 'auth:register' %}"
                         style="color: #667eea; text-decoration: none; font-weight: 600;">Đăng ký ngay</a></p>
                 <p style="margin-top: 10px; border-top: 1px solid #e0e0e0; padding-top: 10px;">&copy; 2026 HandsViet.

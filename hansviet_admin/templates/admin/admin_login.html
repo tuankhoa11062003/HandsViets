@@ -358,8 +358,9 @@
                 </div>
                 {% endif %}
 
-                <form method="POST" action="{% url 'admin_login' %}">
+                <form method="POST" action="{% url 'dashboard:login' %}">
                     {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
 
                     <div class="form-group">
                         <label for="id_username">Tên đăng nhập</label>
@@ -382,6 +383,7 @@
                     </div>
 
                     <div class="form-options">
+                        <a href="{% url 'auth:login' %}">User Login</a>
                         <label>
                             <input type="checkbox" name="remember">
                             Ghi nhớ tôi

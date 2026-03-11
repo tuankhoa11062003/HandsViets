@@ -1,4 +1,4 @@
-{% extends 'dashboard/base.html' %}
+﻿{% extends 'dashboard/base.html' %}
 {% load static %}
 
 {% block title %}Tổng quan - HandsViet Admin{% endblock %}
@@ -31,21 +31,26 @@
     <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div class="space-y-2">
             <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                Chào buổi sáng, <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-500">{{ request.user.username }}</span>! 👋
+                {{ greeting_text|default:"Chào" }}, <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-500">{{ request.user.username }}</span>! 👋
             </h2>
             <p class="text-slate-400 font-medium max-w-xl text-lg">
-                Hệ thống HandsViet đã sẵn sàng. Bạn có <span class="text-teal-600 font-bold underline decoration-teal-200">2 bản tin mới</span> và <span class="text-blue-600 font-bold underline decoration-blue-200">5 yêu cầu hỗ trợ</span> cần xử lý.
+                Hệ thống HandsViet đã sẵn sàng. Bạn có <span class="text-teal-600 font-bold underline decoration-teal-200">{{ new_news_today|default:0 }} bản tin mới</span> và <span class="text-blue-600 font-bold underline decoration-blue-200">{{ new_leads_today|default:0 }} yêu cầu hỗ trợ</span> cần xử lý.
             </p>
         </div>
         <div class="hidden lg:flex items-center gap-4 bg-slate-50 p-2 rounded-[2rem] border border-slate-100">
             <div class="flex -space-x-3">
-                <div class="w-12 h-12 rounded-full border-4 border-white bg-slate-200 flex items-center justify-center font-bold text-slate-500 text-xs">A1</div>
-                <div class="w-12 h-12 rounded-full border-4 border-white bg-teal-500/20 flex items-center justify-center font-bold text-teal-600 text-xs">A2</div>
-                <div class="w-12 h-12 rounded-full border-4 border-white bg-emerald-500/20 flex items-center justify-center font-bold text-emerald-600 text-xs text-xl">+</div>
+                {% for badge in on_duty_badges %}
+                <div class="w-12 h-12 rounded-full border-4 border-white flex items-center justify-center font-bold text-xs {% cycle 'bg-slate-200 text-slate-500' 'bg-teal-500/20 text-teal-600' 'bg-emerald-500/20 text-emerald-600' %}">{{ badge }}</div>
+                {% empty %}
+                <div class="w-12 h-12 rounded-full border-4 border-white bg-slate-200 flex items-center justify-center font-bold text-slate-500 text-xs">NA</div>
+                {% endfor %}
+                {% if on_duty_extra_count > 0 %}
+                <div class="w-12 h-12 rounded-full border-4 border-white bg-emerald-500/20 flex items-center justify-center font-bold text-emerald-600 text-xs">+{{ on_duty_extra_count }}</div>
+                {% endif %}
             </div>
             <div class="pr-4">
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đội ngũ trực</p>
-                <p class="text-xs font-bold text-slate-700">3 Thành viên</p>
+                <p class="text-xs font-bold text-slate-700">{{ on_duty_count|default:0 }} Thành viên</p>
             </div>
         </div>
     </div>
@@ -188,38 +193,30 @@
                 <span class="w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
             </div>
             
+            {% if recent_activities %}
             <div class="space-y-8">
-                <!-- Activity Item -->
+                {% for activity in recent_activities %}
                 <div class="flex gap-4 relative">
+                    {% if not forloop.last %}
                     <div class="absolute left-[11px] top-8 bottom-[-20px] w-0.5 bg-slate-100"></div>
-                    <div class="w-6 h-6 rounded-full bg-teal-100 border-4 border-white shadow-sm flex-shrink-0 z-10"></div>
+                    {% endif %}
+                    <div class="w-6 h-6 rounded-full {{ activity.dot_class }} border-4 border-white shadow-sm flex-shrink-0 z-10"></div>
                     <div>
-                        <p class="text-[11px] font-black text-slate-900 uppercase tracking-wide">Cập nhật dịch vụ</p>
-                        <p class="text-xs text-slate-400 font-medium mt-1">Admin vừa chỉnh sửa "Phục hồi chức năng vai".</p>
-                        <p class="text-[9px] font-bold text-slate-300 mt-2 uppercase">10 phút trước</p>
+                        <p class="text-[11px] font-black text-slate-900 uppercase tracking-wide">{{ activity.title }}</p>
+                        <p class="text-xs text-slate-400 font-medium mt-1">{{ activity.description }}</p>
+                        <p class="text-[9px] font-bold text-slate-300 mt-2 uppercase">{{ activity.time_label }}</p>
                     </div>
                 </div>
-                <!-- Activity Item -->
-                <div class="flex gap-4 relative">
-                    <div class="absolute left-[11px] top-8 bottom-[-20px] w-0.5 bg-slate-100"></div>
-                    <div class="w-6 h-6 rounded-full bg-blue-100 border-4 border-white shadow-sm flex-shrink-0 z-10"></div>
-                    <div>
-                        <p class="text-[11px] font-black text-slate-900 uppercase tracking-wide">Người dùng mới</p>
-                        <p class="text-xs text-slate-400 font-medium mt-1">Khách hàng <span class="text-blue-600 underline">nguyenvana@gmail.com</span> vừa đăng ký.</p>
-                        <p class="text-[9px] font-bold text-slate-300 mt-2 uppercase">1 giờ trước</p>
-                    </div>
-                </div>
-                <!-- Activity Item -->
-                <div class="flex gap-4 relative">
-                    <div class="w-6 h-6 rounded-full bg-amber-100 border-4 border-white shadow-sm flex-shrink-0 z-10"></div>
-                    <div>
-                        <p class="text-[11px] font-black text-slate-900 uppercase tracking-wide">Bản tin định kỳ</p>
-                        <p class="text-xs text-slate-400 font-medium mt-1">Hệ thống đã tự động gửi báo cáo tuần cho quản trị viên.</p>
-                        <p class="text-[9px] font-bold text-slate-300 mt-2 uppercase">3 giờ trước</p>
-                    </div>
-                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-xs text-slate-400 font-medium">Chưa có hoạt động mới.</p>
+            {% endif %}
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
+
+
