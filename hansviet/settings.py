@@ -40,10 +40,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "handsviet.imagentu.cloud",
-    "165.99.16.48"
+    "165.99.16.48",
+    "127.0.0.1",
+    "localhost",
+    "0.0.0.0",
 ]
-
-
 # Application definition
 
 INSTALLED_APPS = [
