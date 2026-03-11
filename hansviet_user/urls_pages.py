@@ -14,6 +14,7 @@ urlpatterns = [
     path('exercise-library/', views.exercise_library, name='exercise_library'),
     path('payment/vnpay/<slug:slug>/', views.vnpay_start, name='vnpay_start'),
     path('payment/vnpay/return/', views.vnpay_return, name='vnpay_return'),
+    path('payment/qr/webhook/', views.qr_payment_webhook, name='qr_payment_webhook'),
     path('physical-therapy/', views.physical_therapy, name='physical_therapy'),
     path('occupational-therapy/', views.occupational_therapy, name='occupational_therapy'),
     path('speech-therapy/', views.speech_therapy, name='speech_therapy'),

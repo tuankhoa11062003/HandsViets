@@ -1,7 +1,13 @@
 import uuid
+import re
+import json
+import hashlib
+import logging
+import unicodedata
+from decimal import Decimal, InvalidOperation
 from datetime import timedelta
 from datetime import datetime
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, quote, urlparse
 
 from django.conf import settings
 from django.contrib import messages
@@ -11,9 +17,11 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import get_language
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.db.models import F
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
+from django.urls import reverse
 
 from django.views.decorators.csrf import csrf_exempt
 from hansviet_admin.models import (
@@ -29,6 +37,7 @@ from hansviet_admin.models import (
     Service,
     ServiceCategory,
     SessionSchedule,
+    Transaction,
     Video,
 )
 from .forms import LeadForm
@@ -62,6 +71,30 @@ DEFAULT_SERVICE_CATEGORIES = [
     ("Ngon Ngu Tri Lieu", "ngon-ngu-tri-lieu"),
     ("Dinh Duong", "dinh-duong"),
 ]
+
+SERVICE_CYCLE_META = {
+    "week": {"rank": 0, "label": "tuần", "group": "Gói theo tuần"},
+    "month": {"rank": 1, "label": "tháng", "group": "Gói theo tháng"},
+    "year": {"rank": 2, "label": "năm", "group": "Gói theo năm"},
+    "other": {"rank": 3, "label": "", "group": "Gói khác"},
+}
+
+PAYMENT_TIMEOUT_SECONDS = 180
+PAYMENT_REF_PATTERN = re.compile(r"(HV[A-Z0-9]{10,})")
+BOOKING_SPECIALTY_LABELS = {
+    "xuong-khop": "PHCN Cơ xương khớp",
+    "chan-thuong": "PHCN Chấn thương",
+    "than-kinh": "PHCN Thần kinh",
+    "nhi-khoa": "PHCN Nhi khoa",
+}
+BOOKING_SERVICE_LABELS = {
+    "bai-tap": "Bài tập trị liệu",
+    "vat-ly": "Vật lý trị liệu",
+    "hoat-dong": "Hoạt động trị liệu",
+    "ngon-ngu": "Ngôn ngữ trị liệu",
+}
+
+logger = logging.getLogger(__name__)
 
 REHAB_FIELD_DETAILS = {
     "co-xuong-khop": {
@@ -184,7 +217,10 @@ REHAB_FIELD_DETAILS = {
 
 def ensure_news_categories():
     for name, slug in DEFAULT_NEWS_CATEGORIES:
-        NewsCategory.objects.get_or_create(slug=slug, defaults={"name": name})
+        category, _ = NewsCategory.objects.get_or_create(slug=slug, defaults={"name": name})
+        if category.name != name:
+            category.name = name
+            category.save(update_fields=["name"])
 
 
 def ensure_service_categories():
@@ -193,6 +229,382 @@ def ensure_service_categories():
             slug=slug,
             defaults={"name": name, "order": index},
         )
+
+
+def _parse_service_cycle(duration_text: str) -> tuple[str, int]:
+    text = (duration_text or "").strip().lower()
+    normalized_text = "".join(
+        ch for ch in unicodedata.normalize("NFD", text) if unicodedata.category(ch) != "Mn"
+    )
+    count_match = re.search(r"(\d+)", normalized_text)
+    cycle_count = int(count_match.group(1)) if count_match else 1
+
+    if any(token in normalized_text for token in ("tuan", "week", "wk")):
+        return "week", max(1, cycle_count)
+    if any(token in normalized_text for token in ("thang", "month", "mo")):
+        return "month", max(1, cycle_count)
+    if any(token in normalized_text for token in ("nam", "year", "yr")):
+        return "year", max(1, cycle_count)
+    return "other", max(1, cycle_count)
+
+
+def _decorate_service(service: Service) -> Service:
+    cycle_key, cycle_count = _parse_service_cycle(service.duration or "")
+    meta = SERVICE_CYCLE_META.get(cycle_key, SERVICE_CYCLE_META["other"])
+
+    service.cycle_key = cycle_key
+    service.cycle_rank = int(meta["rank"])
+    service.cycle_count = cycle_count
+    service.cycle_group_label = str(meta["group"])
+    service.display_price = (service.price_text or "").strip() or "Liên hệ"
+    service.display_duration = (service.duration or "").strip() or "Chưa cập nhật"
+    service.display_full_info = f"{service.display_price} / {service.display_duration}"
+    return service
+
+
+def _sorted_services(rows) -> list[Service]:
+    decorated = [_decorate_service(service) for service in rows]
+    return sorted(
+        decorated,
+        key=lambda service: (
+            int(getattr(service, "cycle_rank", 9)),
+            int(getattr(service, "cycle_count", 999)),
+            int(service.order or 0),
+            (service.title or "").lower(),
+        ),
+    )
+
+
+def _group_services(rows) -> list[dict]:
+    services = list(rows)
+    if not services:
+        return []
+    if not hasattr(services[0], "cycle_key"):
+        services = _sorted_services(services)
+
+    groups = {key: [] for key in ("week", "month", "year", "other")}
+    for service in services:
+        groups.setdefault(service.cycle_key, []).append(service)
+
+    out = []
+    for key in ("week", "month", "year", "other"):
+        items = groups.get(key) or []
+        if not items:
+            continue
+        out.append(
+            {
+                "key": key,
+                "label": SERVICE_CYCLE_META[key]["group"],
+                "services": items,
+            }
+        )
+    return out
+
+
+def _parse_amount_text(value: str) -> Decimal:
+    digits = re.sub(r"[^\d]", "", value or "")
+    if not digits:
+        return Decimal("0")
+    return Decimal(digits)
+
+
+def _duration_to_days(duration_text: str) -> int:
+    cycle_key, cycle_count = _parse_service_cycle(duration_text or "")
+    if cycle_key == "week":
+        return max(1, cycle_count * 7)
+    if cycle_key == "month":
+        return max(1, cycle_count * 30)
+    if cycle_key == "year":
+        return max(1, cycle_count * 365)
+    return max(1, cycle_count)
+
+
+def _service_package_slug(service_slug: str) -> str:
+    base = f"svc-{service_slug}"
+    if len(base) <= 50:
+        return base
+    digest = hashlib.sha1(service_slug.encode("utf-8")).hexdigest()[:8]
+    return f"svc-{service_slug[:37]}-{digest}"
+
+
+def _sync_package_from_service(service: Service) -> Package:
+    price = _parse_amount_text(service.price_text or "")
+    if price <= 0:
+        raise ValueError("Giá dịch vụ chưa hợp lệ để thanh toán.")
+
+    duration_days = _duration_to_days(service.duration or "")
+    package_slug = _service_package_slug(service.slug)
+    defaults = {
+        "name": service.title,
+        "description": service.summary or f"Gói dịch vụ {service.title}",
+        "duration_days": duration_days,
+        "price": price,
+        "is_active": True,
+    }
+    package, created = Package.objects.get_or_create(slug=package_slug, defaults=defaults)
+    if created:
+        return package
+
+    update_fields = []
+    if package.name != defaults["name"]:
+        package.name = defaults["name"]
+        update_fields.append("name")
+    if package.description != defaults["description"]:
+        package.description = defaults["description"]
+        update_fields.append("description")
+    if package.duration_days != defaults["duration_days"]:
+        package.duration_days = defaults["duration_days"]
+        update_fields.append("duration_days")
+    if package.price != defaults["price"]:
+        package.price = defaults["price"]
+        update_fields.append("price")
+    if not package.is_active:
+        package.is_active = True
+        update_fields.append("is_active")
+
+    if update_fields:
+        package.save(update_fields=update_fields)
+    return package
+
+
+def _generate_transaction_ref() -> str:
+    while True:
+        suffix = uuid.uuid4().hex[:4].upper()
+        candidate = f"HV{timezone.now():%y%m%d%H%M%S}{suffix}"
+        if not Transaction.objects.filter(txn_ref=candidate).exists():
+            return candidate
+
+
+def _transaction_deadline(txn: Transaction):
+    return txn.created_at + timedelta(seconds=PAYMENT_TIMEOUT_SECONDS)
+
+
+def _transaction_remaining_seconds(txn: Transaction) -> int:
+    remaining = int((_transaction_deadline(txn) - timezone.now()).total_seconds())
+    return max(0, remaining)
+
+
+def _mark_transaction_failed(txn: Transaction, reason: str = "timeout") -> Transaction:
+    if txn.status != "pending":
+        return txn
+
+    raw = dict(txn.raw_params or {})
+    raw["failed_reason"] = reason
+    raw["failed_at"] = timezone.now().isoformat()
+    txn.status = "failed"
+    txn.raw_params = raw
+    txn.save(update_fields=["status", "raw_params"])
+
+    Purchase.objects.filter(payment_ref=txn.txn_ref, status="active").update(
+        status="canceled",
+        expires_at=timezone.now(),
+    )
+    return txn
+
+
+def _expire_transaction_if_needed(txn: Transaction) -> Transaction:
+    if txn.status == "pending" and _transaction_remaining_seconds(txn) <= 0:
+        return _mark_transaction_failed(txn, reason="timeout")
+    return txn
+
+
+def _activate_purchase_for_transaction(txn: Transaction) -> Purchase:
+    now = timezone.now()
+    expires = now + timedelta(days=max(1, int(txn.package.duration_days or 1)))
+    purchase = Purchase.objects.filter(payment_ref=txn.txn_ref).first()
+    if purchase:
+        purchase.user = txn.user
+        purchase.package = txn.package
+        purchase.status = "active"
+        purchase.expires_at = expires
+        purchase.save(update_fields=["user", "package", "status", "expires_at"])
+        return purchase
+
+    return Purchase.objects.create(
+        user=txn.user,
+        package=txn.package,
+        expires_at=expires,
+        status="active",
+        payment_ref=txn.txn_ref,
+    )
+
+
+def _extract_txn_ref_from_payload(payload: dict) -> str:
+    direct_keys = ("txn_ref", "reference", "order_code", "payment_ref", "orderCode")
+    for key in direct_keys:
+        value = str(payload.get(key) or "").strip().upper()
+        if value:
+            return value
+
+    text_keys = ("description", "content", "addInfo", "transferContent", "message", "note")
+    for key in text_keys:
+        text = str(payload.get(key) or "")
+        match = PAYMENT_REF_PATTERN.search(text.upper())
+        if match:
+            return match.group(1)
+    return ""
+
+
+def _parse_payload_amount(payload: dict) -> Decimal | None:
+    amount_candidates = (
+        payload.get("amount"),
+        payload.get("transferAmount"),
+        payload.get("totalAmount"),
+        payload.get("value"),
+    )
+    for candidate in amount_candidates:
+        if candidate in ("", None):
+            continue
+        try:
+            if isinstance(candidate, (int, float, Decimal)):
+                return Decimal(str(candidate))
+            cleaned = re.sub(r"[^\d]", "", str(candidate))
+            if cleaned:
+                return Decimal(cleaned)
+        except (InvalidOperation, ValueError):
+            continue
+    return None
+
+
+def _build_transfer_content(package: Package, service: Service, txn_ref: str) -> str:
+    duration_text = (service.duration or "").strip() or f"{package.duration_days} ngày"
+    return f"{package.name} - {duration_text} - {txn_ref}"
+
+
+def _build_vietqr_url(amount: Decimal, transfer_content: str) -> tuple[str, str]:
+    bank_id = str(getattr(settings, "QR_BANK_ID", "") or "").strip()
+    account_no = str(getattr(settings, "QR_ACCOUNT_NO", "") or "").strip()
+    account_name = str(getattr(settings, "QR_ACCOUNT_NAME", "") or "").strip()
+    if not bank_id or not account_no or not account_name:
+        return "", "Thiếu cấu hình QR_BANK_ID / QR_ACCOUNT_NO / QR_ACCOUNT_NAME trong settings."
+
+    amount_int = int(amount)
+    info_q = quote(transfer_content, safe="")
+    account_name_q = quote(account_name, safe="")
+    url = (
+        f"https://img.vietqr.io/image/{bank_id}-{account_no}-compact2.png"
+        f"?amount={amount_int}&addInfo={info_q}&accountName={account_name_q}"
+    )
+    return url, ""
+
+
+def _parse_recipient_emails(value) -> list[str]:
+    if isinstance(value, str):
+        candidates = [item.strip() for item in value.split(",")]
+    elif isinstance(value, (list, tuple, set)):
+        candidates = [str(item).strip() for item in value]
+    else:
+        candidates = [str(value).strip()] if value else []
+    return [email for email in candidates if email]
+
+
+def _send_email_safe(subject: str, body: str, recipients: list[str]) -> bool:
+    to_emails = _parse_recipient_emails(recipients)
+    if not to_emails:
+        return False
+    try:
+        send_mail(
+            subject=subject,
+            message=body,
+            from_email=getattr(settings, "DEFAULT_FROM_EMAIL", ""),
+            recipient_list=to_emails,
+            fail_silently=False,
+        )
+        return True
+    except Exception:
+        logger.exception("Failed to send email '%s' to %s", subject, to_emails)
+        return False
+
+
+def _extract_booking_meta(post_data) -> dict:
+    date_raw = (post_data.get("date") or "").strip()
+    specialty_key = (post_data.get("specialty") or "").strip()
+    service_key = (post_data.get("service") or "").strip()
+
+    appointment_date_obj = None
+    appointment_date = date_raw
+    if date_raw:
+        try:
+            appointment_date_obj = datetime.strptime(date_raw, "%Y-%m-%d").date()
+            appointment_date = appointment_date_obj.strftime("%d/%m/%Y")
+        except ValueError:
+            appointment_date = date_raw
+
+    specialty = BOOKING_SPECIALTY_LABELS.get(specialty_key, specialty_key)
+    service_name = BOOKING_SERVICE_LABELS.get(service_key, service_key)
+    return {
+        "appointment_date_obj": appointment_date_obj,
+        "appointment_date": appointment_date,
+        "specialty": specialty,
+        "service_name": service_name,
+    }
+
+
+def _merge_booking_message(base_message: str, booking_meta: dict) -> str:
+    lines = []
+    if booking_meta.get("appointment_date"):
+        lines.append(f"- Ngày khám mong muốn: {booking_meta['appointment_date']}")
+    if booking_meta.get("specialty"):
+        lines.append(f"- Chuyên khoa: {booking_meta['specialty']}")
+    if booking_meta.get("service_name"):
+        lines.append(f"- Dịch vụ quan tâm: {booking_meta['service_name']}")
+
+    details_text = ""
+    if lines:
+        details_text = "Thông tin đặt lịch:\n" + "\n".join(lines)
+
+    base = (base_message or "").strip()
+    if base and details_text:
+        return f"{base}\n\n{details_text}"
+    if details_text:
+        return details_text
+    return base
+
+
+def _send_booking_notifications(lead: Lead, booking_meta: dict):
+    appointment_date = booking_meta.get("appointment_date") or "Chưa chọn"
+    specialty = booking_meta.get("specialty") or "Chưa chọn"
+    service_name = booking_meta.get("service_name") or "Chưa chọn"
+    created_at_text = timezone.localtime(lead.created_at).strftime("%d/%m/%Y %H:%M")
+    message_text = (lead.message or "").strip() or "Không có ghi chú thêm."
+
+    user_email = (lead.email or "").strip()
+    if user_email:
+        user_subject = "HandsViet đã nhận yêu cầu đặt lịch khám của bạn"
+        user_body = (
+            f"Chào {lead.name},\n\n"
+            "HandsViet đã nhận được yêu cầu đặt lịch khám của bạn.\n\n"
+            f"Thông tin:\n"
+            f"- Họ tên: {lead.name}\n"
+            f"- Số điện thoại: {lead.phone or 'Chưa cập nhật'}\n"
+            f"- Email: {user_email}\n"
+            f"- Ngày khám mong muốn: {appointment_date}\n"
+            f"- Chuyên khoa: {specialty}\n"
+            f"- Dịch vụ quan tâm: {service_name}\n"
+            f"- Ghi chú: {message_text}\n"
+            f"- Thời gian gửi: {created_at_text}\n\n"
+            "Bộ phận chăm sóc khách hàng sẽ liên hệ bạn sớm.\n"
+            "HandsViet."
+        )
+        _send_email_safe(user_subject, user_body, [user_email])
+
+    internal_recipients = _parse_recipient_emails(getattr(settings, "BOOKING_CONTACT_EMAIL", ""))
+    if internal_recipients:
+        internal_subject = f"[Booking] Yêu cầu mới từ {lead.name}"
+        internal_body = (
+            "Có yêu cầu đặt lịch khám mới từ website.\n\n"
+            f"Thông tin khách:\n"
+            f"- Họ tên: {lead.name}\n"
+            f"- Số điện thoại: {lead.phone or 'Chưa cập nhật'}\n"
+            f"- Email: {lead.email or 'Chưa cập nhật'}\n"
+            f"- Ngày khám mong muốn: {appointment_date}\n"
+            f"- Chuyên khoa: {specialty}\n"
+            f"- Dịch vụ quan tâm: {service_name}\n"
+            f"- Nguồn: {lead.page or 'booking'}\n"
+            f"- Ghi chú: {message_text}\n"
+            f"- Thời gian: {created_at_text}\n"
+        )
+        _send_email_safe(internal_subject, internal_body, internal_recipients)
 
 
 def _handle_lead(request, page_slug):
@@ -328,9 +740,27 @@ def about(request):
 
 
 def booking(request):
-    saved, form = _handle_lead(request, "booking")
-    if saved:
+    booking_meta = {"appointment_date": "", "specialty": "", "service_name": ""}
+    form_data = request.POST.copy() if request.method == "POST" else None
+    if form_data is not None:
+        booking_meta = _extract_booking_meta(form_data)
+        merged_message = _merge_booking_message(form_data.get("message", ""), booking_meta)
+        if merged_message:
+            form_data["message"] = merged_message
+        form_data["page"] = "booking"
+
+    form = LeadForm(form_data or None, initial={"page": "booking"})
+    if request.method == "POST" and form.is_valid():
+        lead = form.save(commit=False)
+        lead.page = "booking"
+        lead.booking_date = booking_meta.get("appointment_date_obj")
+        lead.booking_specialty = booking_meta.get("specialty", "")
+        lead.booking_service = booking_meta.get("service_name", "")
+        lead.save()
+        _send_booking_notifications(lead, booking_meta)
+        messages.success(request, "Đã nhận lịch khám. Chúng tôi sẽ liên hệ bạn sớm.")
         return redirect(request.path)
+
     return render(request, "pages/booking.html", {"lead_form": form})
 
 
@@ -526,11 +956,12 @@ def rehab_field_detail(request, slug):
 def services(request):
     ensure_service_categories()
     categories = ServiceCategory.objects.all()
-    services = Service.objects.select_related("category").all()
+    services = _sorted_services(Service.objects.select_related("category").all())
+    service_groups = _group_services(services)
     return render(
         request,
         "pages/services.html",
-        {"categories": categories, "services": services, "category": None},
+        {"categories": categories, "services": services, "service_groups": service_groups, "category": None},
     )
 
 
@@ -541,15 +972,166 @@ def services_temp(request):
 def category_detail(request, slug):
     ensure_service_categories()
     category = get_object_or_404(ServiceCategory, slug=slug)
-    services = Service.objects.select_related("category").filter(category=category)
+    services = _sorted_services(Service.objects.select_related("category").filter(category=category))
+    service_groups = _group_services(services)
     categories = ServiceCategory.objects.all()
-    context = {"category": category, "services": services, "categories": categories}
+    context = {
+        "category": category,
+        "services": services,
+        "service_groups": service_groups,
+        "categories": categories,
+    }
     return render(request, "pages/services.html", context)
 
 
 def service_detail(request, slug):
     service = get_object_or_404(Service.objects.select_related("category"), slug=slug)
-    return render(request, "pages/service_detail.html", {"service": service, "template_exists": True})
+    service = _decorate_service(service)
+    package_price = _parse_amount_text(service.price_text or "")
+    package_duration_days = _duration_to_days(service.duration or "")
+    can_checkout = package_price > 0
+
+    related_qs = Service.objects.select_related("category").exclude(pk=service.pk)
+    if service.category_id:
+        related_qs = related_qs.filter(category_id=service.category_id)
+    related_services = _sorted_services(related_qs)[:4]
+
+    return render(
+        request,
+        "pages/service_detail.html",
+        {
+            "service": service,
+            "related_services": related_services,
+            "can_checkout": can_checkout,
+            "package_duration_days": package_duration_days,
+            "checkout_url": reverse("services:service_checkout", kwargs={"slug": service.slug}) if can_checkout else "",
+        },
+    )
+
+
+def service_checkout(request, slug):
+    if not request.user.is_authenticated:
+        messages.error(request, "Vui lòng đăng nhập để thanh toán gói dịch vụ.")
+        return redirect(f"{settings.LOGIN_URL}?next={request.path}")
+
+    service = get_object_or_404(Service.objects.select_related("category"), slug=slug)
+    service = _decorate_service(service)
+    try:
+        package = _sync_package_from_service(service)
+    except ValueError as exc:
+        messages.error(request, str(exc))
+        return redirect(service.get_absolute_url())
+
+    latest_pending = (
+        Transaction.objects.filter(user=request.user, package=package, status="pending")
+        .order_by("-created_at")
+        .first()
+    )
+    if latest_pending:
+        latest_pending = _expire_transaction_if_needed(latest_pending)
+
+    if latest_pending and latest_pending.status == "pending":
+        txn = latest_pending
+    else:
+        txn_ref = _generate_transaction_ref()
+        transfer_content = _build_transfer_content(package, service, txn_ref)
+        buyer_name = (
+            request.user.get_full_name().strip()
+            or request.user.username
+            or f"User#{request.user.pk}"
+        )
+        txn = Transaction.objects.create(
+            user=request.user,
+            package=package,
+            amount=package.price,
+            status="pending",
+            txn_ref=txn_ref,
+            raw_params={
+                "service_slug": service.slug,
+                "service_duration": service.display_duration,
+                "transfer_content": transfer_content,
+                "created_via": "service_checkout",
+                "buyer_name": buyer_name,
+                "buyer_username": request.user.username,
+                "buyer_email": request.user.email,
+            },
+        )
+
+    pending_duplicates = Transaction.objects.filter(user=request.user, package=package, status="pending").exclude(pk=txn.pk)
+    for duplicate in pending_duplicates:
+        _mark_transaction_failed(duplicate, reason="replaced")
+
+    raw = dict(txn.raw_params or {})
+    buyer_name = request.user.get_full_name().strip() or request.user.username
+    transfer_content = str(raw.get("transfer_content") or _build_transfer_content(package, service, txn.txn_ref))
+    needs_update = False
+    if raw.get("transfer_content") != transfer_content:
+        raw["transfer_content"] = transfer_content
+        needs_update = True
+    if raw.get("service_slug") != service.slug:
+        raw["service_slug"] = service.slug
+        needs_update = True
+    if raw.get("service_duration") != service.display_duration:
+        raw["service_duration"] = service.display_duration
+        needs_update = True
+    if raw.get("buyer_name") != buyer_name:
+        raw["buyer_name"] = buyer_name
+        needs_update = True
+    if raw.get("buyer_username") != request.user.username:
+        raw["buyer_username"] = request.user.username
+        needs_update = True
+    if raw.get("buyer_email") != (request.user.email or ""):
+        raw["buyer_email"] = request.user.email or ""
+        needs_update = True
+
+    if needs_update:
+        txn.raw_params = raw
+        txn.save(update_fields=["raw_params"])
+
+    qr_url, qr_error = _build_vietqr_url(package.price, transfer_content)
+
+    context = {
+        "service": service,
+        "package": package,
+        "transaction": txn,
+        "buyer_name": request.user.get_full_name().strip() or request.user.username,
+        "buyer_username": request.user.username,
+        "buyer_email": request.user.email or "Chưa cập nhật",
+        "transfer_content": transfer_content,
+        "qr_url": qr_url,
+        "qr_error": qr_error,
+        "payment_timeout_seconds": PAYMENT_TIMEOUT_SECONDS,
+        "deadline_iso": _transaction_deadline(txn).isoformat(),
+        "status_url": reverse("services:service_checkout_status", kwargs={"txn_ref": txn.txn_ref}),
+    }
+    return render(request, "pages/service_checkout.html", context)
+
+
+def service_checkout_status(request, txn_ref):
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "unauthenticated"}, status=401)
+
+    txn = get_object_or_404(
+        Transaction.objects.select_related("package"),
+        txn_ref=txn_ref,
+        user=request.user,
+    )
+    txn = _expire_transaction_if_needed(txn)
+    remaining_seconds = _transaction_remaining_seconds(txn) if txn.status == "pending" else 0
+
+    payload = {
+        "status": txn.status,
+        "txn_ref": txn.txn_ref,
+        "remaining_seconds": remaining_seconds,
+        "amount": str(txn.amount),
+    }
+    if txn.status == "success":
+        payload["redirect_url"] = "/auth/profile/"
+        payload["message"] = "Thanh toán thành công. Gói đã được kích hoạt."
+    elif txn.status == "failed":
+        payload["message"] = "Thanh toán thất bại hoặc đã quá hạn 3 phút."
+
+    return JsonResponse(payload)
 
 
 def speech_therapy(request):
@@ -582,18 +1164,111 @@ def buy_package(request, slug):
 
 
 @csrf_exempt
+def qr_payment_webhook(request):
+    if request.method != "POST":
+        return JsonResponse({"ok": False, "error": "method_not_allowed"}, status=405)
+
+    webhook_secret = str(getattr(settings, "QR_WEBHOOK_SECRET", "") or "").strip()
+    if webhook_secret and request.headers.get("X-QR-SECRET", "") != webhook_secret:
+        return JsonResponse({"ok": False, "error": "invalid_secret"}, status=403)
+
+    try:
+        payload = json.loads((request.body or b"{}").decode("utf-8"))
+    except json.JSONDecodeError:
+        return JsonResponse({"ok": False, "error": "invalid_json"}, status=400)
+
+    if not isinstance(payload, dict):
+        return JsonResponse({"ok": False, "error": "payload_must_be_object"}, status=400)
+
+    txn_ref = _extract_txn_ref_from_payload(payload)
+    if not txn_ref:
+        return JsonResponse({"ok": False, "error": "missing_txn_ref"}, status=400)
+
+    txn = Transaction.objects.select_related("package", "user").filter(txn_ref=txn_ref).first()
+    if not txn:
+        return JsonResponse({"ok": False, "error": "transaction_not_found"}, status=404)
+
+    txn = _expire_transaction_if_needed(txn)
+    if txn.status == "failed":
+        return JsonResponse({"ok": False, "status": "failed", "error": "transaction_expired"}, status=409)
+    if txn.status == "success":
+        return JsonResponse({"ok": True, "status": "success", "txn_ref": txn.txn_ref})
+
+    provider_status = str(
+        payload.get("status")
+        or payload.get("result")
+        or payload.get("event")
+        or ""
+    ).strip().lower()
+    if provider_status in {"failed", "error", "cancel", "cancelled", "timeout"}:
+        _mark_transaction_failed(txn, reason=provider_status or "provider_failed")
+        return JsonResponse({"ok": False, "status": "failed", "txn_ref": txn.txn_ref}, status=400)
+    if provider_status in {"pending", "processing", "waiting"}:
+        return JsonResponse({"ok": True, "status": "pending", "txn_ref": txn.txn_ref})
+
+    paid_amount = _parse_payload_amount(payload)
+    if paid_amount is not None and paid_amount < txn.amount:
+        _mark_transaction_failed(txn, reason="amount_mismatch")
+        return JsonResponse(
+            {
+                "ok": False,
+                "error": "amount_mismatch",
+                "txn_ref": txn.txn_ref,
+                "expected": str(txn.amount),
+                "received": str(paid_amount),
+            },
+            status=400,
+        )
+
+    raw = dict(txn.raw_params or {})
+    raw["webhook_payload"] = payload
+    raw["paid_amount"] = str(paid_amount) if paid_amount is not None else ""
+    raw["paid_at"] = timezone.now().isoformat()
+    txn.status = "success"
+    txn.raw_params = raw
+    txn.save(update_fields=["status", "raw_params"])
+
+    purchase = _activate_purchase_for_transaction(txn)
+    return JsonResponse(
+        {
+            "ok": True,
+            "status": "success",
+            "txn_ref": txn.txn_ref,
+            "purchase_id": purchase.pk,
+        }
+    )
+
+
+@csrf_exempt
 def login_view(request):
     """
     Simple username/password login using Django's AuthenticationForm.
     Supports ?next= redirect.
     """
+    def _resolve_next(default_target):
+        target = (request.POST.get("next") or request.GET.get("next") or "").strip()
+        if not target.startswith("/"):
+            return default_target
+        if target.startswith("//"):
+            return default_target
+        return target
+
+    def _user_next():
+        target = _resolve_next("/")
+        if target.startswith("/hansviet_admin/"):
+            return "/"
+        return target
+
+    def _admin_next():
+        target = _resolve_next(settings.LOGIN_REDIRECT_URL)
+        if not target.startswith("/hansviet_admin/"):
+            return settings.LOGIN_REDIRECT_URL
+        return target
+
     if request.user.is_authenticated:
-        target = request.GET.get("next") or (
-            settings.LOGIN_REDIRECT_URL
-            if request.user.is_staff or request.user.is_superuser
-            else "/"
-        )
-        return redirect(target)
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect(settings.LOGIN_REDIRECT_URL)
+        return redirect(_user_next())
 
     admin_login_url = getattr(settings, "ADMIN_LOGIN_URL", "/hansviet_admin/login/")
     form = AuthenticationForm(request, data=request.POST or None)
@@ -601,19 +1276,15 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             if user.is_staff or user.is_superuser:
-                messages.info(request, "Tai khoan quan tri vui long dang nhap tai trang admin.")
-                target_admin = request.GET.get("next") or settings.LOGIN_REDIRECT_URL
-                return redirect(f"{admin_login_url}?next={target_admin}")
+                messages.error(request, "Tai khoan admin vui long dang nhap o trang admin.")
+                return redirect(f"{admin_login_url}?next={_admin_next()}")
             login(request, user)
 
-            target = request.GET.get("next") or (
-                settings.LOGIN_REDIRECT_URL if user.is_staff or user.is_superuser else "/"
-            )
-            return redirect(target)
+            return redirect(_user_next())
         else:
             messages.error(request, "Tên đăng nhập hoặc mật khẩu không đúng.")
 
-    return render(request, "auth/login.html", {"form": form})
+    return render(request, "auth/login.html", {"form": form, "next": _user_next()})
 
 
 def register_view(request):
@@ -681,7 +1352,29 @@ def logout_view(request):
 def profile_view(request):
     if not request.user.is_authenticated:
         return redirect(f"{settings.LOGIN_URL}?next=/auth/profile/")
-    return render(request, "auth/profile.html")
+
+    purchases = (
+        Purchase.objects.select_related("package")
+        .filter(user=request.user)
+        .order_by("-started_at", "-id")
+    )
+    now = timezone.now()
+    active_purchases = []
+    purchase_history = []
+    for item in purchases:
+        is_active_now = item.status == "active" and item.expires_at > now
+        item.is_active_now = is_active_now
+        if is_active_now:
+            active_purchases.append(item)
+        else:
+            purchase_history.append(item)
+
+    context = {
+        "active_purchases": active_purchases,
+        "purchase_history": purchase_history,
+        "purchase_count": purchases.count(),
+    }
+    return render(request, "auth/profile.html", context)
 
 
 def care_management_view(request):

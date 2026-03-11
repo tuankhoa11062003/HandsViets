@@ -51,11 +51,8 @@
         <div class="h-full flex flex-col p-6">
             <!-- Logo Section -->
             <div class="flex items-center gap-3 mb-10 px-2">
-                <div
-                    class="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20">
-                    <img src="{% static 'images/logo.png' %}" alt="Logo" class="w-6 h-6 invert brightness-0">
-                </div>
-                <span class="font-extrabold text-xl tracking-tight text-slate-800">HandsViet</span>
+                <img src="{% static 'images/HandsVietLogo.png' %}" alt="HandsViet Logo"
+                    class="h-12 w-auto object-contain">
             </div>
 
             {% if messages %}
@@ -127,6 +124,15 @@
                             stroke-width="2.5"></path>
                     </svg>
                     Liệu pháp PHCN
+                </a>
+                <a href="{% url 'dashboard:booking_list' %}"
+                    class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all {% if 'bookings' in request.path %}sidebar-active{% else %}text-slate-500 hover:bg-slate-50 hover:text-slate-800{% endif %}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            stroke-width="2.5"></path>
+                    </svg>
+                    Lịch hẹn khám
                 </a>
                 <a href="{% url 'dashboard:home' %}"
                     class="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-all">

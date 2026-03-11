@@ -109,43 +109,62 @@
                     </p>
                 </div>
 
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {% for service in services %}
-                    <div
-                        class="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border {% if service.is_featured %}border-2 border-teal-500{% else %}border-gray-100{% endif %}">
-                        <div class="flex justify-center mb-4">
-                            {% if service.thumbnail %}
-                                <img src="{{ service.thumbnail.url }}" alt="{{ service.title }}" class="w-20 h-20 object-cover rounded-2xl">
-                            {% else %}
-                                <img src="{% static 'images/assets/pain-relief-icon.png' %}" alt="{{ service.title }}" class="w-20 h-20 object-cover rounded-2xl">
-                            {% endif %}
+                {% if service_groups %}
+                <div class="space-y-12">
+                    {% for group in service_groups %}
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <h3 class="text-xl md:text-2xl font-bold text-slate-800">{{ group.label }}</h3>
+                            <span class="text-xs md:text-sm font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">
+                                {{ group.services|length }} gói
+                            </span>
                         </div>
-                        <h3 class="text-xl font-bold text-center text-gray-800 mb-2">{{ service.title }}</h3>
-                        {% if service.featured_tag %}
-                        <div
-                            class="bg-teal-100 text-teal-600 text-xs font-semibold px-3 py-1 rounded-full inline-block mb-4">
-                            {{ service.featured_tag }}
+                        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {% for service in group.services %}
+                            <div class="bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition-all duration-300 border {% if service.is_featured %}border-2 border-teal-500{% else %}border-gray-100{% endif %}">
+                                <div class="flex justify-center mb-4">
+                                    {% if service.thumbnail %}
+                                    <img src="{{ service.thumbnail.url }}" alt="{{ service.title }}" class="w-20 h-20 object-cover rounded-2xl">
+                                    {% else %}
+                                    <img src="{% static 'images/assets/pain-relief-icon.png' %}" alt="{{ service.title }}" class="w-20 h-20 object-cover rounded-2xl">
+                                    {% endif %}
+                                </div>
+                                <h3 class="text-xl font-bold text-center text-gray-800 mb-2">{{ service.title }}</h3>
+                                {% if service.featured_tag %}
+                                <div class="text-center mb-3">
+                                    <span class="bg-teal-100 text-teal-700 text-xs font-semibold px-3 py-1 rounded-full inline-block">
+                                        {{ service.featured_tag }}
+                                    </span>
+                                </div>
+                                {% endif %}
+                                <p class="text-gray-600 text-sm mb-5 text-center line-clamp-3">{{ service.summary }}</p>
+
+                                <div class="space-y-2 mb-5 text-sm">
+                                    <div class="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2">
+                                        <span class="text-slate-500">Chu kỳ</span>
+                                        <span class="font-semibold text-slate-800">{{ service.display_duration }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2">
+                                        <span class="text-slate-500">Giá</span>
+                                        <span class="font-semibold text-teal-700">{{ service.display_price }}</span>
+                                    </div>
+                                </div>
+
+                                <a href="{{ service.get_absolute_url }}"
+                                    class="w-full flex items-center justify-center {% if service.is_featured %}bg-teal-500 text-white hover:bg-teal-600{% else %}border-2 border-teal-500 text-teal-600 hover:bg-teal-50{% endif %} py-3 rounded-xl font-semibold transition-all duration-300">
+                                    Xem chi tiết →
+                                </a>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endif %}
-                        <p class="text-gray-600 text-sm mb-6 text-center">
-                            {{ service.summary }}
-                        </p>
-                        <div class="text-center mb-4">
-                            <div class="text-teal-600 text-sm font-semibold mb-1">THỜI GIAN / GIÁ</div>
-                            <div class="text-2xl font-bold text-gray-800">
-                                {{ service.duration|default:service.price_text}}</div>
-                        </div>
-                        <a href="{{ service.get_absolute_url }}"
-                            class="w-full flex items-center justify-center {% if service.is_featured %}bg-teal-500 text-white hover:bg-teal-600{% else %}border-2 border-teal-500 text-teal-600 hover:bg-teal-50{% endif %} py-3 rounded-xl font-semibold transition-all duration-300">
-                            {% if service.is_featured %}Đặt ngay ✓{% else %}Xem chi tiết →{% endif %}
-                        </a>
-                    </div>
-                    {% empty %}
-                    <div class="col-span-full text-center py-12">
-                        <p class="text-gray-500">Chưa có dịch vụ nào được đăng.</p>
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <p class="text-gray-500">Chưa có dịch vụ nào được đăng.</p>
+                </div>
+                {% endif %}
             </div>
         </section>
 

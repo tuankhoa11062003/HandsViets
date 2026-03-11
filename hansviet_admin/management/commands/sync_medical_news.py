@@ -20,6 +20,14 @@ DEFAULT_CATEGORY_SLUGS = [
     "cau-chuyen-khach-hang",
 ]
 
+DEFAULT_NEWS_CATEGORIES = [
+    ("Tin tức Y khoa", "tin-tuc-y-khoa"),
+    ("Tư vấn PHCN", "tu-van-phcn"),
+    ("Tin truyền thông", "tin-truyen-thong"),
+    ("Khuyến mãi sự kiện", "khuyen-mai-su-kien"),
+    ("Câu chuyện khách hàng", "cau-chuyen-khach-hang"),
+]
+
 
 class Command(BaseCommand):
     help = "Sync medical news from Perplexity-compatible API and save into NewsArticle."
@@ -67,6 +75,15 @@ class Command(BaseCommand):
                 return cf
             except Exception:
                 return None
+
+        for category_name, category_slug in DEFAULT_NEWS_CATEGORIES:
+            category, _ = NewsCategory.objects.get_or_create(
+                slug=category_slug,
+                defaults={"name": category_name},
+            )
+            if category.name != category_name:
+                category.name = category_name
+                category.save(update_fields=["name"])
 
         category_slugs = options.get("categories") or DEFAULT_CATEGORY_SLUGS
         max_items = max(1, options["max_items"])
@@ -127,7 +144,10 @@ class Command(BaseCommand):
                 )
 
                 if item.published_at:
-                    article.published_at = item.published_at
+                    published_at = item.published_at
+                    if timezone.is_naive(published_at):
+                        published_at = timezone.make_aware(published_at, timezone.get_current_timezone())
+                    article.published_at = published_at
                     article.save(update_fields=["published_at"])
 
                 if image_url:
@@ -142,4 +162,3 @@ class Command(BaseCommand):
                 f"mode={'publish' if auto_publish else 'draft'}, at={timezone.now()}"
             )
         )
-

@@ -21,39 +21,99 @@ CATEGORY_ORDER = [
     CATEGORY_SLUGS["consult"],
 ]
 
+KEYWORDS_BY_CATEGORY = {
+    CATEGORY_SLUGS["event"]: [
+        ("khuyen mai", 4),
+        ("uu dai", 4),
+        ("mien phi", 3),
+        ("giam gia", 3),
+        ("su kien", 3),
+        ("workshop", 3),
+        ("hoi thao", 3),
+        ("dang ky", 2),
+        ("chuong trinh", 2),
+    ],
+    CATEGORY_SLUGS["media"]: [
+        ("truyen thong", 4),
+        ("bao chi", 3),
+        ("thong cao", 3),
+        ("phong su", 3),
+        ("dua tin", 2),
+        ("phat song", 2),
+        ("truyen hinh", 2),
+        ("media", 2),
+    ],
+    CATEGORY_SLUGS["story"]: [
+        ("cau chuyen", 4),
+        ("hanh trinh", 3),
+        ("khach hang", 3),
+        ("benh nhan chia se", 4),
+        ("chia se", 2),
+        ("vuot qua", 2),
+        ("case study", 3),
+    ],
+    CATEGORY_SLUGS["consult"]: [
+        ("phuc hoi chuc nang", 4),
+        ("phcn", 4),
+        ("vat ly tri lieu", 4),
+        ("hoat dong tri lieu", 4),
+        ("ngon ngu tri lieu", 4),
+        ("rehab", 3),
+        ("huong dan", 2),
+        ("tu van", 2),
+        ("cham soc tai nha", 2),
+        ("dau lung", 2),
+        ("xuong khop", 2),
+        ("dot quy", 2),
+        ("sau mo", 2),
+    ],
+    CATEGORY_SLUGS["medical"]: [
+        ("y te", 2),
+        ("suc khoe", 2),
+        ("benh", 2),
+        ("trieu chung", 2),
+        ("dieu tri", 2),
+        ("nghien cuu", 2),
+        ("vaccine", 2),
+        ("virus", 2),
+        ("kham", 1),
+        ("bac si", 1),
+        ("xet nghiem", 1),
+    ],
+}
+
 
 def _normalize_text(text: str) -> str:
     base = (text or "").lower()
     base = "".join(ch for ch in unicodedata.normalize("NFD", base) if unicodedata.category(ch) != "Mn")
-    return base.replace("đ", "d").replace("Đ", "D")
+    return base.replace("đ", "d").replace("Đ", "d")
 
 
 def pick_topic_category_slug(title: str, summary: str, source_name: str) -> str | None:
     text = _normalize_text(f"{title} {summary} {source_name}")
-    if any(k in text for k in ["khuyen mai", "uu dai", "giam gia", "su kien", "workshop", "hoi thao"]):
-        return CATEGORY_SLUGS["event"]
-    if any(k in text for k in ["truyen thong", "bao chi", "phong su", "dua tin", "media"]):
-        return CATEGORY_SLUGS["media"]
-    if any(k in text for k in ["cau chuyen", "hanh trinh", "khach hang", "benh nhan chia se", "case study"]):
-        return CATEGORY_SLUGS["story"]
-    if any(
-        k in text
-        for k in [
-            "phuc hoi chuc nang",
-            "phcn",
-            "vat ly tri lieu",
-            "rehab",
-            "van dong tri lieu",
-            "chan thuong chinh hinh",
-            "dau lung",
-            "cot song",
-            "xuong khop",
-            "dot quy",
-            "sau mo",
-        ]
-    ):
-        return CATEGORY_SLUGS["consult"]
-    return None
+    scores = {slug: 0 for slug in KEYWORDS_BY_CATEGORY.keys()}
+    for slug, rows in KEYWORDS_BY_CATEGORY.items():
+        for phrase, weight in rows:
+            if phrase in text:
+                scores[slug] += weight
+
+    best_slug = max(scores.keys(), key=lambda slug: scores.get(slug, 0))
+    best_score = scores.get(best_slug, 0)
+    if best_score <= 0:
+        return None
+
+    priority = [
+        CATEGORY_SLUGS["event"],
+        CATEGORY_SLUGS["media"],
+        CATEGORY_SLUGS["story"],
+        CATEGORY_SLUGS["consult"],
+        CATEGORY_SLUGS["medical"],
+    ]
+    top_slugs = {slug for slug, score in scores.items() if score == best_score}
+    for slug in priority:
+        if slug in top_slugs:
+            return slug
+    return best_slug
 
 
 def _least_filled_slug(total_counts: dict[str, int], changed_counts: dict[str, int]) -> str:

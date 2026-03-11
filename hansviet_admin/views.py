@@ -1,4 +1,6 @@
 from datetime import datetime
+import hashlib
+import re
 from types import SimpleNamespace
 
 from django.conf import settings
@@ -6,10 +8,13 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
 
 from .forms import (
     DashboardUserCreateForm,
@@ -21,7 +26,7 @@ from .forms import (
     ServiceForm,
     VideoForm,
 )
-from .models import Lead, NewsArticle, NewsCategory, Package, Service, ServiceCategory, Video
+from .models import Lead, NewsArticle, NewsCategory, Package, Purchase, Service, ServiceCategory, Video
 
 
 def staff_required(view_func):
@@ -31,16 +36,31 @@ def staff_required(view_func):
     return login_required(check_staff(view_func), login_url=admin_login_url)
 
 
+def _safe_admin_next(request):
+    fallback = "/hansviet_admin/"
+    candidate = request.GET.get("next") or request.POST.get("next") or ""
+    if not candidate:
+        return fallback
+    if not url_has_allowed_host_and_scheme(
+        candidate,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return fallback
+    if not candidate.startswith("/hansviet_admin/"):
+        return fallback
+    return candidate
+
+
 def admin_login_view(request):
     """Dedicated login screen for staff/admin users."""
-    default_next = "/hansviet_admin/"
-    next_url = request.GET.get("next") or request.POST.get("next") or default_next
+    next_url = _safe_admin_next(request)
 
     if request.user.is_authenticated:
         if request.user.is_staff or request.user.is_superuser:
             return redirect(next_url)
-        messages.error(request, "Tai khoan hien tai khong co quyen quan tri.")
-        return redirect("/")
+        messages.error(request, "Tai khoan nay khong co quyen vao trang admin.")
+        return redirect(settings.LOGIN_URL)
 
     form = AuthenticationForm(request, data=request.POST or None)
     if request.method == "POST":
@@ -49,7 +69,8 @@ def admin_login_view(request):
             if user.is_staff or user.is_superuser:
                 login(request, user)
                 return redirect(next_url)
-            messages.error(request, "Tai khoan nay khong co quyen quan tri.")
+            messages.error(request, "Trang nay chi danh cho tai khoan admin.")
+            return redirect(settings.LOGIN_URL)
         else:
             messages.error(request, "Ten dang nhap hoac mat khau khong dung.")
 
@@ -107,6 +128,154 @@ def _event_sort_key(dt):
     if timezone.is_naive(dt):
         dt = timezone.make_aware(dt, timezone.get_current_timezone())
     return dt.timestamp()
+
+
+def _service_package_slug(service_slug: str) -> str:
+    base = f"svc-{service_slug}"
+    if len(base) <= 50:
+        return base
+    digest = hashlib.sha1(service_slug.encode("utf-8")).hexdigest()[:8]
+    return f"svc-{service_slug[:37]}-{digest}"
+
+
+def _extract_booking_meta_from_message(message_text: str) -> dict:
+    text = (message_text or "").strip()
+    if not text:
+        return {
+            "appointment_date": "",
+            "specialty": "",
+            "service_name": "",
+            "note": "",
+        }
+
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    appointment_date = ""
+    specialty = ""
+    service_name = ""
+    note_lines = []
+
+    for line in lines:
+        date_match = re.match(r"^-+\s*Ngày khám mong muốn:\s*(.+)$", line, flags=re.IGNORECASE)
+        if date_match:
+            appointment_date = date_match.group(1).strip()
+            continue
+
+        specialty_match = re.match(r"^-+\s*Chuyên khoa:\s*(.+)$", line, flags=re.IGNORECASE)
+        if specialty_match:
+            specialty = specialty_match.group(1).strip()
+            continue
+
+        service_match = re.match(r"^-+\s*Dịch vụ quan tâm:\s*(.+)$", line, flags=re.IGNORECASE)
+        if service_match:
+            service_name = service_match.group(1).strip()
+            continue
+
+        if line.lower().startswith("thông tin đặt lịch:"):
+            continue
+        note_lines.append(line)
+
+    return {
+        "appointment_date": appointment_date,
+        "specialty": specialty,
+        "service_name": service_name,
+        "note": "\n".join(note_lines).strip(),
+    }
+
+
+def _decorate_booking_lead(lead: Lead) -> Lead:
+    legacy_meta = _extract_booking_meta_from_message(lead.message or "")
+    lead.display_booking_date = (
+        lead.booking_date.strftime("%d/%m/%Y")
+        if lead.booking_date
+        else legacy_meta.get("appointment_date") or "Chưa chọn"
+    )
+    lead.display_booking_specialty = lead.booking_specialty or legacy_meta.get("specialty") or "Chưa chọn"
+    lead.display_booking_service = lead.booking_service or legacy_meta.get("service_name") or "Chưa chọn"
+    lead.display_note = legacy_meta.get("note") or "Không có ghi chú thêm."
+    lead.display_created_at = timezone.localtime(lead.created_at).strftime("%d/%m/%Y %H:%M")
+    lead.display_ack_sent_at = (
+        timezone.localtime(lead.booking_ack_sent_at).strftime("%d/%m/%Y %H:%M")
+        if lead.booking_ack_sent_at
+        else ""
+    )
+    lead.can_send_ack = bool((lead.email or "").strip())
+    return lead
+
+
+def _booking_queryset_with_filters(request):
+    q = (request.GET.get("q") or "").strip()
+    specialty = (request.GET.get("specialty") or "").strip()
+    date_from_raw = (request.GET.get("date_from") or "").strip()
+    date_to_raw = (request.GET.get("date_to") or "").strip()
+
+    bookings_qs = Lead.objects.filter(page="booking").order_by("-created_at")
+    if q:
+        bookings_qs = bookings_qs.filter(
+            Q(name__icontains=q)
+            | Q(phone__icontains=q)
+            | Q(email__icontains=q)
+            | Q(message__icontains=q)
+        )
+    if specialty:
+        bookings_qs = bookings_qs.filter(booking_specialty__iexact=specialty)
+
+    warnings = []
+    if date_from_raw:
+        try:
+            date_from = datetime.strptime(date_from_raw, "%Y-%m-%d").date()
+            bookings_qs = bookings_qs.filter(booking_date__gte=date_from)
+        except ValueError:
+            warnings.append("Ngày bắt đầu không hợp lệ. Vui lòng dùng định dạng YYYY-MM-DD.")
+    if date_to_raw:
+        try:
+            date_to = datetime.strptime(date_to_raw, "%Y-%m-%d").date()
+            bookings_qs = bookings_qs.filter(booking_date__lte=date_to)
+        except ValueError:
+            warnings.append("Ngày kết thúc không hợp lệ. Vui lòng dùng định dạng YYYY-MM-DD.")
+
+    filters = {
+        "q": q,
+        "specialty": specialty,
+        "date_from_raw": date_from_raw,
+        "date_to_raw": date_to_raw,
+    }
+    return bookings_qs, filters, warnings
+
+
+def _send_booking_confirmation_email(lead: Lead) -> tuple[bool, str]:
+    to_email = (lead.email or "").strip()
+    if not to_email:
+        return False, "Khách hàng chưa có email để gửi xác nhận."
+
+    lead = _decorate_booking_lead(lead)
+    subject = "HandsViet xác nhận đã nhận lịch đặt khám"
+    body = (
+        f"Chào {lead.name},\n\n"
+        "HandsViet xác nhận đã nhận được lịch đặt khám của bạn.\n\n"
+        "Thông tin lịch hẹn:\n"
+        f"- Ngày khám mong muốn: {lead.display_booking_date}\n"
+        f"- Chuyên khoa: {lead.display_booking_specialty}\n"
+        f"- Dịch vụ: {lead.display_booking_service}\n"
+        f"- Ghi chú: {lead.display_note}\n"
+        f"- Thời gian gửi yêu cầu: {lead.display_created_at}\n\n"
+        "Bộ phận CSKH sẽ chủ động liên hệ với bạn để xác nhận khung giờ cụ thể.\n\n"
+        "Trân trọng,\n"
+        "HandsViet."
+    )
+
+    try:
+        send_mail(
+            subject=subject,
+            message=body,
+            from_email=getattr(settings, "DEFAULT_FROM_EMAIL", ""),
+            recipient_list=[to_email],
+            fail_silently=False,
+        )
+        lead.booking_ack_sent_at = timezone.now()
+        lead.save(update_fields=["booking_ack_sent_at"])
+        return True, ""
+    except Exception as exc:
+        return False, str(exc)
 
 
 @staff_required
@@ -312,6 +481,16 @@ def category_delete(request, pk):
 def service_list(request):
     categories = list(ServiceCategory.objects.all())
     services = list(Service.objects.select_related("category").all())
+    package_slugs = [_service_package_slug(service.slug) for service in services]
+    sold_by_slug = dict(
+        Purchase.objects.exclude(status="canceled")
+        .filter(package__slug__in=package_slugs)
+        .values("package__slug")
+        .annotate(total=Count("id"))
+        .values_list("package__slug", "total")
+    )
+    for service in services:
+        service.sold_count = int(sold_by_slug.get(_service_package_slug(service.slug), 0))
     return render(request, "dashboard/services/list.html", {"services": services, "categories": categories})
 
 
@@ -350,6 +529,110 @@ def service_delete(request, pk):
         messages.success(request, "Đã xóa dịch vụ.")
         return redirect("dashboard:service_list")
     return render(request, "dashboard/services/confirm_delete.html", {"service": service})
+
+
+@staff_required
+def booking_list(request):
+    bookings_qs, filters, warnings = _booking_queryset_with_filters(request)
+    page_number = request.GET.get("page")
+    for warning in warnings:
+        messages.warning(request, warning)
+
+    page_obj = Paginator(bookings_qs, 20).get_page(page_number)
+    bookings = list(page_obj.object_list)
+    for index, lead in enumerate(bookings):
+        bookings[index] = _decorate_booking_lead(lead)
+
+    total_bookings = Lead.objects.filter(page="booking").count()
+    today_bookings = Lead.objects.filter(page="booking", created_at__date=timezone.localdate()).count()
+    specialty_options = list(
+        Lead.objects.filter(page="booking")
+        .exclude(booking_specialty="")
+        .order_by()
+        .values_list("booking_specialty", flat=True)
+        .distinct()
+    )
+    latest_booking_id = int(bookings[0].id) if bookings else 0
+
+    return render(
+        request,
+        "dashboard/bookings/list.html",
+        {
+            "bookings": bookings,
+            "page_obj": page_obj,
+            "total_bookings": total_bookings,
+            "today_bookings": today_bookings,
+            "specialty_options": specialty_options,
+            "current_q": filters["q"],
+            "current_specialty": filters["specialty"],
+            "current_date_from": filters["date_from_raw"],
+            "current_date_to": filters["date_to_raw"],
+            "latest_booking_id": latest_booking_id,
+            "realtime_enabled": True,
+        },
+    )
+
+
+@staff_required
+def booking_feed(request):
+    bookings_qs, _, _ = _booking_queryset_with_filters(request)
+    try:
+        last_id = int(request.GET.get("last_id") or 0)
+    except ValueError:
+        last_id = 0
+
+    new_rows_qs = bookings_qs.filter(id__gt=last_id).order_by("id")
+    rows = []
+    latest_id = last_id
+
+    for lead in new_rows_qs:
+        decorated = _decorate_booking_lead(lead)
+        latest_id = max(latest_id, int(decorated.id))
+        rows.append(
+            {
+                "id": decorated.id,
+                "name": decorated.name,
+                "phone": decorated.phone or "",
+                "email": decorated.email or "",
+                "booking_date": decorated.display_booking_date,
+                "booking_specialty": decorated.display_booking_specialty,
+                "booking_service": decorated.display_booking_service,
+                "note": decorated.display_note,
+                "created_at_text": decorated.display_created_at,
+                "ack_sent_at": decorated.display_ack_sent_at,
+                "can_send_ack": decorated.can_send_ack,
+            }
+        )
+
+    return JsonResponse(
+        {
+            "ok": True,
+            "latest_id": latest_id,
+            "new_count": len(rows),
+            "rows": rows,
+            "total_bookings": Lead.objects.filter(page="booking").count(),
+            "today_bookings": Lead.objects.filter(page="booking", created_at__date=timezone.localdate()).count(),
+            "server_time": timezone.localtime().strftime("%d/%m/%Y %H:%M:%S"),
+        }
+    )
+
+
+@staff_required
+def booking_send_confirmation_email(request, pk):
+    lead = get_object_or_404(Lead, pk=pk, page="booking")
+    if request.method != "POST":
+        return redirect("dashboard:booking_list")
+
+    success, error_message = _send_booking_confirmation_email(lead)
+    if success:
+        messages.success(request, f"Đã gửi email xác nhận tới {lead.email}.")
+    else:
+        messages.error(request, f"Gửi email thất bại: {error_message}")
+
+    redirect_url = (request.POST.get("next") or "").strip()
+    if redirect_url and redirect_url.startswith("/hansviet_admin/"):
+        return redirect(redirect_url)
+    return redirect("dashboard:booking_list")
 
 
 @staff_required

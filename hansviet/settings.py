@@ -39,8 +39,8 @@ SECRET_KEY = 'django-insecure-ix6^2#xu44uhjcb5_5*uxx!lgd9lb^#8n#%m(o8ab$#zrxf1@f
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "handsviet.imagentu.cloud",
-    "165.99.16.48"
+    # "handsviet.imagentu.cloud",
+    # "165.99.16.48"
 ]
 
 
@@ -133,7 +133,7 @@ LANGUAGES = [
     ('en', 'English'),
 ]
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 USE_I18N = True
 
@@ -162,6 +162,7 @@ LOGIN_EXEMPT_URLS = [
     '/services/', '/services/category/', '/news/', '/news/category/',
     '/contact/', '/booking/', '/exercise-library/', '/partners/',
     '/visit-guide/', '/faq/', '/therapies/', '/rehab/',
+    '/payment/',
     '/i18n/',
 ]
 
@@ -176,3 +177,25 @@ PPLX_API_KEY = os.getenv("PPLX_API_KEY", "")
 PPLX_MODEL = os.getenv("PPLX_MODEL", "sonar")
 PPLX_TIMEOUT = int(os.getenv("PPLX_TIMEOUT", "45"))
 PPLX_AUTO_PUBLISH = os.getenv("PPLX_AUTO_PUBLISH", "false").lower() in {"1", "true", "yes", "on"}
+
+# Email settings
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() in {"1", "true", "yes", "on"}
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "false").lower() in {"1", "true", "yes", "on"}
+EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "20"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "noreply@handsviet.vn")
+
+# Notification recipients
+BOOKING_CONTACT_EMAIL = os.getenv("BOOKING_CONTACT_EMAIL", DEFAULT_FROM_EMAIL)
+EXPIRY_REMINDER_CONTACT_EMAIL = os.getenv("EXPIRY_REMINDER_CONTACT_EMAIL", BOOKING_CONTACT_EMAIL)
+PACKAGE_EXPIRY_REMINDER_DAYS = os.getenv("PACKAGE_EXPIRY_REMINDER_DAYS", "3,2")
+
+# QR payment settings (VietQR image API)
+QR_BANK_ID = os.getenv("QR_BANK_ID", "VCB")
+QR_ACCOUNT_NO = os.getenv("QR_ACCOUNT_NO", "9363977687")
+QR_ACCOUNT_NAME = os.getenv("QR_ACCOUNT_NAME", "BUI DINH PHAP")
+QR_WEBHOOK_SECRET = os.getenv("QR_WEBHOOK_SECRET", "")

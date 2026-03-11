@@ -90,6 +90,10 @@ class Lead(models.Model):
     email = models.EmailField(blank=True)
     message = models.TextField(blank=True)
     page = models.CharField(max_length=255, blank=True)
+    booking_date = models.DateField(null=True, blank=True)
+    booking_specialty = models.CharField(max_length=255, blank=True)
+    booking_service = models.CharField(max_length=255, blank=True)
+    booking_ack_sent_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -125,6 +129,8 @@ class Purchase(models.Model):
     expires_at = models.DateTimeField()
     status = models.CharField(max_length=20, default="active")  # active/expired/canceled
     payment_ref = models.CharField(max_length=100, blank=True)
+    expiry_reminder_3d_sent_at = models.DateTimeField(null=True, blank=True)
+    expiry_reminder_days_sent = models.JSONField(default=list, blank=True)
 
     class Meta:
         verbose_name = "Purchase"

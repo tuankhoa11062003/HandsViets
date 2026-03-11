@@ -8,6 +8,7 @@ from urllib.request import Request, urlopen
 
 from django.conf import settings
 from django.utils.text import slugify
+from hansviet_admin.services.news_content import ensure_detailed_content, ensure_summary
 
 
 @dataclass
@@ -22,27 +23,23 @@ class NewsItem:
 
 
 SYSTEM_PROMPT = (
-    "Bạn là biên tập viên tin y tế tiếng Việt. "
-    "BẮT BUỘC trả về tiếng Việt tự nhiên, không dùng tiếng Anh, không markdown. "
-    "Mỗi bài phải chi tiết, có chiều sâu, tránh viết chung chung. "
-    "summary dài từ 80 đến 160 từ. "
-    "content dài từ 900 đến 1600 từ, dùng HTML đơn giản (h2, h3, p, ul, li). "
-    "Nội dung phải có các phần: bối cảnh, số liệu/chứng cứ, tác động lâm sàng, khuyến nghị cho người dân Việt Nam. "
-    "Nếu có ảnh phù hợp thì điền image_url là URL ảnh minh họa công khai. "
-    "Chỉ trả về JSON UTF-8 theo schema: "
+    "Ban la bien tap vien tin y te cho doc gia Viet Nam. "
+    "Bat buoc tra ve tieng Viet tu nhien, khong markdown. "
+    "Moi bai can co tom tat ro rang va noi dung chi tiet, co gia tri thuc hanh. "
+    "summary tu 80 den 160 tu. "
+    "content tu 900 den 1600 tu, dung HTML don gian (h2, h3, p, ul, li). "
+    "Tra ve JSON theo schema: "
     "{\"items\":[{\"title\":\"...\",\"summary\":\"...\",\"content\":\"...\","
     "\"source_url\":\"https://...\",\"source_name\":\"...\",\"image_url\":\"https://...\","
-    "\"published_at\":\"YYYY-MM-DDTHH:MM:SSZ\"}]}."
+    "\"published_at\":\"YYYY-MM-DDTHH:MM:SSZ\"}]}"
 )
 
 
 def _build_user_prompt(category_name: str, max_items: int) -> str:
     return (
-        f"Hãy lấy tối đa {max_items} tin mới nhất phù hợp chuyên mục '{category_name}' cho độc giả Việt Nam. "
-        "Mỗi tin cần đúng trọng tâm, có nguồn trích dẫn đáng tin cậy. "
-        "Bắt buộc tiếng Việt tự nhiên. "
-        "summary cần nêu rõ điểm chính và ý nghĩa thực tiễn. "
-        "content cần phân tích sâu, có giá trị ứng dụng cho bệnh nhân và gia đình."
+        f"Hay lay toi da {max_items} tin moi nhat phu hop chuyen muc '{category_name}' cho doc gia Viet Nam. "
+        "Noi dung phai dung trong tam, co nguon tham khao ro rang. "
+        "Summary neu ro diem chinh. Content can phan tich sau va co khuyen nghi thuc hanh."
     )
 
 
@@ -55,42 +52,53 @@ def _parse_json_from_text(raw_text: str) -> dict:
 
 
 def _has_vietnamese_tone(text: str) -> bool:
-    return bool(
-        re.search(
-            r"[ăâđêôơưáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệóòỏõọốồổỗộớờởỡợúùủũụứừửữựíìỉĩịýỳỷỹỵ]",
-            text.lower(),
-        )
-    )
+    lowered = f" {text.lower()} "
+    markers = [
+        " va ",
+        " cua ",
+        " benh ",
+        " dieu tri ",
+        " phuc hoi ",
+        " suc khoe ",
+        " bệnh ",
+        " điều trị ",
+        " phục hồi ",
+        " sức khỏe ",
+    ]
+    return any(marker in lowered for marker in markers)
 
 
 def _ensure_length(item: dict) -> dict:
-    summary = (item.get("summary") or "").strip()
-    content = (item.get("content") or "").strip()
-    if len(summary) < 180 and content:
-        item["summary"] = (content[:380].rsplit(" ", 1)[0] + "...").strip()
-    if len(content) < 1500:
-        filler = (
-            "<h2>Khuyến nghị thực hành</h2>"
-            "<p>Người dân nên theo dõi thông tin từ cơ quan y tế chính thống, "
-            "tuân thủ hướng dẫn của bác sĩ và không tự ý điều trị theo nguồn chưa kiểm chứng.</p>"
-            "<ul>"
-            "<li>Khám sớm khi có dấu hiệu bất thường.</li>"
-            "<li>Duy trì lối sống lành mạnh, vận động phù hợp.</li>"
-            "<li>Tái khám định kỳ theo chỉ định chuyên môn.</li>"
-            "</ul>"
-        )
-        item["content"] = (content + "\n\n" + filler).strip()
+    title = (item.get("title") or "").strip()
+    source_url = (item.get("source_url") or "").strip()
+    source_name = (item.get("source_name") or "").strip()
+    image_url = (item.get("image_url") or "").strip()
+
+    summary = ensure_summary(title=title, summary=(item.get("summary") or ""), min_len=280, min_words=55)
+    content = ensure_detailed_content(
+        title=title,
+        summary=summary,
+        content=(item.get("content") or ""),
+        source_url=source_url,
+        source_name=source_name,
+        image_url=image_url,
+        min_len=2200,
+        min_words=360,
+    )
+
+    item["summary"] = summary
+    item["content"] = content
     return item
 
 
 def _translate_item_to_vietnamese(item: dict) -> dict:
     translate_prompt = (
-        "Dịch toàn bộ object sau sang tiếng Việt tự nhiên, giữ nguyên cấu trúc JSON, "
-        "không thêm giải thích. Object: " + json.dumps(item, ensure_ascii=False)
+        "Translate this object to natural Vietnamese, keep exact JSON structure and return JSON only. Object: "
+        + json.dumps(item, ensure_ascii=False)
     )
     response = _post_chat(
         [
-            {"role": "system", "content": "Bạn là biên tập viên tiếng Việt. Chỉ trả về JSON hợp lệ."},
+            {"role": "system", "content": "You are a Vietnamese medical editor. Return valid JSON only."},
             {"role": "user", "content": translate_prompt},
         ]
     )
@@ -201,4 +209,6 @@ def unique_article_slug(title: str, exists_fn) -> str:
         slug = f"{base}-{i}"
         i += 1
     return slug
+
+
 

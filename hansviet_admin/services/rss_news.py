@@ -23,7 +23,7 @@ def _fix_text(text: str) -> str:
     raw = html.unescape((text or "").strip())
     # Retry common mojibake conversion.
     for _ in range(2):
-        if not any(tok in raw for tok in ("Ã", "Ä", "Â", "á»", "áº")):
+        if not any(tok in raw for tok in ("Ã", "Â", "Ä", "á»", "áº", "Æ°", "Æ¡", "â€", "â€“", "â€”", "�")):
             break
         try:
             candidate = raw.encode("latin1", errors="ignore").decode("utf-8", errors="ignore")
@@ -96,9 +96,9 @@ def fetch_rss_items(feed_url: str, source_name: str = "", max_items: int = 5) ->
         with urlopen(req, timeout=45) as resp:
             xml_text = resp.read()
     except Exception as ex:
-        if "CERTIFICATE_VERIFY_FAILED" not in str(ex):
-            raise
         # Fallback for local machines with SSL interception.
+        if "certificate verify failed" not in str(ex).lower():
+            raise
         insecure_ctx = ssl._create_unverified_context()
         with urlopen(req, timeout=45, context=insecure_ctx) as resp:
             xml_text = resp.read()
@@ -134,7 +134,7 @@ def fetch_rss_items(feed_url: str, source_name: str = "", max_items: int = 5) ->
                 "{http://www.w3.org/2005/Atom}summary",
             ],
         )
-        summary = _strip_html(desc_html)[:900]
+        summary = _strip_html(desc_html)[:1400]
         published_raw = _find_first_text(node, ["pubDate", "published", "{http://www.w3.org/2005/Atom}updated"])
         image_url = _extract_image(node, desc_html)
 
@@ -144,9 +144,14 @@ def fetch_rss_items(feed_url: str, source_name: str = "", max_items: int = 5) ->
         content = (
             f"<h2>{title}</h2>"
             f"<p>{summary}</p>"
+            "<h3>Điểm chính cần lưu ý</h3>"
+            "<ul>"
+            "<li>Đây là thông tin tổng hợp nhanh từ nguồn RSS và cần được đối chiếu với bài gốc.</li>"
+            "<li>Người đọc nên tham khảo tư vấn chuyên môn trước khi áp dụng cho tình trạng cá nhân.</li>"
+            "<li>Ưu tiên nguồn chính thống và cập nhật mới nhất từ cơ quan y tế hoặc bệnh viện uy tín.</li>"
+            "</ul>"
             "<h3>Nguồn tham khảo</h3>"
-            f"<p>Bài viết được tổng hợp từ nguồn: <a href=\"{link}\" target=\"_blank\" rel=\"noopener noreferrer\">{feed_title}</a>.</p>"
-            "<p>Độc giả nên đọc bài gốc để xem đầy đủ thông tin chuyên môn và cập nhật mới nhất.</p>"
+            f"<p>Bài viết được tổng hợp từ: <a href=\"{link}\" target=\"_blank\" rel=\"noopener noreferrer\">{feed_title}</a>.</p>"
         )
         if image_url:
             content = (

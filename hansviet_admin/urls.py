@@ -27,6 +27,9 @@ urlpatterns = [
     path("therapies/create/", views.therapy_create, name="therapy_create"),
     path("therapies/<int:pk>/edit/", views.therapy_edit, name="therapy_edit"),
     path("therapies/<int:pk>/delete/", views.therapy_delete, name="therapy_delete"),
+    path("bookings/", views.booking_list, name="booking_list"),
+    path("bookings/feed/", views.booking_feed, name="booking_feed"),
+    path("bookings/<int:pk>/send-confirmation/", views.booking_send_confirmation_email, name="booking_send_confirmation_email"),
 
     path("categories/", views.category_list, name="category_list"),
     path("categories/create/", views.category_create, name="category_create"),

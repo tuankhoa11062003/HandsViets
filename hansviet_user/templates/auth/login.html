@@ -1,10 +1,15 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HandsViet - Dang Nhap Nguoi Dung</title>
+    <title>HandsViet - Đăng nhập người dùng</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,32 +18,38 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: "Be Vietnam Pro", sans-serif;
             min-height: 100vh;
+            padding: 24px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(13, 88, 101, 0.75), rgba(6, 68, 76, 0.8)),
+                url("{% static 'images/bgrLogin.jpg' %}") center/cover no-repeat fixed;
+            color: #0f172a;
         }
 
-        .container {
+        .login-shell {
             width: 100%;
-            max-width: 420px;
+            max-width: 980px;
         }
 
-        .login-box {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        .login-card {
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 24px;
             overflow: hidden;
-            animation: slideUp 0.5s ease-out;
+            box-shadow: 0 24px 55px rgba(15, 23, 42, 0.28);
+            backdrop-filter: blur(3px);
+            animation: fadeUp 0.45s ease-out;
         }
 
-        @keyframes slideUp {
+        @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(24px);
             }
 
             to {
@@ -47,193 +58,244 @@
             }
         }
 
-        .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
+        .brand-pane {
+            padding: 36px 34px;
+            background: linear-gradient(155deg, rgba(15, 133, 141, 0.12), rgba(10, 76, 83, 0.08));
+            border-right: 1px solid rgba(15, 133, 141, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 18px;
         }
 
-        .login-header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-            font-weight: 600;
+        .brand-logo {
+            width: min(320px, 100%);
+            height: auto;
+            object-fit: contain;
         }
 
-        .login-header p {
+        .brand-title {
+            font-size: 27px;
+            color: #0f4f5a;
+            line-height: 1.3;
+            font-weight: 700;
+        }
+
+        .brand-text {
+            color: #325a63;
+            font-size: 15px;
+            line-height: 1.65;
+            max-width: 420px;
+        }
+
+        .form-pane {
+            padding: 38px 36px;
+        }
+
+        .form-pane h1 {
+            font-size: 30px;
+            color: #0f4f5a;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .form-subtitle {
+            color: #475569;
+            margin-bottom: 24px;
             font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .login-body {
-            padding: 40px 30px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 7px;
             font-size: 14px;
-            font-weight: 500;
-            color: #333;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            color: #0f172a;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #0ea5a4;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.16);
+        }
+
+        input::placeholder {
+            color: #94a3b8;
         }
 
         .password-input-wrapper {
             position: relative;
         }
 
+        .password-input-wrapper input {
+            padding-right: 72px;
+        }
+
         .toggle-password {
             position: absolute;
-            right: 15px;
             top: 50%;
+            right: 10px;
             transform: translateY(-50%);
-            background: none;
             border: none;
+            background: transparent;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 700;
             cursor: pointer;
-            font-size: 18px;
-            color: #999;
-            transition: color 0.3s;
-            padding: 5px;
+            padding: 6px 8px;
+            border-radius: 6px;
         }
 
         .toggle-password:hover {
-            color: #667eea;
-        }
-
-        input[type="password"],
-        input[type="text"].password-visible {
-            padding-right: 45px;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background: #f9f9f9;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group input::placeholder {
-            color: #aaa;
+            background: rgba(15, 118, 110, 0.1);
         }
 
         .remember-forgot {
+            margin-top: 4px;
+            margin-bottom: 22px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            font-size: 14px;
+            gap: 10px;
+            font-size: 13px;
         }
 
         .remember-forgot label {
-            display: flex;
+            margin: 0;
+            font-weight: 500;
+            display: inline-flex;
             align-items: center;
-            margin-bottom: 0;
-            font-weight: 400;
-        }
-
-        .remember-forgot input[type="checkbox"] {
-            margin-right: 6px;
-            cursor: pointer;
+            gap: 7px;
+            color: #475569;
         }
 
         .remember-forgot a {
-            color: #667eea;
+            color: #0f766e;
             text-decoration: none;
-            transition: color 0.3s;
+            font-weight: 600;
         }
 
         .remember-forgot a:hover {
-            color: #764ba2;
+            color: #115e59;
         }
 
         .btn-login {
             width: 100%;
-            padding: 13px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 10px;
+            padding: 13px 14px;
+            background: linear-gradient(135deg, #0f8e95, #0f5f6b);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 25px rgba(15, 95, 107, 0.36);
         }
 
-        .btn-login:active {
-            transform: translateY(0);
+        .btn-login:disabled {
+            opacity: 0.75;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error-message,
+        .success-message,
+        .info-message,
+        .warning-message {
+            border-radius: 10px;
+            padding: 11px 12px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            border: 1px solid transparent;
         }
 
         .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            border-left: 4px solid #c33;
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #b91c1c;
         }
 
         .success-message {
-            background: #efe;
-            color: #3c3;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            border-left: 4px solid #3c3;
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #166534;
+        }
+
+        .info-message {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+        }
+
+        .warning-message {
+            background: #fffbeb;
+            border-color: #fde68a;
+            color: #92400e;
+        }
+
+        .field-error {
+            margin-top: 6px;
+            color: #b91c1c;
+            font-size: 12px;
         }
 
         .login-footer {
+            margin-top: 18px;
             text-align: center;
-            padding: 20px 30px;
-            background: #f9f9f9;
-            border-top: 1px solid #e0e0e0;
+            color: #475569;
             font-size: 13px;
-            color: #666;
+        }
+
+        .login-footer a {
+            color: #0f766e;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .login-footer a:hover {
+            color: #115e59;
         }
 
         .version {
-            font-size: 12px;
-            color: #999;
             margin-top: 10px;
-        }
-
-        /* Loading animation */
-        .btn-login:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+            color: #64748b;
+            font-size: 12px;
         }
 
         .spinner {
             display: inline-block;
             width: 14px;
             height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top: 2px solid white;
-            animation: spin 0.8s linear infinite;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #fff;
             margin-right: 8px;
             vertical-align: middle;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
@@ -242,43 +304,58 @@
             }
         }
 
-        /* Responsive */
-        @media (max-width: 480px) {
-            .login-box {
-                border-radius: 8px;
+        @media (max-width: 880px) {
+            body {
+                padding: 16px;
             }
 
-            .login-header {
-                padding: 30px 20px;
+            .login-card {
+                grid-template-columns: 1fr;
             }
 
-            .login-header h1 {
-                font-size: 24px;
+            .brand-pane {
+                border-right: none;
+                border-bottom: 1px solid rgba(15, 133, 141, 0.15);
             }
 
-            .login-body {
-                padding: 30px 20px;
+            .brand-logo {
+                width: min(260px, 100%);
+            }
+        }
+
+        @media (max-width: 520px) {
+
+            .brand-pane,
+            .form-pane {
+                padding: 26px 20px;
             }
 
-            .login-footer {
-                padding: 15px 20px;
+            .form-pane h1 {
+                font-size: 25px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="login-box">
-            <div class="login-header">
-                <h1>HandsViet User Portal</h1>
-                <p>Hệ thống quản lý nội dung</p>
-            </div>
+    <div class="login-shell">
+        <div class="login-card">
+            <section class="brand-pane">
+                <img src="{% static 'images/HandsVietLogo.png' %}" alt="Logo HandsViet" class="brand-logo">
+                <h2 class="brand-title">Bệnh viện Phục hồi Chức năng HandsViet</h2>
+                <p class="brand-text">
+                    Hệ thống chăm sóc và theo dõi phục hồi cho người bệnh, hỗ trợ truy cập hồ sơ và dịch vụ điều trị
+                    nhanh chóng, an toàn.
+                </p>
+            </section>
 
-            <div class="login-body">
+            <section class="form-pane">
+                <h1>Đăng nhập</h1>
+                <p class="form-subtitle">Vui lòng nhập thông tin tài khoản để tiếp tục.</p>
+
                 {% if messages %}
                 {% for message in messages %}
-                <div class="{% if message.tags %}{{ message.tags }}{% endif %}-message">
+                <div class="{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}-message">
                     {{ message }}
                 </div>
                 {% endfor %}
@@ -294,15 +371,14 @@
 
                 <form method="POST" action="{% url 'auth:login' %}">
                     {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next|default:'' }}">
 
                     <div class="form-group">
                         <label for="id_username">Tên đăng nhập</label>
-                        <input type="text" id="id_username" name="username" placeholder="Nhập tên đăng nhập" required
-                            autofocus>
+                        <input type="text" id="id_username" name="username" placeholder="Nhập tên đăng nhập"
+                            value="{{ form.username.value|default:'' }}" autocomplete="username" required autofocus>
                         {% if form.username.errors %}
-                        <div class="error-message" style="margin-top: 5px;">
-                            {{ form.username.errors.0 }}
-                        </div>
+                        <div class="field-error">{{ form.username.errors.0 }}</div>
                         {% endif %}
                     </div>
 
@@ -310,66 +386,49 @@
                         <label for="id_password">Mật khẩu</label>
                         <div class="password-input-wrapper">
                             <input type="password" id="id_password" name="password" placeholder="Nhập mật khẩu"
-                                required>
-                            <button type="button" class="toggle-password" onclick="togglePassword('id_password')">
-                                👁️
+                                autocomplete="current-password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('id_password', this)">
+                                Hiện
                             </button>
                         </div>
                         {% if form.password.errors %}
-                        <div class="error-message" style="margin-top: 5px;">
-                            {{ form.password.errors.0 }}
-                        </div>
+                        <div class="field-error">{{ form.password.errors.0 }}</div>
                         {% endif %}
                     </div>
 
                     <div class="remember-forgot">
-                        <label>
+                        <label for="id_remember">
                             <input type="checkbox" name="remember" id="id_remember">
                             Ghi nhớ tôi
                         </label>
                         <a href="#">Quên mật khẩu?</a>
                     </div>
 
-                    <button type="submit" class="btn-login" id="login-btn">
-                        Đăng Nhập
-                    </button>
+                    <button type="submit" class="btn-login" id="login-btn">Đăng nhập</button>
                 </form>
-            </div>
 
-            <div class="login-footer">
-                <p>Tai khoan quan tri? <a href="{% url 'dashboard:login' %}"
-                        style="color: #667eea; text-decoration: none; font-weight: 600;">Dang nhap admin</a></p>
-                <p>Chưa có tài khoản? <a href="{% url 'auth:register' %}"
-                        style="color: #667eea; text-decoration: none; font-weight: 600;">Đăng ký ngay</a></p>
-                <p style="margin-top: 10px; border-top: 1px solid #e0e0e0; padding-top: 10px;">&copy; 2026 HandsViet.
-                    All rights reserved.</p>
-                <div class="version">v1.0.0</div>
-            </div>
+                <div class="login-footer">
+                    <p>Tài khoản quản trị? <a href="{% url 'dashboard:login' %}">Đăng nhập admin</a></p>
+                    <p>Chưa có tài khoản? <a href="{% url 'auth:register' %}">Đăng ký ngay</a></p>
+                    <p style="margin-top: 8px;">&copy; 2026 HandsViet. All rights reserved.</p>
+                    <div class="version">v1.0.0</div>
+                </div>
+            </section>
         </div>
     </div>
 
     <script>
-        // Toggle password visibility
-        function togglePassword(fieldId) {
+        function togglePassword(fieldId, button) {
             const field = document.getElementById(fieldId);
-            const btn = event.target.closest('button');
-
-            if (field.type === 'password') {
-                field.type = 'text';
-                field.classList.add('password-visible');
-                btn.textContent = '🙈';
-            } else {
-                field.type = 'password';
-                field.classList.remove('password-visible');
-                btn.textContent = '👁️';
-            }
+            const showing = field.type === "text";
+            field.type = showing ? "password" : "text";
+            button.textContent = showing ? "Hiện" : "Ẩn";
         }
 
-        // Handle form submission with loading state
-        const loginForm = document.querySelector('form');
-        const loginBtn = document.getElementById('login-btn');
+        const loginForm = document.querySelector("form");
+        const loginBtn = document.getElementById("login-btn");
 
-        loginForm.addEventListener('submit', function (e) {
+        loginForm.addEventListener("submit", function () {
             const username = loginForm.querySelector('input[name="username"]').value;
             const password = loginForm.querySelector('input[name="password"]').value;
 

@@ -1,3 +1,5 @@
+import re
+from decimal import Decimal, ROUND_HALF_UP
 from django import forms
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
@@ -6,6 +8,23 @@ from urllib.parse import parse_qs, urlparse
 from .models import Package, Service, ServiceCategory, NewsArticle, NewsCategory, Video
 
 User = get_user_model()
+
+
+CYCLE_UNIT_CHOICES = (
+    ("week", "Tuần"),
+    ("month", "Tháng"),
+    ("year", "Năm"),
+)
+CYCLE_UNIT_LABELS = {
+    "week": "tuần",
+    "month": "tháng",
+    "year": "năm",
+}
+
+
+def _format_vnd(value) -> str:
+    amount = Decimal(str(value)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+    return f"{int(amount):,}".replace(",", ".") + " VNĐ"
 
 
 def _unique_slug(model, slug_base, instance=None):
@@ -136,7 +155,29 @@ class ServiceCategoryForm(forms.ModelForm):
         return _unique_slug(ServiceCategory, slug, self.instance)
 
 
-class ServiceForm(forms.ModelForm):
+class ServiceForm(StyledFormMixin, forms.ModelForm):
+    slug = forms.CharField(required=False, label="Slug (URL)")
+    cycle_unit = forms.ChoiceField(choices=CYCLE_UNIT_CHOICES, initial="month", label="Chu kỳ")
+    cycle_count = forms.IntegerField(
+        min_value=1,
+        initial=1,
+        label="Số chu kỳ",
+        widget=forms.NumberInput(attrs={"min": "1", "step": "1", "inputmode": "numeric"}),
+    )
+    unit_price = forms.DecimalField(
+        min_value=0,
+        decimal_places=0,
+        max_digits=12,
+        initial=0,
+        label="Đơn giá / chu kỳ (VNĐ)",
+        widget=forms.NumberInput(attrs={"min": "0", "step": "1000", "inputmode": "numeric"}),
+    )
+    total_price_preview = forms.CharField(
+        required=False,
+        label="Tổng giá dịch vụ",
+        widget=forms.TextInput(attrs={"readonly": "readonly"}),
+    )
+
     class Meta:
         model = Service
         fields = [
@@ -153,7 +194,34 @@ class ServiceForm(forms.ModelForm):
         ]
         widgets = {
             "summary": forms.Textarea(attrs={"rows": 4}),
+            "price_text": forms.HiddenInput(),
+            "duration": forms.HiddenInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["price_text"].required = False
+        self.fields["duration"].required = False
+
+        self.fields["title"].widget.attrs["placeholder"] = "Ví dụ: Gói phục hồi chuyên sâu"
+        self.fields["slug"].widget.attrs["placeholder"] = "tu-dong-tao-neu-de-trong"
+        self.fields["summary"].widget.attrs["placeholder"] = "Mô tả ngắn gọn về dịch vụ"
+        self.fields["featured_tag"].widget.attrs["placeholder"] = "Ví dụ: HOT"
+        self.fields["total_price_preview"].widget.attrs["placeholder"] = "Tự động tính"
+
+        if self.instance and self.instance.pk:
+            cycle_unit, cycle_count = self._extract_cycle(self.instance.duration or "")
+            total_price = self._extract_amount(self.instance.price_text or "")
+
+            self.fields["cycle_unit"].initial = cycle_unit
+            self.fields["cycle_count"].initial = cycle_count
+            self.initial["duration"] = self.instance.duration or ""
+            self.initial["price_text"] = self.instance.price_text or ""
+
+            if total_price is not None:
+                unit_price = (total_price / Decimal(cycle_count)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+                self.fields["unit_price"].initial = unit_price
+                self.fields["total_price_preview"].initial = _format_vnd(total_price)
 
     def clean_slug(self):
         title = self.cleaned_data.get("title", "")
@@ -162,6 +230,52 @@ class ServiceForm(forms.ModelForm):
         if not slug:
             raise forms.ValidationError("Slug không hợp lệ; vui lòng dùng chữ, số, dấu '-' hoặc '_'.")
         return _unique_slug(Service, slug, self.instance)
+
+    @staticmethod
+    def _extract_cycle(duration_text: str) -> tuple[str, int]:
+        text = (duration_text or "").lower()
+        count_match = re.search(r"(\d+)", text)
+        count = int(count_match.group(1)) if count_match else 1
+        if "tuần" in text or "week" in text:
+            unit = "week"
+        elif "năm" in text or "year" in text:
+            unit = "year"
+        else:
+            unit = "month"
+        return unit, max(1, count)
+
+    @staticmethod
+    def _extract_amount(price_text: str) -> Decimal | None:
+        digits = re.sub(r"[^\d]", "", price_text or "")
+        if not digits:
+            return None
+        return Decimal(digits)
+
+    def clean(self):
+        cleaned = super().clean()
+        unit = cleaned.get("cycle_unit")
+        cycle_count = cleaned.get("cycle_count")
+        unit_price = cleaned.get("unit_price")
+
+        if not unit or not cycle_count or unit_price is None:
+            return cleaned
+
+        total_price = (Decimal(unit_price) * Decimal(cycle_count)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+        duration_label = CYCLE_UNIT_LABELS.get(unit, "tháng")
+
+        cleaned["duration"] = f"{int(cycle_count)} {duration_label}"
+        cleaned["price_text"] = _format_vnd(total_price)
+        cleaned["total_price_preview"] = _format_vnd(total_price)
+        return cleaned
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.duration = self.cleaned_data.get("duration", instance.duration)
+        instance.price_text = self.cleaned_data.get("price_text", instance.price_text)
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance
 
 
 class NewsCategoryForm(forms.ModelForm):
